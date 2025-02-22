@@ -1,0 +1,53 @@
+---
+spring:
+  application:
+    name: API-CDT-CORE-SERVICE
+
+---
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+
+spring:
+  config:
+    use-legacy-processing: true
+  jmx:
+    enabled: true
+
+  main:
+    lazy-initialization: true
+
+  datasource:
+    url: jdbc:postgresql://db:5432/core
+    username: core_user
+    password: core_pwd
+
+  jpa:
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: validate
+
+  flyway:
+    enabled: false
+
+  zipkin:
+    enabled: false
+
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: false
+
+feign:
+  hystrix:
+    enabled: true
+
+security:
+  basic:
+    enable: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
