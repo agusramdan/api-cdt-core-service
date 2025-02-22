@@ -37,9 +37,9 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:${{ env.VERSION }} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:dev
-          docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:${{ env.VERSION }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:dev
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-event-service:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:dev
+          docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:dev
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:latest
