@@ -1,5 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
+import agus.ramdan.base.dto.BankDTO;
+import agus.ramdan.base.dto.BranchDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -18,9 +20,13 @@ public class BeneficiaryAccountUpdateDTO {
     @Schema(description = "Account holder name (optional)", example = "John Doe")
     private String account_name;
 
-    @Schema(description = "Bank code (optional)", example = "BCA")
-    private String bank_code;
+    private BankDTO bank;
 
-    @Schema(description = "Bank name (optional)", example = "Bank Central Asia")
-    private String bank_name;
+    private BranchDTO branch;
+
+//    @Schema(description = "Bank code (optional)", example = "BCA")
+//    private String bank_code;
+//
+//    @Schema(description = "Bank name (optional)", example = "Bank Central Asia")
+//    private String bank_name;
 }

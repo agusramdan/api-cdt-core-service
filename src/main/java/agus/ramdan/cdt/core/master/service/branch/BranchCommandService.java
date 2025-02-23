@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.branch;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.controller.dto.branch.BranchCreateDTO;
@@ -16,8 +17,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BranchCommandService implements
-        BaseCommandService<BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, UUID>,
-        BaseCommandEntityService<Branch, UUID, BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, UUID> {
+        BaseCommandService<BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, String>,
+        BaseCommandEntityService<Branch, UUID, BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, String> {
 
     private final BranchRepository repository;
     private final BranchMapper mapper;
@@ -36,11 +37,13 @@ public class BranchCommandService implements
     public Branch convertFromCreateDTO(BranchCreateDTO dto) {
         return mapper.createDtoToEntity(dto);
     }
-
+    public Branch getById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
+    }
     @Override
-    public Branch convertFromUpdateDTO(UUID id, BranchUpdateDTO dto) {
-        Branch branch = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Branch not found"));
+    public Branch convertFromUpdateDTO(String id, BranchUpdateDTO dto) {
+        Branch branch = getById(convertId(id));
         mapper.updateEntityFromUpdateDto(dto, branch);
         return branch;
     }
@@ -52,10 +55,12 @@ public class BranchCommandService implements
 
     @Override
     public void delete(UUID id) {
+        getById(id);
         repository.deleteById(id);
     }
+
     @Override
-    public UUID convertId(UUID uuid) {
-        return uuid;
+    public UUID convertId(String uuid) {
+        return UUID.fromString(uuid);
     }
 }

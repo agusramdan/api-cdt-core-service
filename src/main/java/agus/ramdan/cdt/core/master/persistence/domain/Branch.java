@@ -1,17 +1,15 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
-import agus.ramdan.cdt.core.master.persistence.embedded.Address;
+import agus.ramdan.base.embeddable.Address;
+import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -21,6 +19,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "cdt_branch")
+@SQLDelete(sql = "UPDATE cdt_branch SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class Branch {
@@ -30,19 +30,8 @@ public class Branch {
     @JsonProperty(index = 1)
     private UUID id;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime created_on;
-    @UpdateTimestamp
-    private LocalDateTime updated_on;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    private String created_by;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    private String updated_by;
+    @Embedded
+    private AuditMetadata auditMetadata;
 
     private String name;
     private String code;
@@ -50,6 +39,5 @@ public class Branch {
     // Address
     @Embedded
     private Address address;  // Embedded Address
-
 
 }

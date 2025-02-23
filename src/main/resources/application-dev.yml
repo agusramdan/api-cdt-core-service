@@ -1,7 +1,6 @@
 ---
-#-Dspring.datasource.password
 spring:
   jpa:
-    show-sql: true
+    # show-sql: true
     # Hibernate ddl auto (create, create-drop, validate, update)
-    hibernate.ddl-auto: update
+    hibernate.ddl-auto: create

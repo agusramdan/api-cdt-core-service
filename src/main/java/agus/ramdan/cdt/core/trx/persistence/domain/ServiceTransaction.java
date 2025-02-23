@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -25,5 +26,8 @@ public class ServiceTransaction {
     private UUID id;
     private String no;
 
+    @Embedded
+    private AuditMetadata auditMetadata;
 
+    private TrxStatus status;
 }

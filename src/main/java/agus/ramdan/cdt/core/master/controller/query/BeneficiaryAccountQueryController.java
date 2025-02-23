@@ -19,4 +19,3 @@ import java.util.UUID;
 public class BeneficiaryAccountQueryController implements BaseQueryController<BeneficiaryAccountQueryDTO,UUID> {
     private final BeneficiaryAccountQueryService service;
 }
-

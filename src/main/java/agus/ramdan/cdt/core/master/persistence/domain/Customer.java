@@ -1,22 +1,18 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.embeddable.Address;
+import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerType;
-import agus.ramdan.cdt.core.master.persistence.embedded.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -30,8 +26,8 @@ import java.util.UUID;
         @Index(name = "idx_customer_msidn", columnList = "msidn"),
         @Index(name = "idx_customer_npwp", columnList = "npwp")
 })
-@SQLDelete(sql = "UPDATE cdt_customer SET deleted = true WHERE id = ?")
-@Where(clause = "deleted = false")
+@SQLDelete(sql = "UPDATE cdt_customer SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class Customer {
@@ -42,30 +38,13 @@ public class Customer {
     @JsonProperty("id")
     private UUID id;
 
+    @Embedded
+    private AuditMetadata auditMetadata;
+
     @Column(name = "name", nullable = false)
     @JsonProperty("name")
     @Schema(description = "Name")
     private String name;
-
-    @CreationTimestamp
-    @Column(name = "created_on", updatable = false)
-    @JsonProperty("created_on")
-    private LocalDateTime createdOn;
-
-    @UpdateTimestamp
-    @Column(name = "updated_on")
-    @JsonProperty("updated_on")
-    private LocalDateTime updatedOn;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    @JsonProperty("created_by")
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    @JsonProperty("updated_by")
-    private String updatedBy;
 
     // Address
     @Embedded
@@ -95,8 +74,4 @@ public class Customer {
     @JsonProperty("msidn")
     private String msidn;
 
-    @Column(name = "deleted", nullable = false)
-    @JsonProperty("deleted")
-    @Builder.Default
-    private boolean deleted = false;
 }

@@ -1,4 +1,4 @@
-package agus.ramdan.cdt.core.master.controller.dto;
+package agus.ramdan.base.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -3,7 +3,6 @@ package agus.ramdan.base.controller;
 import agus.ramdan.base.exception.Errors;
 import agus.ramdan.base.utils.BaseSpecifications;
 import agus.ramdan.base.utils.BaseSpecificationsBuilder;
-import agus.ramdan.base.utils.ChekUtils;
 import agus.ramdan.base.utils.OffsetBasedPageRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

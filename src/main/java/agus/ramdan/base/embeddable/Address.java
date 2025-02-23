@@ -1,4 +1,4 @@
-package agus.ramdan.cdt.core.master.persistence.embedded;
+package agus.ramdan.base.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;

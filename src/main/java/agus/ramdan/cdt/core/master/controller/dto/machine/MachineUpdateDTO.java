@@ -14,4 +14,6 @@ public class MachineUpdateDTO {
 
     @Schema(description = "Nama Mesin")
     private String name;
+
+    private String description;
 }

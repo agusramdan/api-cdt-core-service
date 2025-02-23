@@ -24,15 +24,15 @@ public interface BaseCommandController<ResultDTO,CreateDTO,UpdateDTO, ID_DTO>{
     @PutMapping("/{id}")
     @Operation(summary = "Update data details (partial update supported)")
     @ApiResponse(responseCode = "200", description = "Customer updated successfully")
-    default ResponseEntity<ResultDTO> updateCustomer(@PathVariable ID_DTO idDTO, @Valid @RequestBody UpdateDTO dto) {
-        return ResponseEntity.ok(getService().commandUpdate(idDTO,dto));
+    default ResponseEntity<ResultDTO> updateCustomer(@PathVariable("id") ID_DTO id, @Valid @RequestBody UpdateDTO dto) {
+        return ResponseEntity.ok(getService().commandUpdate(id,dto));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a customer")
     @ApiResponse(responseCode = "204", description = "Customer deleted successfully")
-    default ResponseEntity<Void> deleteCustomer(@PathVariable ID_DTO idDTO) {
-        getService().commandDelete(idDTO);
+    default ResponseEntity<Void> deleteCustomer(@PathVariable("id") ID_DTO id) {
+        getService().commandDelete(id);
         return ResponseEntity.noContent().build();
     }
 }

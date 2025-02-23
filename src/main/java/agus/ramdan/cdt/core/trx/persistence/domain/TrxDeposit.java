@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
@@ -8,10 +9,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
@@ -33,19 +30,8 @@ public class TrxDeposit {
     @JsonProperty(index = 1)
     private UUID id;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime created_on;
-    @UpdateTimestamp
-    private LocalDateTime updated_on;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    public String created_by;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    public String updated_by;
+    @Embedded
+    private AuditMetadata auditMetadata;
 
     @Column(unique = true)
     private String token;

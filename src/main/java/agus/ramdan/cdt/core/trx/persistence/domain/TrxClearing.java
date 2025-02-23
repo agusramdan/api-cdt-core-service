@@ -17,10 +17,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_transfer")
+@Table(name = "cdt_clearing")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class TrxTransfer {
+public class TrxClearing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,21 +1,15 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -23,6 +17,8 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "cdt_service_location")
+@SQLDelete(sql = "UPDATE cdt_service_location SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class ServiceLocation {
@@ -33,25 +29,8 @@ public class ServiceLocation {
     @JsonProperty("id")
     private UUID id;
 
-    @CreationTimestamp
-    @Column(name = "created_on", updatable = false)
-    @JsonProperty("created_on")
-    private LocalDateTime createdOn;
-
-    @UpdateTimestamp
-    @Column(name = "updated_on")
-    @JsonProperty("updated_on")
-    private LocalDateTime updatedOn;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    @JsonProperty("created_by")
-    private String createdBy;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    @JsonProperty("updated_by")
-    private String updatedBy;
+    @Embedded
+    private AuditMetadata auditMetadata;
 
     @Column(name = "name")
     @JsonProperty(index = 2)

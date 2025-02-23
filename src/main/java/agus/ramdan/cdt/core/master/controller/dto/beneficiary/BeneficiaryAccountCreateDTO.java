@@ -1,5 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
+import agus.ramdan.base.dto.BankDTO;
+import agus.ramdan.base.dto.BranchDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -28,11 +30,15 @@ public class BeneficiaryAccountCreateDTO {
     @Schema(description = "Account holder name", example = "John Doe")
     private String account_name;
 
-    @NotBlank
-    @Schema(description = "Bank code", example = "BCA")
-    private String bank_code;
+    private BankDTO bank;
 
-    @NotBlank
-    @Schema(description = "Bank name", example = "Bank Central Asia")
-    private String bank_name;
+    private BranchDTO branch;
+
+//    @NotBlank
+//    @Schema(description = "Bank code", example = "BCA")
+//    private String bank_code;
+//
+//    @NotBlank
+//    @Schema(description = "Bank name", example = "Bank Central Asia")
+//    private String bank_name;
 }

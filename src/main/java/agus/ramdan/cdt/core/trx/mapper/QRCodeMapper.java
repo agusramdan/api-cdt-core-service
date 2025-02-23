@@ -1,9 +1,13 @@
 package agus.ramdan.cdt.core.trx.mapper;
 
-import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
-import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
-import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
-import agus.ramdan.cdt.core.trx.controller.dto.*;
+import agus.ramdan.base.dto.BankDTO;
+import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
+import agus.ramdan.cdt.core.master.persistence.domain.*;
+import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
@@ -30,8 +34,12 @@ public interface QRCodeMapper {
     TrxUser map(TrxUserDTO source);
     TrxUserDTO map(CustomerCrew source);
     String map(QRCodeType source);
+    Branch map(BranchDTO source);
+    BranchDTO map(Branch source);
+    Bank map(BankDTO source);
+    BankDTO map(Bank source);
 
-//    @Mapping(source = "beneficiaryAccount.beneficiary_id", target = "beneficiaryAccount.beneficiary_id", qualifiedByName = "stringToUUID")
+    //    @Mapping(source = "beneficiaryAccount.beneficiary_id", target = "beneficiaryAccount.beneficiary_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "serviceTransaction.id", target = "serviceTransaction.id", qualifiedByName = "stringToUUID")

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/cdt/core/master//branch/query")
+@RequestMapping("/api/cdt/core/master/branch/query")
 @Tag(name = "Branch API", description = "APIs for query Branch")
 @RequiredArgsConstructor
 @Getter

@@ -1,5 +1,9 @@
-package agus.ramdan.cdt.core.trx.controller.dto;
+package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
+import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,5 +1,9 @@
 package agus.ramdan.cdt.core.trx.controller.dto.deposit;
 
+import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
+import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
+import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,16 +19,13 @@ public class TrxDepositCreateDTO {
     private String token;
     private String signature;
 
-    private String service_transaction_id;
-    private String service_transaction_no;
+    @JsonProperty("service_transaction")
+    private ServiceTransactionDTO serviceTransaction;
 
-    private String service_product_id;
-    private String service_product_code;
-    private String service_product_name;
+    @JsonProperty("service_product")
+    private ServiceProduct serviceProduct;
 
-    private String machine_deposit_id;
-    private String machine_deposit_code;
-    private String machine_deposit_sn;
+    private MachineDTO machine;
 
     private String cdm_trx_no;
     private LocalDateTime cdm_trx_date;

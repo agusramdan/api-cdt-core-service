@@ -1,24 +1,24 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 
 @Getter
 @Setter
 @Entity
 @Table(name = "t_account")
+@SQLDelete(sql = "UPDATE t_account SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class Wallet {
@@ -33,19 +33,8 @@ public class Wallet {
 
     private BigDecimal balance;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime created_on;
-    @UpdateTimestamp
-    private LocalDateTime updated_on;
-
-    @CreatedBy
-    @Column(name = "created_by", updatable = false)
-    public String created_by;
-
-    @LastModifiedBy
-    @Column(name = "updated_by")
-    public String updated_by;
+    @Embedded
+    private AuditMetadata auditMetadata;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

@@ -1,8 +1,11 @@
 package agus.ramdan.cdt.core.trx.service.qrcode;
 
+import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
-import agus.ramdan.cdt.core.trx.controller.dto.QRCodeCreateDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.QRCodeMapper;
@@ -26,6 +29,16 @@ public class QRCodeCommandService implements
 
     @Override
     public QRCode saveCreate(QRCode entity) {
+
+        repository.findByCode(entity.getCode())
+                .ifPresent(qrCode -> {
+                    throw new BadRequestException(
+                            "QR Code already exists",
+                            ErrorValidation.validations(
+                                    ErrorValidation.New("QR Code already exists", "code", qrCode.getCode())
+                            )
+                    );
+                });
         return repository.save(entity);
     }
 
@@ -42,7 +55,7 @@ public class QRCodeCommandService implements
     @Override
     public QRCode convertFromUpdateDTO(String id, QRCodeUpdateDTO dto) {
         QRCode qrCode = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("QR Code not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
         mapper.updateEntityFromUpdateDto(dto, qrCode);
         return qrCode;
     }

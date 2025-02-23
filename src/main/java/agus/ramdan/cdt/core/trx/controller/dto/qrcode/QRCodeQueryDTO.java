@@ -1,9 +1,11 @@
 package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
+import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;
-import agus.ramdan.cdt.core.trx.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -16,6 +18,12 @@ public class QRCodeQueryDTO {
     @Schema(description = "Kode QR unik")
     private String code;
 
+    @Schema(description = "type")
+    private String type;
+
+    @Schema(description = "Status aktif QR Code")
+    private String status;
+
     @Schema(description = "Status aktif QR Code")
     private Boolean active;
 
@@ -25,12 +33,18 @@ public class QRCodeQueryDTO {
     @Schema(description = "Informasi pengguna transaksi")
     private TrxUserDTO user;
 
+    @Schema(description = "Informasi pengguna transaksi")
+    private BranchDTO branch;
+
     @Schema(description = "Informasi akun penerima manfaat")
+    @JsonProperty("beneficiary_account")
     private BeneficiaryAccountDTO beneficiaryAccount;
 
     @Schema(description = "Informasi transaksi terkait")
+    @JsonProperty("service_transaction")
     private ServiceTransactionDTO serviceTransaction;
 
     @Schema(description = "Informasi produk layanan terkait")
+    @JsonProperty("service_product")
     private ServiceProductDTO serviceProduct;
 }
