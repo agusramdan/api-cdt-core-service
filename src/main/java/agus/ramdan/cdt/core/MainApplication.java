@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@ComponentScan(basePackages={"agus.ramdan.base","agus.ramdan.cdt.core"})
+@ComponentScan(basePackages={
+        "agus.ramdan.base.exception",
+        "agus.ramdan.cdt.core"})
 public class MainApplication {
 
     public static void main(String[] args) {

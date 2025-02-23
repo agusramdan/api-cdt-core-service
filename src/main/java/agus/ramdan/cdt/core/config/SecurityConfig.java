@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("oauth2")
 @Configuration
 public class SecurityConfig {
+    // @formatter:off
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -21,15 +22,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui.html","/swagger-ui/**", "/v3/api-docs/**","/v3/api-docs.yaml").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/cdm/**").hasAnyAuthority("SCOPE_read","SCOPE_cdm.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/cdm/**").hasAnyAuthority("SCOPE_write","SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/cdm/**").hasAnyAuthority("SCOPE_write","SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/cdm/**").hasAnyAuthority("SCOPE_delete","SCOPE_cdm.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/cdm/**").hasAuthority("SCOPE_cdm.read")
+                        .requestMatchers(HttpMethod.POST,"/api/cdt/cdm/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/cdm/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/cdm/**").hasAuthority("SCOPE_cdm.delete")
                         .anyRequest().authenticated()
             ).oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         return http.build();
     }
+    // @formatter:on
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {

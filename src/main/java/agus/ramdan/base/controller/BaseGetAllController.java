@@ -59,7 +59,9 @@ public interface BaseGetAllController<T, DTO>{
         val spec = builder.build(BaseSpecifications::new);
         val pageable = new OffsetBasedPageRequest(offset, limit);
         val page = getRepository().findAll(spec, pageable);
-        ChekUtils.ifEmptyThrow(page);
+        if (page.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         val content =page.getContent().stream().map(this::convert).collect(Collectors.toList());
         return ResponseEntity.ok(content);
     }

@@ -157,6 +157,7 @@
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>7.4</version>
+			<classifier></classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -274,6 +275,44 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>base-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>base</classifier>
+							<includes>
+								<include>agus/ramdan/base/**</include>
+							</includes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>client-jar</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>client</classifier>
+							<includes>
+								<include>agus/ramdan/cdt/core/master/controller/dto/**</include>
+								<include>agus/ramdan/cdt/core/trx/controller/dto/**</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<finalName>app</finalName>

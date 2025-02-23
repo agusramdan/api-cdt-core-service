@@ -74,13 +74,13 @@ public class GlobalExceptionHandler {
         val error = new Errors(new Date(), ex.getMessage(),traceId,spanId,request.getDescription(false),ex.getErrors());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<?> noContentException(NoContentException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        val error = new Errors(new Date(), ex.getMessage(),traceId,spanId,request.getDescription(false),null);
-        return new ResponseEntity<>(error,HttpStatus.NO_CONTENT);
+        log.debug(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
+        return ResponseEntity.noContent().build();
     }
     @ExceptionHandler(InternalServerErrorException.class)
     public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Exception ex, WebRequest request) {

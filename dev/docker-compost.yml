@@ -10,10 +10,45 @@ services:
       - "5432:5432"
     volumes:
       - pg-16-data:/var/lib/postgresql/data
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongodb
 
   api-cdt-core-trx-service:
-    image: 'api-cdt-core-trx-service'
-    container_name: api-cdt-core-trx-service
+    image: 'api-cdt-core-service'
+    container_name: api-cdt-core-service
     environment:
       - SPRING_PROFILES_ACTIVE=devdocker,local
       - JAVA_OPTS="-Xms128M -Xmx128M"
