@@ -1,7 +1,7 @@
 package agus.ramdan.cdt.core.trx.mapper;
 
-import agus.ramdan.base.dto.BankDTO;
-import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;

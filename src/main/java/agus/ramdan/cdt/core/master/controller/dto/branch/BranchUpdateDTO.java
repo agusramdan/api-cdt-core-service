@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 @Schema(description = "DTO untuk memperbarui Branch")
 public class BranchUpdateDTO {
-    @Schema(description = "ID Cabang dalam format String")
-    private String id;
 
     @Schema(description = "Nama Cabang")
     private String name;

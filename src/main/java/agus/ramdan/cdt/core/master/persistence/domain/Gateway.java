@@ -37,4 +37,6 @@ public class Gateway {
     private String code;
     private String description;
 
+    @ManyToOne
+    private Vendor partner;
 }

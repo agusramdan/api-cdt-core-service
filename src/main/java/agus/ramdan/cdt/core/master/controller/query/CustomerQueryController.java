@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cdt/core/master/customers/query")
-@Tag(name = "Customer API", description = "APIs for query Customer")
+@Tag(name = "Customer Query API", description = "APIs for query Customer")
 @RequiredArgsConstructor
 @Getter
 public class CustomerQueryController implements BaseQueryController<CustomerQueryDTO, UUID> {

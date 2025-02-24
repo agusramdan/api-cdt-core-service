@@ -13,10 +13,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cdt/core/master/branch/query")
-@Tag(name = "Branch API", description = "APIs for query Branch")
+@Tag(name = "Branch Query API", description = "APIs for query Branch")
 @RequiredArgsConstructor
 @Getter
-public class BranchQueryController implements BaseQueryController<BranchQueryDTO, UUID> {
+public class BranchQueryController implements BaseQueryController<BranchQueryDTO, String> {
     private final BranchQueryService service;
 }
 

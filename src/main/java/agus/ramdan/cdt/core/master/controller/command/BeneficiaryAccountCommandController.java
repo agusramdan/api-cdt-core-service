@@ -18,8 +18,7 @@ import java.util.UUID;
 @RequestMapping("/api/cdt/core/master/beneficiary-accounts/command")
 @Tag(name = "Beneficiary Account Command API", description = "APIs for creating, updating, and deleting beneficiary")
 @RequiredArgsConstructor
+@Getter
 public class BeneficiaryAccountCommandController implements BaseCommandController< BeneficiaryAccountQueryDTO,BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO,UUID> {
-    @Getter
     private final BeneficiaryAccountCommandService service;
-
 }

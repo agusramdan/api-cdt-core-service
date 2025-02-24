@@ -17,14 +17,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, BranchQueryDTO, UUID>{
+public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, BranchQueryDTO, String>{
 
     private final BranchRepository repository;
     private final BranchMapper mapper;
 
     @Override
-    public UUID convertId(UUID uuid) {
-        return uuid;
+    public UUID convertId(String uuid) {
+        return UUID.fromString(uuid);
     }
 
     public BranchQueryDTO convertOne(Branch entity) {

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BeneficiaryAccountQueryService implements
-        BaseQueryEntityService<BeneficiaryAccount, UUID, BeneficiaryAccountQueryDTO,UUID> {
+        BaseQueryEntityService<BeneficiaryAccount, UUID, BeneficiaryAccountQueryDTO,String> {
     @Getter
     private final BeneficiaryAccountRepository repository;
     private final BeneficiaryAccountMapper mapper;
@@ -29,8 +29,8 @@ public class BeneficiaryAccountQueryService implements
         return mapper.entityToQueryDto(entity);
     }
     @Override
-    public UUID convertId(UUID uuid) {
-        return uuid;
+    public UUID convertId(String uuid) {
+        return UUID.fromString(uuid);
     }
 
 }

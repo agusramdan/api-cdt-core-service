@@ -13,9 +13,9 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cdt/core/master/beneficiary-accounts/query")
-@Tag(name = "Beneficiary Account API", description = "APIs for query Beneficiary Account")
+@Tag(name = "Beneficiary Query Account API", description = "APIs for query Beneficiary Account")
 @RequiredArgsConstructor
 @Getter
-public class BeneficiaryAccountQueryController implements BaseQueryController<BeneficiaryAccountQueryDTO,UUID> {
+public class BeneficiaryAccountQueryController implements BaseQueryController<BeneficiaryAccountQueryDTO,String> {
     private final BeneficiaryAccountQueryService service;
 }

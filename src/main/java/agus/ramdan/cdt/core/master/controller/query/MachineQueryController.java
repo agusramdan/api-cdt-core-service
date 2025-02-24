@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cdt/core/master/machine/query")
-@Tag(name = "Machine Account API", description = "APIs for query Machine")
+@Tag(name = "Machine Query Account API", description = "APIs for query Machine")
 @RequiredArgsConstructor
 @Getter
 public class MachineQueryController implements

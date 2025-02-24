@@ -37,4 +37,18 @@ public class Machine {
     private String name;
     private String description;
 
+    @ManyToOne
+    private Branch branch;
+
+    @ManyToOne
+    private ServiceLocation serviceLocation;
+
+    @ManyToOne
+    private Vendor supplier;
+
+    @ManyToOne
+    private Vendor maintenance;
+
+    @ManyToOne
+    private Vendor pjpur;
 }

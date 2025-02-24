@@ -1,6 +1,8 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.embeddable.Coordinate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -32,26 +34,14 @@ public class ServiceLocation {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @Column(name = "name")
-    @JsonProperty(index = 2)
-    @Schema(description = "Name")
+    private String code;
     private String name;
 
     // Address Start
-    @Column
-    private String street1;
-    @Column
-    private String street2;
-    @Column
-    private String city;
-    @Column
-    private String zip_code;
-    @Column
-    private String country;
+    @Embedded
+    private Address address;
     // Address End
 
-    @Column
-    private Float longitude ;
-    @Column
-    private Float latitude;
+    @Embedded
+    private Coordinate coordinate;
 }

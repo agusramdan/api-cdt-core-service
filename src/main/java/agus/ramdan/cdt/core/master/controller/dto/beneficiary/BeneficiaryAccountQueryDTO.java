@@ -1,7 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
-import agus.ramdan.base.dto.BankDTO;
-import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

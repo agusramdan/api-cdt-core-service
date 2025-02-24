@@ -17,14 +17,15 @@ public interface BranchMapper {
 //    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     BranchQueryDTO entityToQueryDto(Branch entity);
 
-    @Mapping(source = "id", target = "id", ignore = true)
+//    @Mapping(source = "id", target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(BranchUpdateDTO dto, @MappingTarget Branch entity);
-
+    @Named("stringToUUID")
     default UUID stringToUUID(String value) {
         return value != null ? UUID.fromString(value) : null;
     }
 
+    @Named("uuidToString")
     default String uuidToString(UUID value) {
         return value != null ? value.toString() : null;
     }

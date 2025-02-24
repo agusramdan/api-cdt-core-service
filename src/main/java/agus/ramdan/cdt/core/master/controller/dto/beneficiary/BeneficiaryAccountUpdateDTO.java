@@ -1,7 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
-import agus.ramdan.base.dto.BankDTO;
-import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,8 +11,6 @@ import java.util.UUID;
 @Schema(name = "BeneficiaryAccountUpdateDTO", description = "DTO for updating an existing beneficiary account")
 public class BeneficiaryAccountUpdateDTO {
 
-    @Schema(description = "Beneficiary Account ID", example = "550e8400-e29b-41d4-a716-446655440000")
-    private UUID id;
 
     @Schema(description = "Bank account number (optional)", example = "1234567890")
     private String account_number;

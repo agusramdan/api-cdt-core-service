@@ -1,5 +1,6 @@
 package agus.ramdan.base.service;
 
+import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -22,7 +23,15 @@ public interface BaseQueryEntityService<T,ID,DTO,DTO_ID> extends
         return BaseQueryAllService.super.getAll(offset, limit, search, ids);
     }
     default DTO getByDtoId(DTO_ID dtoId) throws ResourceNotFoundException{
-        return BaseQueryOneService.super.getById(convertId(dtoId));
+        ID data;
+        try{
+            data = convertId(dtoId);
+        } catch (BadRequestException e){
+            throw e;
+        }catch (Exception e) {
+            throw new BadRequestException("Invalid ID");
+        }
+        return BaseQueryOneService.super.getById(data);
     }
     DTO convertOne(T entity);
 

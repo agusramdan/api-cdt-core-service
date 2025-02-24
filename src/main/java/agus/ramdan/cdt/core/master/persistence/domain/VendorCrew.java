@@ -49,4 +49,8 @@ public class VendorCrew {
     private String username;
     private String email;
     private String msidn;
+
+    private Boolean supplier;
+    private Boolean maintenance;
+    private Boolean pjpur;
 }

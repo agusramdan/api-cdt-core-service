@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - pg-16-data:/var/lib/postgresql/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper

@@ -14,7 +14,7 @@ import java.util.UUID;
 public class CustomerQueryDTO {
 
     @Schema(description = "Unique Customer ID", example = "550e8400-e29b-41d4-a716-446655440000")
-    private UUID id;
+    private String id;
 
     @Schema(description = "Customer Full Name", example = "John Doe")
     private String name;

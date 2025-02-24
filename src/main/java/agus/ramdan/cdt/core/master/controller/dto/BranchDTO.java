@@ -1,10 +1,11 @@
-package agus.ramdan.base.dto;
+package agus.ramdan.cdt.core.master.controller.dto;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(name = "Branch", description = "Branch")
-public class BankDTO {
+public class BranchDTO {
 
     @Schema(description = "System Identifier", example = "")
     private String id;

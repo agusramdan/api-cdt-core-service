@@ -67,4 +67,9 @@ public class Vendor {
     @JsonProperty("msidn")
     private String msidn;
 
+    // Type vendor service
+    private Boolean supplier;
+    private Boolean maintenance;
+    private Boolean pjpur;
+    private Boolean gateway;
 }

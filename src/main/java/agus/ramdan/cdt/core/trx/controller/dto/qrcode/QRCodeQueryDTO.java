@@ -1,6 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
-import agus.ramdan.base.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;

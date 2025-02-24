@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cdt/core/master/service-product/query")
-@Tag(name = "Service Product API", description = "APIs for query Service Product")
+@Tag(name = "Service Product Query API", description = "APIs for query Service Product")
 @RequiredArgsConstructor
 @Getter
 public class ServiceProductQueryController implements BaseQueryController<ServiceProductQueryDTO, String> {

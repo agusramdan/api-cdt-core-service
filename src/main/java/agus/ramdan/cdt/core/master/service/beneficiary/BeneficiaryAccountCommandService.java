@@ -49,7 +49,7 @@ public class BeneficiaryAccountCommandService implements
     }
 
     public BeneficiaryAccount convertFromUpdateDTO(UUID id,BeneficiaryAccountUpdateDTO updateDTO) {
-        BeneficiaryAccount entity = beneficiaryAccountRepository.findById(updateDTO.getId())
+        BeneficiaryAccount entity = beneficiaryAccountRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Beneficiary Account not found"));
 
         beneficiaryAccountMapper.updateEntityFromDto(updateDTO, entity);
