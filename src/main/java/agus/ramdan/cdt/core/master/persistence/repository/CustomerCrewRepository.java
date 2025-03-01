@@ -4,7 +4,9 @@ import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerCrewRepository extends JpaRepository<CustomerCrew, UUID>, JpaSpecificationExecutor<CustomerCrew> {
+    Optional<CustomerCrew> findByUsername(String username);
 }

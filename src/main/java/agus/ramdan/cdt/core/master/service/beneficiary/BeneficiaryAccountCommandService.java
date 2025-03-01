@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.master.service.beneficiary;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
-import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountUpdateDTO;

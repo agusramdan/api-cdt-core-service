@@ -7,6 +7,7 @@ import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
+import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
@@ -37,6 +38,7 @@ public class QRCodeCommandService implements
     private final BranchQueryService branchQueryService;
     private final ServiceProductQueryService serviceProductQueryService;
     private final BeneficiaryAccountQueryService beneficiaryAccountQueryService;
+    private final CustomerCrewQueryService customerCrewQueryService;
 
     public void validateActiveStatus(QRCode entity, List<ErrorValidation> validations) {
        // TODO Tambahkan validasi bila konsisi status entity aktif
@@ -75,6 +77,7 @@ public class QRCodeCommandService implements
         qrCode.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         qrCode.setServiceProduct(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product"));
         qrCode.setBeneficiaryAccount(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account"));
+        qrCode.setUser(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user"));
         validateActiveStatus(qrCode,validations);
         if(validations.size() > 0) {
             throw new BadRequestException(
@@ -94,6 +97,8 @@ public class QRCodeCommandService implements
         val validations = new ArrayList<ErrorValidation>();
         qrCode.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         qrCode.setServiceProduct(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product"));
+        qrCode.setBeneficiaryAccount(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account"));
+        qrCode.setUser(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user"));
         if(validations.size() > 0) {
             throw new BadRequestException(
                     "Validation error",

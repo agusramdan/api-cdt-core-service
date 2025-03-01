@@ -2,7 +2,6 @@ package agus.ramdan.cdt.core.master.controller.query;
 
 import agus.ramdan.base.controller.BaseQueryController;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankQueryDTO;
-import agus.ramdan.cdt.core.master.controller.dto.branch.BranchQueryDTO;
 import agus.ramdan.cdt.core.master.service.bank.BankQueryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;

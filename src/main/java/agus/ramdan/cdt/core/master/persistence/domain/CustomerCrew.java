@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -46,7 +47,22 @@ public class CustomerCrew {
 
     private UUID user_id;
 
+    @Column(unique = true)
     private String username;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private String msidn;
+
+    @PrePersist
+    protected void onCreate(){
+        username=UserUtils.username(username);
+    }
+
+    @PreUpdate
+    protected void onUpdate(){
+        username=UserUtils.username(username);
+    }
 }

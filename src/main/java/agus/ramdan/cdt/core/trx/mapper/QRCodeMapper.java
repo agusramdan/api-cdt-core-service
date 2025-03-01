@@ -1,10 +1,10 @@
 package agus.ramdan.cdt.core.trx.mapper;
 
 import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
-import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;

@@ -12,14 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/cdt/core/trx/qr-code/query")
 @Tag(name = "CR Code API", description = "APIs for query QR Code")
 @RequiredArgsConstructor
 @Getter
-public class QRCodeQueryController implements BaseQueryController<QRCodeQueryDTO, UUID> {
+public class QRCodeQueryController implements BaseQueryController<QRCodeQueryDTO, String> {
 
     private final QRCodeQueryService service;
 
