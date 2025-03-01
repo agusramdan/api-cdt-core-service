@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -30,4 +31,10 @@ public class ServiceTransaction {
     private AuditMetadata auditMetadata;
 
     private TrxStatus status;
+
+    @ManyToOne
+    private TrxDeposit deposit;
+
+    @ManyToOne
+    private Gateway gateway;
 }

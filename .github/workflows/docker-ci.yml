@@ -25,6 +25,16 @@ jobs:
       - name: Build project with Maven
         run: mvn clean package
 
+      - name: Deploy to GitHub Packages
+        run: mvn deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete jars base and client
+        run: |
+          rm target/*-base.jar 
+          rm target/*-client.jar
+
       - name: Extract Version from pom.xml
         id: extract_version
         run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV

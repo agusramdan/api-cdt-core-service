@@ -21,8 +21,8 @@ public class TrxDepositQueryDTO {
     private String token;
     private String status;
 
-    private LocalDateTime createdOn;
-    private LocalDateTime updatedOn;
+//    private LocalDateTime createdOn;
+//    private LocalDateTime updatedOn;
 
     @JsonProperty("service_transaction")
     private ServiceTransactionDTO serviceTransaction;
@@ -33,6 +33,7 @@ public class TrxDepositQueryDTO {
     private MachineDTO machine;
 
     private String cdm_trx_no;
+
     private LocalDateTime cdm_trx_date;
     private LocalDateTime cdm_trx_time;
 

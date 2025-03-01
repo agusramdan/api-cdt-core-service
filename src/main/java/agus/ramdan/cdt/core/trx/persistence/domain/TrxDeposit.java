@@ -36,7 +36,9 @@ public class TrxDeposit {
     @Column(unique = true)
     private String token;
     private String signature;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private TrxDepositStatus status;
 
     @ManyToOne
     private CustomerCrew user;
@@ -50,9 +52,13 @@ public class TrxDeposit {
     private ServiceProduct serviceProduct;
 
     @ManyToOne
+    private QRCode code;
+
+    @ManyToOne
     private Machine machine;
 
     private String cdm_trx_no;
+
     private LocalDateTime cdm_trx_date;
 
     private LocalDateTime trx_date;
