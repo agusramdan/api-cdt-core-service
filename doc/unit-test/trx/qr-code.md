@@ -69,12 +69,34 @@ Response
 
 ### Minimal Request dengan Service Product information
 
-### Minimal Request dengan Branch information
 ```json
 {
   "type": "MULTIPLE_TRX_USE",
-  "product": {
+  "service_product": {
     "code": "MUL-ST-TR"
   }
 }
 ```
+
+Response
+
+```json
+{
+    "id": "63235ea7-81a0-4fc1-899c-dbfe1c46274e",
+    "code": "exkx13z6knzc5yii514h",
+    "type": "MULTIPLE_TRX_USE",
+    "status": "PENDING",
+    "active": false,
+    "expired_time": "2026-03-01T11:51:50.6913797",
+    "user": null,
+    "branch": null,
+    "beneficiary_account": null,
+    "service_transaction": null,
+    "service_product": {
+        "id": "2011a8ac-de41-4725-8a2f-1adedd642cca",
+        "code": "MUL-ST-TR",
+        "name": "Stor Tunai dan Transfer ke rekening menggunakan QR multiple use"
+    }
+}
+```
+
