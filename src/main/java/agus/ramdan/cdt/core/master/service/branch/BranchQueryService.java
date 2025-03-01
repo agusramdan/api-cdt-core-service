@@ -8,7 +8,6 @@ import agus.ramdan.cdt.core.master.controller.dto.branch.BranchQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.BranchMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Branch;
 import agus.ramdan.cdt.core.master.persistence.repository.BranchRepository;
-import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -48,23 +47,22 @@ public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, B
                 .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
     }
 
-    public Branch getRelation(final BranchDTO branchDTO, @NotNull final List<ErrorValidation> validations, String key) {
+    public Branch getForRelation(final BranchDTO branchDTO, @NotNull final List<ErrorValidation> validations, String key) {
         final String keyField = key==null?"branch":key;
-        Branch branch = null;
+        Branch data = null;
         if (branchDTO != null) {
             if (branchDTO.getId() != null) {
-                branch = repository.findById(UUID.fromString(branchDTO.getId())).orElseGet(() -> {
+                data = repository.findById(convertId(branchDTO.getId())).orElseGet(() -> {
                     validations.add(ErrorValidation.New("Branch not found",keyField, branchDTO.getId()));
                     return null;
                 });
             } else {
-                branch = repository.findByCode(branchDTO.getCode()).orElseGet( () -> {
+                data = repository.findByCode(branchDTO.getCode()).orElseGet( () -> {
                     validations.add(ErrorValidation.New("Branch not found",keyField, branchDTO.getCode()));
                     return null;
                 });
             }
         }
-        return branch;
+        return data;
     }
-
 }
