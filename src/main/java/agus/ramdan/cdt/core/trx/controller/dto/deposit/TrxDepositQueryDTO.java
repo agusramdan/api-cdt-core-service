@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.trx.controller.dto.deposit;
 
 import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
+import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +29,7 @@ public class TrxDepositQueryDTO {
     private ServiceTransactionDTO serviceTransaction;
 
     @JsonProperty("service_product")
-    private ServiceProduct serviceProduct;
+    private ServiceProductDTO serviceProduct;
 
     private MachineDTO machine;
 
