@@ -5,6 +5,7 @@ import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
+import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
@@ -35,6 +36,8 @@ public class QRCodeCommandService implements
     private final RandomStringGenerator generator;
     private final BranchQueryService branchQueryService;
     private final ServiceProductQueryService serviceProductQueryService;
+    private final BeneficiaryAccountQueryService beneficiaryAccountQueryService;
+
     public void validateActiveStatus(QRCode entity, List<ErrorValidation> validations) {
        // TODO Tambahkan validasi bila konsisi status entity aktif
     }
@@ -71,6 +74,7 @@ public class QRCodeCommandService implements
         val qrCode = mapper.createDtoToEntity(dto);
         qrCode.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         qrCode.setServiceProduct(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product"));
+        qrCode.setBeneficiaryAccount(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account"));
         validateActiveStatus(qrCode,validations);
         if(validations.size() > 0) {
             throw new BadRequestException(

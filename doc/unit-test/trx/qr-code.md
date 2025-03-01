@@ -101,10 +101,48 @@ Response
 ```
 
 
+### Minimal Request dengan Beneficary Account
+
+```json
+{
+  "type": "MULTIPLE_TRX_USE",
+  "beneficiary_account": {
+    "id": "8b1ceb67-0710-4499-892c-d739aabef22c"
+  }
+}
+```
+
+Response
+
+```json
+{
+  "id": "8bef075c-b93f-4b5e-a019-b56ddcdce01b",
+  "code": "fm0au68zkgp7pdhnr15o",
+  "type": "MULTIPLE_TRX_USE",
+  "status": "PENDING",
+  "active": false,
+  "expired_time": "2026-03-01T14:48:29.6419795",
+  "user": null,
+  "branch": null,
+  "beneficiary_account": {
+    "id": "8b1ceb67-0710-4499-892c-d739aabef22c",
+    "account_number": "1234567890",
+    "account_name": "John Doe",
+    "bank": {
+      "id": "ff9389fa-243d-486b-90fb-242b1a98357f",
+      "code": "014",
+      "name": "Bank Central Asia"
+    },
+    "branch": null
+  },
+  "service_transaction": null,
+  "service_product": null
+}
+```
 
 
 ## Related dengan
 1. [Branch](../master/branch.md) 
 2. [Service Product](../master/service-product.md)
 2. [Customer](../master/customer.md)
-3. [Beneficiary Account](../master/be)
+3. [Beneficiary Account](../master/beneficiary-account.md)

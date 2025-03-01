@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
+import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
@@ -15,6 +16,11 @@ import lombok.NoArgsConstructor;
 public class QRCodeUpdateDTO {
     @Schema(description = "Status aktif QR Code")
     private String status;
+
+    @Schema(description = "Informasi akun penerima manfaat")
+    @JsonProperty("beneficiary_account")
+    private BeneficiaryAccountDTO beneficiaryAccount;
+
     @Schema(description = "Informasi cabang manage QR Code")
     private BranchDTO branch;
 

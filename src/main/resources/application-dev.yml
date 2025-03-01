@@ -3,4 +3,4 @@ spring:
   jpa:
     # show-sql: true
     # Hibernate ddl auto (create, create-drop, validate, update)
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update

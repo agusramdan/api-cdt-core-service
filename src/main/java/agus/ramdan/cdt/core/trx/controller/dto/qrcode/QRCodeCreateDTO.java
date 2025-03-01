@@ -2,7 +2,7 @@ package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
 import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
-import agus.ramdan.cdt.core.trx.controller.dto.BeneficiaryAccountDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,7 +25,7 @@ public class QRCodeCreateDTO {
     private TrxUserDTO user;
 
     @Schema(description = "Informasi akun penerima manfaat")
-    @JsonProperty("beneficiary")
+    @JsonProperty("beneficiary_account")
     private BeneficiaryAccountDTO beneficiaryAccount;
 
     @Schema(description = "Informasi cabang manage QR Code")
