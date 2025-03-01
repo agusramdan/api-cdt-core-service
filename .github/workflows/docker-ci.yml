@@ -24,22 +24,12 @@ jobs:
           distribution: 'temurin'  # Bisa juga 'adopt', 'zulu', dll.
           java-version: '17'
 
-      - name: Build project with Maven
-        run: mvn clean package
-        env:
-          GITHUB_ACTOR: ${{ secrets.GH_ACTOR }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Publish to GitHub Packages
-        run: mvn --batch-mode deploy
-        env:
-          GITHUB_ACTOR: ${{ secrets.GH_ACTOR }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Delete jars base and client
+      - name: Build project with Maven and Publish to GitHub Packages
         run: |
-          rm target/*-base.jar 
-          rm target/*-client.jar
+          mvn clean package
+          mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Extract Version from pom.xml
         id: extract_version
@@ -53,6 +43,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
+          rm target/*-base.jar 
+          rm target/*-client.jar
           docker build -t ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} .
           docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:dev
           docker tag ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }} ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:latest
