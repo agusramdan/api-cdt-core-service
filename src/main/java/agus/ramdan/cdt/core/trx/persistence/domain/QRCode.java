@@ -1,10 +1,7 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
-import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
-import agus.ramdan.cdt.core.master.persistence.domain.Branch;
-import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
-import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
+import agus.ramdan.cdt.core.master.persistence.domain.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -37,6 +34,7 @@ public class QRCode {
     private String code;
 
     private LocalDateTime expired_time ;
+
     private boolean active=true;
 
     @Enumerated(EnumType.STRING)
@@ -51,13 +49,16 @@ public class QRCode {
 
     // customer/user information
     @ManyToOne
+    private Customer customer;
+
+    @ManyToOne
     private CustomerCrew user;
 
     @ManyToOne
-    private Branch branch;
+    private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
-    private BeneficiaryAccount beneficiaryAccount;
+    private Branch branch;
 
     @ManyToOne
     private ServiceTransaction serviceTransaction;
@@ -73,6 +74,29 @@ public class QRCode {
         if (status == null) {
             status = QRCodeStatus.PENDING;
         }
+        if (expired_time == null){
+            if (type == QRCodeType.SINGEL_TRX_USE)
+                expired_time = LocalDateTime.now().plusDays(1);
+            else
+                expired_time = LocalDateTime.now().plusYears(1);
+        }
+        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+            status = QRCodeStatus.EXPIRED;
+        }
+        active = status == QRCodeStatus.ACTIVE;
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        if (expired_time == null){
+            if (type == QRCodeType.SINGEL_TRX_USE)
+                expired_time = LocalDateTime.now().plusDays(1);
+            else
+                expired_time = LocalDateTime.now().plusYears(1);
+        }
+        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+            status = QRCodeStatus.EXPIRED;
+        }
+        active = status == QRCodeStatus.ACTIVE;
+    }
 }

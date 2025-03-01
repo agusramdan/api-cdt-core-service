@@ -1,0 +1,49 @@
+QR Code
+=============================
+
+QR Code is a type of matrix barcode (or two-dimensional code) first designed in 1994 for the automotive industry in Japan. A barcode is a machine-readable optical label that contains information about the item to which it is attached. In practice, QR codes often contain data for a locator, identifier, or tracker that points to a website or application. A QR code uses four standardized encoding modes (numeric, alphanumeric, byte/binary, and kanji) to store data efficiently; extensions may also be used.
+
+
+## QR Code Create minimal generate untuk multiple use
+
+POST http://localhost:8082/api/cdt/core/trx/qr-code/command
+
+### Minimal Request
+```json
+{
+  "type": "MULTIPLE_TRX_USE"
+}
+```
+
+System akan generate QR Code yang dapat digunakan
+contoh hasilnya adalah sebagai berikut:
+
+```json
+{
+  "id": "92ac6b5b-89e7-4619-949e-e38f4400e1c4",
+  "code": "qbg596ooribt88v4g5p1",
+  "type": "MULTIPLE_TRX_USE",
+  "status": "PENDING",
+  "active": false,
+  "expired_time": "2026-03-01T10:02:56.4277587",
+  "user": null,
+  "branch": null,
+  "beneficiary_account": null,
+  "service_transaction": null,
+  "service_product": null
+}
+```
+Agar bisa digunakan perlu di lengkapi data yang dibutuhkan, seperti user, branch, beneficiary_account, service_product.
+
+
+### Minimal Request dengan Branch information
+```json
+{
+  "type": "MULTIPLE_TRX_USE",
+  "branch": {
+    "code": "BRANCH-001"
+  }
+}
+```
+
+TODO FIX

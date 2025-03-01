@@ -14,6 +14,7 @@ import agus.ramdan.cdt.core.trx.persistence.repository.QRCodeRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -26,29 +27,45 @@ public class QRCodeCommandService implements
     @Getter
     private final QRCodeRepository repository;
     private final QRCodeMapper mapper;
+    private final RandomStringGenerator generator;
 
+    public void validateActiveStatus(QRCode entity) {
+       // TODO Tambahkan validasi bila konsisi status entity aktif
+    }
     @Override
     public QRCode saveCreate(QRCode entity) {
-
-        repository.findByCode(entity.getCode())
-                .ifPresent(qrCode -> {
-                    throw new BadRequestException(
-                            "QR Code already exists",
-                            ErrorValidation.validations(
-                                    ErrorValidation.New("QR Code already exists", "code", qrCode.getCode())
-                            )
-                    );
-                });
+        var generate_code = !StringUtils.hasText(entity.getCode());
+        while (generate_code) {
+            entity.setCode(generator.generateRandomString());
+            generate_code = repository.findByCode(entity.getCode()).isPresent();
+        }
+        validateActiveStatus(entity);
         return repository.save(entity);
     }
 
     @Override
     public QRCode saveUpdate(QRCode entity) {
+        var generate_code = !StringUtils.hasText(entity.getCode());
+        while (generate_code) {
+            entity.setCode(generator.generateRandomString());
+            generate_code = repository.findByCode(entity.getCode()).isPresent();
+        }
+        validateActiveStatus(entity);
         return repository.save(entity);
     }
 
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
+        if(StringUtils.hasText(dto.getCode()))
+            repository.findByCode(dto.getCode())
+                    .ifPresent(qrCode -> {
+                        throw new BadRequestException(
+                                "QR Code already exists",
+                                ErrorValidation.validations(
+                                        ErrorValidation.New("QR Code already exists", "code", qrCode.getCode())
+                                )
+                        );
+                    });
         return mapper.createDtoToEntity(dto);
     }
 
