@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,8 +52,8 @@ public class BeneficiaryAccountCommandService implements
     public BeneficiaryAccount convertFromCreateDTO(BeneficiaryAccountCreateDTO dto) {
         BeneficiaryAccount entity = beneficiaryAccountMapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
-        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
-        entity.setBank(bankQueryService.getForRelation(dto.getBank(),validations,"bank"));
+        entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
+        entity.setBank(Optional.ofNullable(bankQueryService.getForRelation(dto.getBank(),validations,"bank")).orElse(entity.getBank()));
         // Fetch related Customer entity and set it
         if (dto.getCustomerId()!=null) {
             entity.setCustomer(customerRepository.findById(UUID.fromString(dto.getCustomerId()))

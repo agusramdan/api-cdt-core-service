@@ -15,4 +15,8 @@ public class BadRequestException extends ClientError4xxException {
     public BadRequestException(String message, ErrorValidation[] errors) {
         super(message,HttpStatus.BAD_REQUEST.value(),errors);
     }
+
+    public BadRequestException(String message,ErrorValidation[] errors, Exception e) {
+        super(message, HttpStatus.BAD_REQUEST.value(), errors, e);
+    }
 }

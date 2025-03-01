@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -91,21 +92,22 @@ public class QRCodeCommandService implements
     @Override
     public QRCode convertFromUpdateDTO(String id, QRCodeUpdateDTO dto) {
 
-        QRCode qrCode = repository.findById(UUID.fromString(id))
+        QRCode entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
-        mapper.updateEntityFromUpdateDto(dto, qrCode);
+        mapper.updateEntityFromUpdateDto(dto, entity);
         val validations = new ArrayList<ErrorValidation>();
-        qrCode.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
-        qrCode.setServiceProduct(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product"));
-        qrCode.setBeneficiaryAccount(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account"));
-        qrCode.setUser(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user"));
+        entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
+        entity.setServiceProduct(Optional.ofNullable(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product")).orElse(entity.getServiceProduct()));
+        entity.setBeneficiaryAccount(Optional.ofNullable(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account")).orElse(entity.getBeneficiaryAccount()));
+        entity.setUser(Optional.ofNullable(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user")).orElse(entity.getUser()));
+
         if(validations.size() > 0) {
             throw new BadRequestException(
                     "Validation error",
                     validations.toArray(new ErrorValidation[validations.size()])
             );
         }
-        return qrCode;
+        return entity;
     }
 
     @Override

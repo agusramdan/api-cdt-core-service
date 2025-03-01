@@ -29,7 +29,7 @@ public interface BaseCommandEntityService<T,ID,ResultDTO,CreateDTO,UpdateDTO,DTO
         } catch (BadRequestException e){
             throw e;
         } catch (Exception e) {
-            throw new BadRequestException("Invalid Data For Update");
+            throw new BadRequestException("Invalid Data For Update",null,e);
         }
         T newData = saveUpdate(data);
         newData = afterUpdate(newData,updateDTO);

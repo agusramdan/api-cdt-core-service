@@ -9,9 +9,11 @@ public class ClientError4xxException extends RuntimeException {
     private final int code;
     private final ErrorValidation[] errors;
     public ClientError4xxException(String message,int code,ErrorValidation[] errors) {
-        super(message);
+        this(message,code,errors,null);
+    }
+    public ClientError4xxException(String message,int code,ErrorValidation[] errors,Exception e) {
+        super(message,e);
         this.code = code;
         this.errors = errors;
     }
-
 }

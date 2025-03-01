@@ -6,10 +6,13 @@ QR Code is a type of matrix barcode (or two-dimensional code) first designed in 
 
 ## QR Code Create minimal generate untuk multiple use
 
-POST http://localhost:8082/api/cdt/core/trx/qr-code/command
 
 ### Minimal Request
+
+POST http://localhost:8082/api/cdt/core/trx/qr-code/command
+
 ```json
+
 {
   "type": "MULTIPLE_TRX_USE"
 }
@@ -37,6 +40,9 @@ Agar bisa digunakan perlu di lengkapi data yang dibutuhkan, seperti user, branch
 
 
 ### Minimal Request dengan Branch information
+Lihat [Branch](../master/branch.md) untuk informasi lebih lanjut
+
+POST http://localhost:8082/api/cdt/core/trx/qr-code/command
 ```json
 {
   "type": "MULTIPLE_TRX_USE",
@@ -69,6 +75,7 @@ Response
 
 ### Minimal Request dengan Service Product information
 
+Lihat [Service Product](../master/service-product.md) untuk informasi lebih lanjut
 ```json
 {
   "type": "MULTIPLE_TRX_USE",
@@ -102,6 +109,8 @@ Response
 
 
 ### Minimal Request dengan Beneficary Account
+
+Lihat [Beneficiary Account](../master/beneficiary-account.md)
 
 ```json
 {
@@ -140,9 +149,164 @@ Response
 }
 ```
 
+### Minimal Request dengan user
+
+Lihat [Customer Crew](../master/customer-crew.md) untuk infomasi lebih lanjut.
+```json
+{
+  "type": "MULTIPLE_TRX_USE",
+  "user": {
+    "username": "johndoeexamplecom"
+  }
+}
+```
+
+Response
+```json
+{
+    "id": "77ab9eb2-0d01-4355-ad89-bdb94a37d72c",
+    "code": "sdxsl1tltz007ik3lteg",
+    "type": "MULTIPLE_TRX_USE",
+    "status": "PENDING",
+    "active": false,
+    "expired_time": "2026-03-01T16:41:39.1470316",
+    "user": {
+        "id": "cade2fbf-39fa-4f2f-8464-57bbf2b9ef52",
+        "name": "John Doe",
+        "username": "johndoeexamplecom",
+        "email": "john.doe@example.com",
+        "msidn": "+6281234567890",
+        "customer_id": null
+    },
+    "branch": null,
+    "beneficiary_account": null,
+    "service_transaction": null,
+    "service_product": null
+}
+```
+
+### Lengkapi data agar bisa di aktivasi
+
+PUT http://localhost:8082/api/cdt/core/trx/qr-code/command/77ab9eb2-0d01-4355-ad89-bdb94a37d72c
+
+```json
+{
+  "type": "MULTIPLE_TRX_USE",
+  "user": {
+    "username": "johndoeexamplecom"
+  },
+  "beneficiary_account": {
+    "id": "8b1ceb67-0710-4499-892c-d739aabef22c"
+  },
+  "service_product": {
+    "code": "MUL-ST-TR"
+  },
+  "branch": {
+    "code": "BRANCH-001"
+  }
+}
+```
+Response
+
+```json
+{
+    "id": "77ab9eb2-0d01-4355-ad89-bdb94a37d72c",
+    "code": "sdxsl1tltz007ik3lteg",
+    "type": "MULTIPLE_TRX_USE",
+    "status": "PENDING",
+    "active": false,
+    "expired_time": "2026-03-01T16:41:39.147032",
+    "user": {
+        "id": "cade2fbf-39fa-4f2f-8464-57bbf2b9ef52",
+        "name": "John Doe",
+        "username": "johndoeexamplecom",
+        "email": "john.doe@example.com",
+        "msidn": "+6281234567890",
+        "customer_id": null
+    },
+    "branch": {
+        "id": "0da9c773-6e20-4d0b-ad94-c9ef0560b862",
+        "code": "BRANCH-001",
+        "name": "BRANCH 001"
+    },
+    "beneficiary_account": {
+        "id": "8b1ceb67-0710-4499-892c-d739aabef22c",
+        "account_number": "1234567890",
+        "account_name": "John Doe",
+        "bank": {
+            "id": "ff9389fa-243d-486b-90fb-242b1a98357f",
+            "code": "014",
+            "name": "Bank Central Asia"
+        },
+        "branch": null
+    },
+    "service_transaction": null,
+    "service_product": {
+        "id": "96712ce1-e315-4d46-b8bf-97ed2f659a4a",
+        "code": "MUL-ST-TR",
+        "name": "Stor Tunai dan Transfer ke rekening menggunakan QR multiple use"
+    }
+}
+```
+
+### Aktivasi QR Code
+Setelah data lengkap bisa dilakukan aktifasi
+
+PUT http://localhost:8082/api/cdt/core/trx/qr-code/command/77ab9eb2-0d01-4355-ad89-bdb94a37d72c
+
+```json
+{
+  "status": "ACTIVE"
+}
+```
+
+Response :
+
+```json
+{
+    "id": "77ab9eb2-0d01-4355-ad89-bdb94a37d72c",
+    "code": "sdxsl1tltz007ik3lteg",
+    "type": "MULTIPLE_TRX_USE",
+    "status": "ACTIVE",
+    "active": true,
+    "expired_time": "2026-03-01T16:41:39.147032",
+    "user": {
+        "id": "cade2fbf-39fa-4f2f-8464-57bbf2b9ef52",
+        "name": "John Doe",
+        "username": "johndoeexamplecom",
+        "email": "john.doe@example.com",
+        "msidn": "+6281234567890",
+        "customer_id": null
+    },
+    "branch": {
+        "id": "0da9c773-6e20-4d0b-ad94-c9ef0560b862",
+        "code": "BRANCH-001",
+        "name": "BRANCH 001"
+    },
+    "beneficiary_account": {
+        "id": "8b1ceb67-0710-4499-892c-d739aabef22c",
+        "account_number": "1234567890",
+        "account_name": "John Doe",
+        "bank": {
+            "id": "ff9389fa-243d-486b-90fb-242b1a98357f",
+            "code": "014",
+            "name": "Bank Central Asia"
+        },
+        "branch": null
+    },
+    "service_transaction": null,
+    "service_product": {
+        "id": "96712ce1-e315-4d46-b8bf-97ed2f659a4a",
+        "code": "MUL-ST-TR",
+        "name": "Stor Tunai dan Transfer ke rekening menggunakan QR multiple use"
+    }
+}
+```
+
 
 ## Related dengan
 1. [Branch](../master/branch.md) 
 2. [Service Product](../master/service-product.md)
 2. [Customer](../master/customer.md)
+4. [Customer Crew](../master/customer-crew.md)
 3. [Beneficiary Account](../master/beneficiary-account.md)

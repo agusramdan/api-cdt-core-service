@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,7 +44,7 @@ public class CustomerCommandService implements
     public Customer convertFromCreateDTO(CustomerCreateDTO dto) {
         val entity= mapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
-        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
+        entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
         if (validations.size() > 0) {
             throw new BadRequestException(
                     "Validation error",
