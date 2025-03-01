@@ -1,7 +1,6 @@
 package agus.ramdan.base.client;
 
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 public interface BaseCommandClient<ResultDTO,CreateDTO,UpdateDTO, ID_DTO> {

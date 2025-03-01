@@ -2,7 +2,7 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
-import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerType;
+import agus.ramdan.cdt.core.master.controller.dto.CustomerType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -74,4 +74,7 @@ public class Customer {
     @JsonProperty("msidn")
     private String msidn;
 
+    @ManyToOne
+    @Schema(description = "Customer managed By branch")
+    private Branch branch;
 }

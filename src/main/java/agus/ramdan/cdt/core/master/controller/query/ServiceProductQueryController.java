@@ -1,7 +1,6 @@
 package agus.ramdan.cdt.core.master.controller.query;
 
 import agus.ramdan.base.controller.BaseQueryController;
-import agus.ramdan.cdt.core.master.controller.dto.branch.BranchQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductQueryDTO;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
 import io.swagger.v3.oas.annotations.tags.Tag;

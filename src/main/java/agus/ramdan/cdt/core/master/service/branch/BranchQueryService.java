@@ -53,12 +53,12 @@ public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, B
         if (branchDTO != null) {
             if (branchDTO.getId() != null) {
                 data = repository.findById(convertId(branchDTO.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Branch not found",keyField, branchDTO.getId()));
+                    validations.add(ErrorValidation.New("Branch not found",keyField+".id", branchDTO.getId()));
                     return null;
                 });
             } else {
                 data = repository.findByCode(branchDTO.getCode()).orElseGet( () -> {
-                    validations.add(ErrorValidation.New("Branch not found",keyField, branchDTO.getCode()));
+                    validations.add(ErrorValidation.New("Branch not found",keyField+".code", branchDTO.getCode()));
                     return null;
                 });
             }

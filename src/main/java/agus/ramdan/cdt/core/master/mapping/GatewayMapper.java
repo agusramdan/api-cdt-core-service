@@ -1,17 +1,12 @@
 package agus.ramdan.cdt.core.master.mapping;
 
-import agus.ramdan.cdt.core.master.controller.dto.bank.BankCreateDTO;
-import agus.ramdan.cdt.core.master.controller.dto.bank.BankQueryDTO;
-import agus.ramdan.cdt.core.master.controller.dto.bank.BankUpdateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayUpdateDTO;
-import agus.ramdan.cdt.core.master.persistence.domain.Bank;
 import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
 import org.mapstruct.*;
 
 import java.util.UUID;
-import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface GatewayMapper {

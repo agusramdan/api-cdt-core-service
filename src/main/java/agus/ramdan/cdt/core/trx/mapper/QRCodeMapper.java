@@ -13,7 +13,6 @@ import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxUser;
 import org.mapstruct.*;
 
 import java.util.UUID;
@@ -45,6 +44,10 @@ public interface QRCodeMapper {
     TrxUserDTO map(CustomerCrew source);
 
     String map(QRCodeType source);
+    default QRCodeType mapQRCodeType(String source){
+        if (source==null) return null;
+        return QRCodeType.valueOf(source);
+    }
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     Branch map(BranchDTO source);

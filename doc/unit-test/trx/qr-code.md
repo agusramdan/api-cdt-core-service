@@ -100,3 +100,11 @@ Response
 }
 ```
 
+
+
+
+## Related dengan
+1. [Branch](../master/branch.md) 
+2. [Service Product](../master/service-product.md)
+2. [Customer](../master/customer.md)
+3. [Beneficiary Account](../master/be)

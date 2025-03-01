@@ -28,7 +28,7 @@ public interface BaseCommandEntityService<T,ID,ResultDTO,CreateDTO,UpdateDTO,DTO
             data = convertFromUpdateDTO(id,updateDTO);
         } catch (BadRequestException e){
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new BadRequestException("Invalid Data For Update");
         }
         T newData = saveUpdate(data);

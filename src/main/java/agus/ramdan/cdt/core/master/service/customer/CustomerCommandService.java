@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.master.service.customer;
 
 import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerCreateDTO;
@@ -9,10 +10,13 @@ import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CustomerMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
+import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -24,7 +28,7 @@ public class CustomerCommandService implements
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
-
+    private final BranchQueryService branchQueryService;
     @Override
     public Customer saveCreate(Customer data) {
         return repository.save(data);
@@ -36,18 +40,27 @@ public class CustomerCommandService implements
     }
 
     @Override
-    public Customer convertFromCreateDTO(CustomerCreateDTO createDTO) {
-        return mapper.createDtoToEntity(createDTO);
+    public Customer convertFromCreateDTO(CustomerCreateDTO dto) {
+        val entity= mapper.createDtoToEntity(dto);
+        val validations = new ArrayList<ErrorValidation>();
+        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
+        if (validations.size() > 0) {
+            throw new BadRequestException(
+                    "Validation error",
+                    validations.toArray(new ErrorValidation[validations.size()])
+            );
+        }
+        return entity;
     }
 
     @Override
-    public Customer convertFromUpdateDTO(UUID id,CustomerUpdateDTO updateDTO) {
-        Customer existingCustomer = repository.findById(id)
+    public Customer convertFromUpdateDTO(UUID id,CustomerUpdateDTO dto) {
+        Customer entity = repository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Customer not found"));
 
         // Use MapStruct to update only non-null fields
-        mapper.updateEntityFromUpdateDto(updateDTO, existingCustomer);
-        return existingCustomer;
+        mapper.updateEntityFromUpdateDto(dto, entity);
+        return entity;
     }
 
     @Override

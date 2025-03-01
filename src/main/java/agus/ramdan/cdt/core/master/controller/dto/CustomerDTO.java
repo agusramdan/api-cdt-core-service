@@ -1,13 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto;
 
-import agus.ramdan.base.dto.AddressDTO;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @Schema(name = "CustomerQueryDTO", description = "DTO for querying customer details")

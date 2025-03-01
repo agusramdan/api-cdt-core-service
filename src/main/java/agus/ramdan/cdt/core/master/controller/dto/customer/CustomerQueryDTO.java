@@ -1,13 +1,12 @@
 package agus.ramdan.cdt.core.master.controller.dto.customer;
 
 import agus.ramdan.base.dto.AddressDTO;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @Schema(name = "CustomerQueryDTO", description = "DTO for querying customer details")
@@ -20,7 +19,7 @@ public class CustomerQueryDTO {
     private String name;
 
     @JsonProperty("customer_type")
-    private String customer_type;
+    private String customerType;
 
     @JsonProperty("ktp")
     private String ktp;
@@ -38,5 +37,8 @@ public class CustomerQueryDTO {
 
     @Schema(description = "Customer Address Details")
     private AddressDTO address;
+
+    @Schema(description = "Customer managed By branch")
+    private BranchDTO branch;
 }
 

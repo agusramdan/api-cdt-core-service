@@ -8,7 +8,6 @@ import agus.ramdan.cdt.core.master.mapping.BankMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Bank;
 import agus.ramdan.cdt.core.master.persistence.repository.BankRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

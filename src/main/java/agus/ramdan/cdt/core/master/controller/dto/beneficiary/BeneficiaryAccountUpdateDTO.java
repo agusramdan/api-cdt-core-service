@@ -5,8 +5,6 @@ import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Schema(name = "BeneficiaryAccountUpdateDTO", description = "DTO for updating an existing beneficiary account")
 public class BeneficiaryAccountUpdateDTO {

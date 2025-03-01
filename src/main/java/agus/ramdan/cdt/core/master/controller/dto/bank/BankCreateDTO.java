@@ -3,8 +3,6 @@ package agus.ramdan.cdt.core.master.controller.dto.bank;
 import agus.ramdan.base.dto.AddressDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 
 @Data
 @Schema(description = "DTO untuk membuat Bank")

@@ -1,7 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.repository;
 
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
-import agus.ramdan.cdt.core.trx.mapper.QRCodeMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

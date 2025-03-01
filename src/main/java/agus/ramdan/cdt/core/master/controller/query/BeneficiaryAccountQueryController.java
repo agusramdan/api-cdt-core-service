@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/cdt/core/master/beneficiary-accounts/query")
 @Tag(name = "Beneficiary Query Account API", description = "APIs for query Beneficiary Account")

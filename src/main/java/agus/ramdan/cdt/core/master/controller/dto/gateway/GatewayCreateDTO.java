@@ -1,9 +1,5 @@
 package agus.ramdan.cdt.core.master.controller.dto.gateway;
 
-import agus.ramdan.base.dto.AddressDTO;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

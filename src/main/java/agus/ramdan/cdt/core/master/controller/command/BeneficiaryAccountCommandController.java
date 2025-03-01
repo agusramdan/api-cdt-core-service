@@ -19,6 +19,6 @@ import java.util.UUID;
 @Tag(name = "Beneficiary Account Command API", description = "APIs for creating, updating, and deleting beneficiary")
 @RequiredArgsConstructor
 @Getter
-public class BeneficiaryAccountCommandController implements BaseCommandController< BeneficiaryAccountQueryDTO,BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO,UUID> {
+public class BeneficiaryAccountCommandController implements BaseCommandController< BeneficiaryAccountQueryDTO,BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO,String> {
     private final BeneficiaryAccountCommandService service;
 }

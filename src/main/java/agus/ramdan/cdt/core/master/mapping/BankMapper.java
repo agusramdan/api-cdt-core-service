@@ -3,15 +3,10 @@ package agus.ramdan.cdt.core.master.mapping;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankUpdateDTO;
-import agus.ramdan.cdt.core.master.controller.dto.branch.BranchCreateDTO;
-import agus.ramdan.cdt.core.master.controller.dto.branch.BranchQueryDTO;
-import agus.ramdan.cdt.core.master.controller.dto.branch.BranchUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Bank;
-import agus.ramdan.cdt.core.master.persistence.domain.Branch;
 import org.mapstruct.*;
 
 import java.util.UUID;
-import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BankMapper {

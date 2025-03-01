@@ -8,7 +8,6 @@ import agus.ramdan.cdt.core.master.mapping.VendorMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Vendor;
 import agus.ramdan.cdt.core.master.persistence.repository.VendorRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

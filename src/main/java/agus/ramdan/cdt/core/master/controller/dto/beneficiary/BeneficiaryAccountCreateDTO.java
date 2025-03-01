@@ -29,7 +29,7 @@ public class BeneficiaryAccountCreateDTO {
     @NotBlank
     @Schema(description = "Account holder name", example = "John Doe")
     private String account_name;
-
+    @NotNull(message = " bank can't null.")
     private BankDTO bank;
 
     private BranchDTO branch;
