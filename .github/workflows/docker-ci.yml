@@ -25,8 +25,14 @@ jobs:
       - name: Build project with Maven
         run: mvn clean package
 
-      - name: Deploy to GitHub Packages
-        run: mvn deploy
+      - name: Set up Java for publishing to GitHub Packages
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Publish to GitHub Packages
+        run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,3 +59,4 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }}
           docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:dev
           docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:latest
+
