@@ -22,6 +22,7 @@ import java.util.UUID;
 @Getter
 public class BranchQueryController implements BaseQueryController<BranchQueryDTO, String> {
     private final BranchQueryService service;
+
     @GetMapping("/code/{code}")
     public ResponseEntity<BranchQueryDTO> getByCode(@PathVariable String code) {
         return ResponseEntity.ok(service.getByCode(code));
