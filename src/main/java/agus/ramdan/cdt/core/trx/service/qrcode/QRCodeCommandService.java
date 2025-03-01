@@ -5,6 +5,10 @@ import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
+import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.persistence.domain.Branch;
+import agus.ramdan.cdt.core.master.persistence.repository.BranchRepository;
+import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
@@ -13,9 +17,12 @@ import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import agus.ramdan.cdt.core.trx.persistence.repository.QRCodeRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,10 +35,12 @@ public class QRCodeCommandService implements
     private final QRCodeRepository repository;
     private final QRCodeMapper mapper;
     private final RandomStringGenerator generator;
+    private final BranchQueryService branchQueryService;
 
     public void validateActiveStatus(QRCode entity) {
        // TODO Tambahkan validasi bila konsisi status entity aktif
     }
+
     @Override
     public QRCode saveCreate(QRCode entity) {
         var generate_code = !StringUtils.hasText(entity.getCode());
@@ -56,17 +65,22 @@ public class QRCodeCommandService implements
 
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
+        val validations = new ArrayList<ErrorValidation>();
+
         if(StringUtils.hasText(dto.getCode()))
             repository.findByCode(dto.getCode())
                     .ifPresent(qrCode -> {
-                        throw new BadRequestException(
-                                "QR Code already exists",
-                                ErrorValidation.validations(
-                                        ErrorValidation.New("QR Code already exists", "code", qrCode.getCode())
-                                )
-                        );
+                        validations.add(ErrorValidation.New("QR Code already exists", "code", qrCode.getCode()));
                     });
-        return mapper.createDtoToEntity(dto);
+        val qrCode = mapper.createDtoToEntity(dto);
+        qrCode.setBranch(branchQueryService.getRelation(dto.getBranch(), validations, "branch"));
+        if(validations.size() > 0) {
+            throw new BadRequestException(
+                    "Validation error",
+                    validations.toArray(new ErrorValidation[validations.size()])
+            );
+        }
+        return qrCode;
     }
 
     @Override

@@ -46,4 +46,35 @@ Agar bisa digunakan perlu di lengkapi data yang dibutuhkan, seperti user, branch
 }
 ```
 
-TODO FIX
+Response
+```json
+{
+    "id": "ffa3d583-ffb7-4041-97f9-bfbef1201052",
+    "code": "mbprzgv50f1ezxdj8344",
+    "type": "MULTIPLE_TRX_USE",
+    "status": "PENDING",
+    "active": false,
+    "expired_time": "2026-03-01T11:07:08.0230409",
+    "user": null,
+    "branch": {
+        "id": "82305210-6f32-4738-809d-503a1c4a8e49",
+        "code": "BRANCH-001",
+        "name": "BRANCH 001"
+    },
+    "beneficiary_account": null,
+    "service_transaction": null,
+    "service_product": null
+}
+```
+
+### Minimal Request dengan Service Product information
+
+### Minimal Request dengan Branch information
+```json
+{
+  "type": "MULTIPLE_TRX_USE",
+  "product": {
+    "code": "MUL-ST-TR"
+  }
+}
+```
