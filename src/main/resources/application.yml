@@ -22,8 +22,9 @@ spring:
     url: jdbc:postgresql://db:5432/core
     username: core_user
     password: core_pwd
-
+    driver-class-name: org.postgresql.Driver
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: validate
 

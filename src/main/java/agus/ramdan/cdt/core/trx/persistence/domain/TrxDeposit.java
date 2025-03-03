@@ -20,7 +20,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_trx_cdm")
+@Table(name = "cdt_trx_cdm",
+        indexes = {@Index(name = "idx_cdt_trx_cdm_token_signature", columnList = "token, signature")},
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "token", "signature" }) }
+)
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class TrxDeposit {
@@ -33,7 +36,6 @@ public class TrxDeposit {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @Column(unique = true)
     private String token;
     private String signature;
 

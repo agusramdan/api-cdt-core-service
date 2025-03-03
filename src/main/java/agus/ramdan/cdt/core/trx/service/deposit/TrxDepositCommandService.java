@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.trx.service.deposit;
 
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
@@ -29,6 +30,7 @@ public class TrxDepositCommandService {
     private final TrxDepositRepository repository;
     private final TrxDepositMapper trxDepositMapper;
     private final QRCodeQueryService codeQueryService;
+    private final MachineQueryService machineQueryService;
     private final ServiceTransactionService transactionService;
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
@@ -41,12 +43,14 @@ public class TrxDepositCommandService {
             val token = new QRCodeDTO(dto.getToken());
             val validations =  new ArrayList<ErrorValidation>();
             val code = codeQueryService.getForRelation(token,validations,"qr_code");
+            val machine = machineQueryService.getForRelation(dto.getMachine(),validations,"machine");
             if (validations.size()>0){
                 throw new BadRequestException("Invalid Transaction",validations.toArray(new ErrorValidation[0]));
             }
             // save deposit
             deposit.setCode(code);
             deposit.setServiceProduct(code.getServiceProduct());
+            deposit.setMachine(machine);
             deposit.setStatus(TrxDepositStatus.DEPOSIT);
             deposit = repository.save(deposit);
 

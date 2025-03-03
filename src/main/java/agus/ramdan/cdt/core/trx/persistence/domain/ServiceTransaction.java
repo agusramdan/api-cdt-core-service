@@ -25,6 +25,8 @@ public class ServiceTransaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
+
+    @Column(length = 20, updatable = false, unique = true)
     private String no;
 
     @Embedded
