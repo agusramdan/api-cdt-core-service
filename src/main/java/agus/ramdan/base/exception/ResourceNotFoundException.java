@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundException extends ClientError4xxException {
 
     private static final long serialVersionUID = 1L;
-
     public ResourceNotFoundException(String message) {
-        super(message,HttpStatus.NOT_FOUND.value(),null);
+        super(message,HttpStatus.NOT_FOUND.value(),(Throwable)null);
     }
 }

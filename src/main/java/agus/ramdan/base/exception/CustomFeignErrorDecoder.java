@@ -10,7 +10,7 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         String message = "Unknown error";
-        Errors errors = null;
+        //Errors errors = null;
 
         try {
             if (response.body() != null) {
@@ -25,15 +25,15 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
         } else if (status == HttpStatus.BAD_REQUEST.value()) {
             return new BadRequestException("Propagation Bad Request");
         } else if (status == HttpStatus.NOT_FOUND.value()) {
-            return new ResourceNotFoundException("Propagation Not Found");
+            return new ResourceNotFoundException("Not Found");
         } else {
             int status_group =status/100;
             if (status_group==4){
-                return new Propagation3xxException("Need Validation",status,errors);
+                return new Propagation3xxException("Need Validation",status,String.valueOf(status),null);
             }else if(status_group==3){
-                return new Propagation3xxException("Redirection",status,errors);
+                return new Propagation3xxException("Redirection",status,String.valueOf(status),null);
             }
         }
-        return new Propagation5xxException("Propagation Internal Server"+message,status,errors);
+        return new Propagation5xxException("Propagation Internal Server"+message,status,null);
     }
 }

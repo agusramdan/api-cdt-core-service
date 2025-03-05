@@ -66,13 +66,12 @@ public class GlobalExceptionHandler {
         val error = new Errors(new Date(),"Validation Error",traceId,spanId, request.getDescription(false),errors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Errors> badRequestException(BadRequestException ex, WebRequest request) {
+    @ExceptionHandler(XxxException.class)
+    public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        val error = new Errors(new Date(), ex.getMessage(),traceId,spanId,request.getDescription(false),ex.getErrors());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)),ex.getHttpStatus());
     }
 
     @ExceptionHandler(NoContentException.class)

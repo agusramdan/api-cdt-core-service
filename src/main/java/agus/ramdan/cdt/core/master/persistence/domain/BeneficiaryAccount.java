@@ -37,13 +37,25 @@ public class BeneficiaryAccount {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    // account information
+    private String account_number;
+    private String account_name;
+
+    @ManyToOne
+    @JoinColumn(name = "account_type")
+    private AccountType accountType;
+
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
 
-    // account information
-    private String account_number;
-    private String account_name;
+    @ManyToOne
+    @JoinColumn(name = "customer_type")
+    private CustomerType customerType;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_status")
+    private CustomerType customerStatus;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")

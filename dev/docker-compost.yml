@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=core_user
       - POSTGRES_PASSWORD=core_pwd
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pg-16-data:/var/lib/postgresql/data
 

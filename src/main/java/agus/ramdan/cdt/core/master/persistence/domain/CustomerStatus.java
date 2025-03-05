@@ -9,31 +9,27 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.UUID;
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_product")
-@SQLDelete(sql = "UPDATE cdt_product SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Table(name = "cdt_customer_status")
+@SQLDelete(sql = "UPDATE cdt_customer_status SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class ServiceProduct {
+public class CustomerStatus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    @JsonProperty("id")
-    private UUID id;
+    @JsonProperty(index = 1)
+    private String id;
 
     @Embedded
     private AuditMetadata auditMetadata;
 
-    private String code;
     private String name;
-
+    private String description;
+    
 }

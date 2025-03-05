@@ -34,8 +34,11 @@ public class Bank {
     private AuditMetadata auditMetadata;
 
     private String name;
-    @Column(unique = true)
     private String code;
+    private Boolean onlineTransfer;
+    private Boolean biFastTransfer;
+    private Boolean wallet;
+    private Boolean virtualAccount;
 
     // Address
     @Embedded
