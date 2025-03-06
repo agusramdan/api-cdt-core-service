@@ -14,7 +14,8 @@ spring:
     use-legacy-processing: true
   jmx:
     enabled: true
-
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   main:
     lazy-initialization: true
 

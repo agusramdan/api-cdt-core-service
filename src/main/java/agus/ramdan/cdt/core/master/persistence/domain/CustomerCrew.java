@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.UUID;
@@ -20,7 +22,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "cdt_customer_crew")
 @SQLDelete(sql = "UPDATE cdt_customer_crew SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at is null")
+@FilterDef(name = "deletedFilter_cdt_customer_crew", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter_cdt_customer_crew", condition = "deleted_at IS NULL") // Pengganti @Where
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class CustomerCrew {
@@ -44,16 +47,9 @@ public class CustomerCrew {
 
     private String ktp;
     private String npwp;
-
     private UUID user_id;
-
-    @Column(unique = true)
     private String username;
-
-    @Column(unique = true)
     private String email;
-
-    @Column(unique = true)
     private String msidn;
 
     @PrePersist

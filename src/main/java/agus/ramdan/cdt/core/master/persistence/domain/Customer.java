@@ -5,12 +5,12 @@ import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.UUID;
@@ -21,13 +21,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_customer", indexes = {
-        @Index(name = "idx_customer_email", columnList = "email"),
-        @Index(name = "idx_customer_msidn", columnList = "msidn"),
-        @Index(name = "idx_customer_npwp", columnList = "npwp")
-})
+@Table(name = "cdt_customer")
+@SQLRestriction("deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE cdt_customer SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at is null")
+@FilterDef(name = "deletedFilter_cdt_customer", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter_cdt_customer", condition = "deleted_at IS NULL") // Pengganti @Where
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class Customer {
@@ -56,21 +54,21 @@ public class Customer {
     @Builder.Default
     private CustomerType customerType = CustomerType.INDIVIDUAL;
 
-    @Column(name = "ktp", unique = true)
+    @Column(name = "ktp")
     @JsonProperty("ktp")
     private String ktp;
 
-    @Column(name = "npwp", unique = true)
+    @Column(name = "npwp")
     @JsonProperty("npwp")
     private String npwp;
 
     @Email
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     @JsonProperty("email")
     private String email;
 
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must be in E.164 format")
-    @Column(name = "msidn", unique = true)
+    @Column(name = "msidn")
     @JsonProperty("msidn")
     private String msidn;
 

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.slf4j.MDC;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -42,6 +46,31 @@ public class GlobalExceptionHandler {
         String spanId = getSpanId();
         val error = new Errors(new Date(), ex.getMessage(), traceId, spanId, request.getDescription(false), null);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+        String errorMsg = "Data integrity violation";
+        Throwable rootCause = ex.getRootCause(); // Ambil error dari database
+        if (rootCause instanceof SQLException sqlException) {
+            String message = sqlException.getMessage();
+            if (message.contains("duplicate key value")) {
+                errorMsg = extractDuplicateKeyMessage(message);
+            }
+        }
+        String traceId = getTraceId();
+        String spanId = getSpanId();
+        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"DataIntegrityViolationException"),ex);
+        val error = new Errors(new Date(),errorMsg, traceId, spanId, request.getDescription(false), null);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    private String extractDuplicateKeyMessage(String message) {
+        // Pola regex untuk menangkap "Key (msidn)=(+6281234567890) already exists."
+        Pattern pattern = Pattern.compile("Key \\((.*?)\\)=\\((.*?)\\) already exists");
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            return "Key (" + matcher.group(1) + ")=(" + matcher.group(2) + ") already exists.";
+        }
+        return "Duplicate key constraint violation.";
     }
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Errors> handleMethodArgumentNotValidException(ConstraintViolationException ex, WebRequest request) {
