@@ -7,4 +7,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://merahputih-id.tech:9000
-
+  datasource:
+    url: jdbc:postgresql://db:5433/core
+  jpa:
+   show-sql: true
+   hibernate.ddl-auto: create
