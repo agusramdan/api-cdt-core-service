@@ -49,7 +49,7 @@ public class VendorCrew {
 
     private String username;
     private String email;
-    private String msidn;
+    private String msisdn;
 
     private Boolean supplier;
     private Boolean maintenance;

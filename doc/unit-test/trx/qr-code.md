@@ -175,7 +175,7 @@ Response
         "name": "John Doe",
         "username": "johndoeexamplecom",
         "email": "john.doe@example.com",
-        "msidn": "+6281234567890",
+        "msisdn": "+6281234567890",
         "customer_id": null
     },
     "branch": null,
@@ -221,7 +221,7 @@ Response
         "name": "John Doe",
         "username": "johndoeexamplecom",
         "email": "john.doe@example.com",
-        "msidn": "+6281234567890",
+        "msisdn": "+6281234567890",
         "customer_id": null
     },
     "branch": {
@@ -275,7 +275,7 @@ Response :
         "name": "John Doe",
         "username": "johndoeexamplecom",
         "email": "john.doe@example.com",
-        "msidn": "+6281234567890",
+        "msisdn": "+6281234567890",
         "customer_id": null
     },
     "branch": {

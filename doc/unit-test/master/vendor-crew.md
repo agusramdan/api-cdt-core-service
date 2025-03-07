@@ -14,7 +14,7 @@ POST http://localhost:8082/api/cdt/core/trx/vendor-crew/command
   "name": "John Doe",
   "username": "John Doe @example.com",
   "email": "john.doe@example.com",
-  "msidn": "+6281234567890",
+  "msisdn": "+6281234567890",
   "ktp": "1234567890123456",
   "npwp": "1234567890123456"
 }
@@ -30,7 +30,7 @@ Response
   "npwp": "1234567890123456",
   "username": "johndoeexamplecom",,
   "email": "john.doe@example.com",
-  "msidn": "+6281234567890",
+  "msisdn": "+6281234567890",
   "vendor_id": "93a347c1-5f87-40ee-a7a5-071cfad6ef40",
   "user_id": null
 }

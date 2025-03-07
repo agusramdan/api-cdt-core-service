@@ -68,9 +68,9 @@ public class Customer {
     private String email;
 
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must be in E.164 format")
-    @Column(name = "msidn")
-    @JsonProperty("msidn")
-    private String msidn;
+    @Column(name = "msisdn")
+    @JsonProperty("msisdn")
+    private String msisdn;
 
     @ManyToOne
     @Schema(description = "Customer managed By branch")

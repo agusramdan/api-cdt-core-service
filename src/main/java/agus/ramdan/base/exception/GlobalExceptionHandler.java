@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
     private String extractDuplicateKeyMessage(String message) {
-        // Pola regex untuk menangkap "Key (msidn)=(+6281234567890) already exists."
+        // Pola regex untuk menangkap "Key (msisdn)=(+6281234567890) already exists."
         Pattern pattern = Pattern.compile("Key \\((.*?)\\)=\\((.*?)\\) already exists");
         Matcher matcher = pattern.matcher(message);
         if (matcher.find()) {

@@ -50,7 +50,7 @@ public class CustomerCrew {
     private UUID user_id;
     private String username;
     private String email;
-    private String msidn;
+    private String msisdn;
 
     @PrePersist
     protected void onCreate(){

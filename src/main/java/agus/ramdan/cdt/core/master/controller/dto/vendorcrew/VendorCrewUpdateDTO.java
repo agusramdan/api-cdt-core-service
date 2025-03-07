@@ -32,5 +32,5 @@ public class VendorCrewUpdateDTO {
     private String email;
 
     @Schema(description = "MSIDN Crew")
-    private String msidn;
+    private String msisdn;
 }

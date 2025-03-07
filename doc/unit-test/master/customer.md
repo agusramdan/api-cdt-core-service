@@ -12,7 +12,7 @@ POST http://localhost:8082/api/cdt/core/trx/customer/command
 {
   "name": "John Doe",
   "email": "john.doe@example.com",
-  "msidn": "+6281234567890",
+  "msisdn": "+6281234567890",
   "ktp": "1234567890123456",
   "npwp": "1234567890123456",
   "customer_type":"INDIVIDUAL",
@@ -37,7 +37,7 @@ contoh hasilnya adalah sebagai berikut:
   "id": "13c2c1e5-327f-431d-87f3-7cfb1fa9151e",
   "name": "John Doe",
   "email": "john.doe@example.com",
-  "msidn": "+6281234567890",
+  "msisdn": "+6281234567890",
   "address": {
     "building": "Tower A",
     "street": "Main Street",

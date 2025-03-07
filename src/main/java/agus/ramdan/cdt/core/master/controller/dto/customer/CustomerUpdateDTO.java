@@ -33,7 +33,7 @@ public class CustomerUpdateDTO {
 
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Phone number must be in E.164 format")
     @Schema(description = "Customer Mobile Number", example = "+6281234567890")
-    private String msidn;
+    private String msisdn;
 
     @Schema(description = "Customer Address Details")
     private AddressDTO address;
