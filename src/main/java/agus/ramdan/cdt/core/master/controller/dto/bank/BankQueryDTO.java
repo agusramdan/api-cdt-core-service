@@ -15,7 +15,10 @@ public class BankQueryDTO {
 
     @Schema(description = "Nama Bank")
     private String name;
-
+    private Boolean onlineTransfer;
+    private Boolean biFastTransfer;
+    private Boolean wallet;
+    private Boolean virtualAccount;
     @Schema(description = "Alamat Bank")
     private AddressDTO address;
 }
