@@ -18,7 +18,7 @@ spring:
     property-naming-strategy: SNAKE_CASE
   main:
     lazy-initialization: true
-
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://db:5432/core
     username: core_user
@@ -53,3 +53,7 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
+feign-client:
+  api-cdt-gateway-service:
+    base-url: http://api-cdt-gateway-service:8080

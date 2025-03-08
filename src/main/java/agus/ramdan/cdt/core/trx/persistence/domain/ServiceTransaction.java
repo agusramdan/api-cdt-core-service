@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
@@ -33,10 +34,13 @@ public class ServiceTransaction {
     private AuditMetadata auditMetadata;
 
     private TrxStatus status;
+    @Column(name = "amount", precision = 12, scale = 2, nullable = false)
+    @Schema(example = "10000.00", required = true)
+    private BigDecimal amount;
 
     @ManyToOne
     private TrxDeposit deposit;
 
     @ManyToOne
-    private Gateway gateway;
+    private TrxTransfer transfer;
 }

@@ -11,12 +11,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransferBalanceRequestDTO {
-
+    @JsonProperty("gateway_code")
+    private String gatewayCode = "0";
     /**
      * 0 = Transfer Online
      * 1 = BI Fast Transfer
      */
-    @JsonProperty("transferType")
+    @JsonProperty("transfer_type")
     private String transferType = "0";
 
     @JsonProperty("destination_account")
@@ -77,7 +78,7 @@ public class TransferBalanceRequestDTO {
      * purposes
      */
     @JsonProperty("purpose_of_transaction")
-    private String purposeOfTransaction;
+    private String purposeOfTransaction="99";
 
     /**
      * transaction_no String(20) M Transaction Number Merchant

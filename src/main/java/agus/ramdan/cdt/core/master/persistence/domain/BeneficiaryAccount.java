@@ -55,7 +55,15 @@ public class BeneficiaryAccount {
 
     @ManyToOne
     @JoinColumn(name = "customer_status")
-    private CustomerType customerStatus;
+    private CustomerStatus customerStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "region_code")
+    private RegionCode regionCode;
+
+    @ManyToOne
+    @JoinColumn(name = "country_code")
+    private CountryCode countryCode;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")

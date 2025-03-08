@@ -9,6 +9,7 @@ import org.slf4j.MDC;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,12 +41,21 @@ public class GlobalExceptionHandler {
         }
         return spanId;
     }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Errors> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         val error = new Errors(new Date(), ex.getMessage(), traceId, spanId, request.getDescription(false), null);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
+        String traceId = getTraceId();
+        String spanId = getSpanId();
+        log.warn("trace_id={},span_id={}:{}",traceId,spanId,"Message Error");
+        val error = new Errors(new Date(),"Message Error",traceId,spanId, request.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
@@ -76,7 +86,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Errors> handleMethodArgumentNotValidException(ConstraintViolationException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"ConstraintViolationException"),ex);
+        log.warn(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"ConstraintViolationException"),ex);
         val errors = ex.getConstraintViolations().stream()
                 .map(violation -> new ErrorValidation(violation.getMessage(),String.valueOf(violation.getPropertyPath()),violation.getInvalidValue()) )
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);

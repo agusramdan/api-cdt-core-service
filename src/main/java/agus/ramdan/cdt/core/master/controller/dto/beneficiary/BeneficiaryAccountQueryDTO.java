@@ -1,7 +1,7 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
-import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.*;
+import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -22,13 +22,20 @@ public class BeneficiaryAccountQueryDTO {
 
     @Schema(description = "Account holder name", example = "John Doe")
     private String account_name;
+
+    private AccountTypeDTO accountType;
+
     private BankDTO bank;
+
+    private CustomerTypeDTO customerType;
+
+    private CustomerStatusDTO customerStatus;
+
+    private RegionCodeDTO regionCode;
+
+    private CountryCodeDTO countryCode;
 
     private BranchDTO branch;
 
-//    @Schema(description = "Bank code", example = "BCA")
-//    private String bank_code;
-//
-//    @Schema(description = "Bank name", example = "Bank Central Asia")
-//    private String bank_name;
+    private QRCodeDTO qrCode;
 }

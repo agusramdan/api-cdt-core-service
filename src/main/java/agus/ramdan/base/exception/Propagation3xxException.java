@@ -8,7 +8,9 @@ import java.util.Collection;
 public class Propagation3xxException extends PropagationXxxException {
     private static final long serialVersionUID = 1L;
 
-
+    public Propagation3xxException(String message, int code) {
+        this(message, code,null);
+    }
     public Propagation3xxException(String message, int code, Throwable cause) {
         super(message, code, cause);
     }

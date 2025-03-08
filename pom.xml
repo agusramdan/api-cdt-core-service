@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>3.3.8.1.20250306</version>
+	<version>3.3.8.1.20250307</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>
@@ -157,7 +157,6 @@
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>7.4</version>
-			<classifier></classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

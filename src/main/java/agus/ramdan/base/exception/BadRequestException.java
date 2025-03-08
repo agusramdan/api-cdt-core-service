@@ -10,8 +10,13 @@ import java.util.Collection;
 @Getter
 public class BadRequestException extends ClientError4xxException {
     private static final long serialVersionUID = 1L;
+
     public BadRequestException(String message) {
-        this(message,null);
+        this(message,new ErrorValidation[0]);
+    }
+
+    public BadRequestException(String message, Errors errors) {
+        this(message, HttpStatus.BAD_REQUEST.value(),errors.getErrCode(),null,errors);
     }
     public BadRequestException(String message, ErrorValidation[] errors) {
         this(message,HttpStatus.BAD_REQUEST.value(),"400",null,errors);

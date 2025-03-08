@@ -23,4 +23,8 @@ public class Propagation5xxException extends PropagationXxxException {
     public Propagation5xxException(String message, int code, String errCode, Throwable cause, Collection<ErrorValidation> errorValidations) {
         super(message, code, errCode, cause, errorValidations);
     }
+
+    public Propagation5xxException(String message, int status, String errCode, Errors errors) {
+        super(message, status, errCode, null,errors);
+    }
 }

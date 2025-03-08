@@ -3,7 +3,10 @@ package agus.ramdan.cdt.core.trx.service.transaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
+import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
+import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,6 +20,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Log4j2
 public class ServiceTransactionService {
+    private final TrxTransferRepository trxTransferRepository;
     private static final String CHARACTERS = "0123456789";
     private static final int STRING_LENGTH = 20;
     private static final Random random = new Random();
@@ -31,8 +35,8 @@ public class ServiceTransactionService {
         return result.toString();
     }
     private final ServiceTransactionRepository repository;
-    private final GatewayService gatewayService;
-
+    private final TrxTransferService transferService;
+//    private final GatewayService gatewayService;
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public  ServiceTransaction prepare() {
         val trx = new ServiceTransaction();
@@ -56,10 +60,16 @@ public class ServiceTransactionService {
         return repository.save(trx);
     }
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ServiceTransaction transferFund(ServiceTransaction trx) {
-        trx = gatewayService.setupGateway(trx);
-        trx = repository.save(trx);
-        trx = gatewayService.transferFund(trx);
+    public ServiceTransaction executeTransaction(ServiceTransaction trx) {
+        log.info("Transfer Transaction; id={}; amount={}; trx={};",trx.getId(),trx.getAmount(),trx.getNo());
+        var transfer = transferService.prepare(trx);
+        trx.setTransfer(transfer);
+        trx.setStatus(TrxStatus.TRANSFER);
+        repository.save(trx);
+        transfer = transferService.transferFund(transfer);
+        if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus())){
+            trx.setStatus(TrxStatus.TRANSFER_SUCCESS);
+        }
         trx = repository.save(trx);
         return trx;
     }

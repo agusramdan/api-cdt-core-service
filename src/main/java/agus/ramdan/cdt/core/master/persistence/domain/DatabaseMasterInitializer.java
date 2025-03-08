@@ -13,7 +13,9 @@ public class DatabaseMasterInitializer {
     @EventListener(ApplicationReadyEvent.class)
     public void createPartialUniqueIndex() {
 
-        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_branch_ktp ON cdt_branch (code) WHERE deleted_at IS NULL;");
+        jdbcTemplate.execute("DROP INDEX IF EXISTS idx_unique_cdt_branch_ktp;");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_branch_code ON cdt_branch (code) WHERE deleted_at IS NULL;");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_bank_code ON cdt_bank (code) WHERE deleted_at IS NULL;");
 
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_customer_ktp ON cdt_customer (ktp) WHERE deleted_at IS NULL;");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_customer_email ON cdt_customer (email) WHERE deleted_at IS NULL;");
@@ -26,5 +28,11 @@ public class DatabaseMasterInitializer {
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_customer_crew_username ON cdt_customer_crew (username) WHERE deleted_at IS NULL and username is not NULL and username <> '';");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_customer_crew_email ON cdt_customer_crew (email) WHERE deleted_at IS NULL and email is not NULL and email <> '';");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_customer_crew_msisdn ON cdt_customer_crew (msisdn) WHERE deleted_at IS NULL and msisdn is not NULL and msisdn <> '';");
+
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_vendor_crew_user_id ON cdt_vendor_crew (user_id) WHERE deleted_at IS NULL and user_id is not NULL ;");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_vendor_crew_username ON cdt_vendor_crew (username) WHERE deleted_at IS NULL and username is not NULL and username <> '';");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_vendor_crew_email ON cdt_vendor_crew (email) WHERE deleted_at IS NULL and email is not NULL and email <> '';");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_vendor_crew_msisdn ON cdt_vendor_crew (msisdn) WHERE deleted_at IS NULL and msisdn is not NULL and msisdn <> '';");
+
     }
 }

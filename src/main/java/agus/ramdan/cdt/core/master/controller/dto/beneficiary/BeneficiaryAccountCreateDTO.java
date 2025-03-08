@@ -1,7 +1,12 @@
 package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
-import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
+import agus.ramdan.cdt.core.master.controller.dto.*;
+import agus.ramdan.cdt.core.master.persistence.domain.AccountType;
+import agus.ramdan.cdt.core.master.persistence.domain.CountryCode;
+import agus.ramdan.cdt.core.master.persistence.domain.CustomerType;
+import agus.ramdan.cdt.core.master.persistence.domain.RegionCode;
+import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
+import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -29,16 +34,21 @@ public class BeneficiaryAccountCreateDTO {
     @NotBlank
     @Schema(description = "Account holder name", example = "John Doe")
     private String account_name;
-    @NotNull(message = " bank can't null.")
+
+    private AccountTypeDTO accountType;
+
+    @NotNull(message = "bank can't null.")
     private BankDTO bank;
+
+    private CustomerTypeDTO customerType;
+
+    private CustomerStatusDTO customerStatus;
+
+    private RegionCodeDTO regionCode;
+
+    private CountryCodeDTO countryCode;
 
     private BranchDTO branch;
 
-//    @NotBlank
-//    @Schema(description = "Bank code", example = "BCA")
-//    private String bank_code;
-//
-//    @NotBlank
-//    @Schema(description = "Bank name", example = "Bank Central Asia")
-//    private String bank_name;
+    private QRCodeDTO qrCode;
 }

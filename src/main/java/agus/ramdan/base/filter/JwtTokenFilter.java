@@ -20,7 +20,6 @@ import java.util.ArrayList;
 @Profile("!oauth2")
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -32,12 +31,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     .build() // Tidak menggunakan setSigningKey
                     .parseClaimsJwt(token) // Perhatikan: `parseClaimsJwt` bukan `parseClaimsJws`
                     .getBody();
-//            val map = decodeJwt(token);
-//            val claims = new DefaultClaims(map.get("payload"));
             String userId = claims.getSubject();
             // Set Authentication ke SecurityContext
-            Object object = claims.get("Role");
-            val authentication = new UsernamePasswordAuthenticationToken(userId, token, new ArrayList<>());
+            // Object object = claims.get("Role");
+            //val authentication = new UsernamePasswordAuthenticationToken(userId, token, new ArrayList<>());
             SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationToken.authenticated(userId,token,new ArrayList<>()));
         }
         filterChain.doFilter(request, response);

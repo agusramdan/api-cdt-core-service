@@ -3,6 +3,7 @@ package agus.ramdan.cdt.core.trx.service.deposit;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
+import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
@@ -31,6 +32,7 @@ public class TrxDepositCommandService {
     private final TrxDepositMapper trxDepositMapper;
     private final QRCodeQueryService codeQueryService;
     private final MachineQueryService machineQueryService;
+    private final ServiceProductQueryService serviceProductQueryService;
     private final ServiceTransactionService transactionService;
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
@@ -44,27 +46,26 @@ public class TrxDepositCommandService {
             val validations =  new ArrayList<ErrorValidation>();
             val code = codeQueryService.getForRelation(token,validations,"qr_code");
             val machine = machineQueryService.getForRelation(dto.getMachine(),validations,"machine");
+            val product = code.getServiceProduct();
+            // save deposit
+            deposit.setCode(code);
+            deposit.setServiceProduct(product);
+            deposit.setMachine(machine);
             if (validations.size()>0){
                 throw new BadRequestException("Invalid Transaction",validations.toArray(new ErrorValidation[0]));
             }
-            // save deposit
-            deposit.setCode(code);
-            deposit.setServiceProduct(code.getServiceProduct());
-            deposit.setMachine(machine);
             deposit.setStatus(TrxDepositStatus.DEPOSIT);
+            log.info("Deposit; id={}; amount={}; product={};",deposit.getId(),deposit.getAmount(),product.getCode());
             deposit = repository.save(deposit);
-
             // prepare transfer
-            deposit = prepareTransfer(deposit);
-
+            deposit = prepareTransaction(deposit);
             // Transfer Fund
-            deposit = transferFund(deposit);
-
+            deposit = executeTransaction(deposit);
             return Optional.of(deposit);
         }).map(trxDepositMapper::entityToQueryDto).orElse(null);
     }
 
-    public TrxDeposit prepareTransfer(TrxDeposit deposit){
+    public TrxDeposit prepareTransaction(TrxDeposit deposit){
         ServiceTransaction trx = transactionService.prepare(deposit);
         deposit.setServiceTransaction(trx);
         deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
@@ -72,9 +73,11 @@ public class TrxDepositCommandService {
         return deposit;
     }
 
-    public TrxDeposit transferFund(TrxDeposit deposit){
-        transactionService.transferFund(deposit.getServiceTransaction());
-        deposit.setStatus(TrxDepositStatus.SUCCESS);
+    public TrxDeposit executeTransaction(TrxDeposit deposit){
+        val trx = transactionService.executeTransaction(deposit.getServiceTransaction());
+        switch (trx.getStatus()){
+            case SUCCESS ,TRANSFER_SUCCESS: deposit.setStatus(TrxDepositStatus.SUCCESS); break;
+        }
         deposit = repository.save(deposit);
         return deposit;
     }

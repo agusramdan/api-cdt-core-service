@@ -29,12 +29,16 @@ public class TrxTransfer {
 
     @Embedded
     private AuditMetadata auditMetadata;
-
-    private LocalDateTime trx_date;
-
+    @Column(name = "trx_date")
+    private LocalDateTime trxDate;
+    @Enumerated(EnumType.STRING)
+    private TrxTransferStatus status;
+    @ManyToOne
+    @JoinColumn(name = "transaction_id")
+    private ServiceTransaction transaction;
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
-    protected BigDecimal amount;
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "beneficiary_account_id")
@@ -44,10 +48,15 @@ public class TrxTransfer {
     @JoinColumn(name = "gateway_id")
     private Gateway gateway;
 
+    private String description;
+
     @PrePersist
     protected void onCreate() {
-        if (trx_date == null) {
-            trx_date = LocalDateTime.now();
+        if (status == null) {
+            status = TrxTransferStatus.PREPARE;
+        }
+        if (trxDate == null) {
+            trxDate = LocalDateTime.now();
         }
     }
 }

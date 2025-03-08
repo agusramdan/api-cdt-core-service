@@ -15,6 +15,9 @@ public class QRCodeCreateDTO {
     @Schema(description = "QR Code unik")
     private String code;
 
+    @Schema(description = "Status")
+    private String status;
+
     @Schema(description = "Waktu kedaluwarsa QR Code")
     private String expired_time;
 
