@@ -2,6 +2,8 @@ package agus.ramdan.cdt.core.trx.service.gateway;
 
 import agus.ramdan.cdt.core.gateway.controller.client.transfer.TransferBalanceClient;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -21,6 +23,20 @@ public class GatewayService {
         val dto = gatewayTransferMapper.mapDTO(trx);
 
         val response = transferBalanceClient.transferBalance(dto);
+        /**
+         * List of status transaction:
+         * 1 = On Process
+         * 2 = Success
+         * 4 = Failed
+         * 5 = Reverse
+         */
+        if ("2".equals(response.getStatus())){
+            trx.setStatus(TrxTransferStatus.SUCCESS);
+        } else if ("4".equals(response.getStatus())) {
+            trx.setStatus(TrxTransferStatus.FAILED);
+        } else if ("5".equals(response.getStatus())) {
+            trx.setStatus(TrxTransferStatus.REVERSAL);
+        }
         //trx.setGateway();
         return trx;
     }

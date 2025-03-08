@@ -33,7 +33,7 @@ public class BeneficiaryAccount {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -70,7 +70,7 @@ public class BeneficiaryAccount {
     private Branch branch;
 
     // static qe
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cr_code_id")
     private QRCode qrCode;
 

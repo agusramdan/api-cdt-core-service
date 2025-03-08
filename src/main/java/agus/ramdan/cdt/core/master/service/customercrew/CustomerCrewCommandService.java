@@ -10,6 +10,7 @@ import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerCrewRepository;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
+import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class CustomerCrewCommandService implements
     private final CustomerCrewRepository repository;
     private final CustomerCrewMapper mapper;
     private final CustomerRepository customerRepository;
+    private final CustomerQueryService customerQueryService;
 
     @Override
     public UUID convertId(String id) {
@@ -53,16 +55,19 @@ public class CustomerCrewCommandService implements
         val validations = new ArrayList<ErrorValidation>();
 //        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         // Fetch related Customer entity and set it
+
         if (dto.getCustomerId()!=null) {
             entity.setCustomer(customerRepository.findById(UUID.fromString(dto.getCustomerId()))
                     .orElseGet(() -> {
                         validations.add(ErrorValidation.New("Customer not found", "customer_id", dto.getCustomerId()));
                         return null;
                     }));
-        }else {
+        } else {
+            entity.setCustomer(customerQueryService.getForRelation(dto.getCustomer(),validations,"customer"));
+        }
+        if(entity.getCustomer()==null){
             validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
         }
-
         if (validations.size() > 0) {
             throw new BadRequestException(
                     "Validation error",

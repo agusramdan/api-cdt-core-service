@@ -16,7 +16,7 @@ import java.util.UUID;
 @Tag(name = "Customer Query API", description = "APIs for query Customer")
 @RequiredArgsConstructor
 @Getter
-public class CustomerQueryController implements BaseQueryController<CustomerQueryDTO, UUID> {
+public class CustomerQueryController implements BaseQueryController<CustomerQueryDTO, String> {
     private final CustomerQueryService service;
 }
 

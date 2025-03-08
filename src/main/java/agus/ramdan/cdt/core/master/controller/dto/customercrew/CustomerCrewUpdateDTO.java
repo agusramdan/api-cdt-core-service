@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.master.controller.dto.customercrew;
+import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class CustomerCrewUpdateDTO {
     @JsonProperty("customer_id")
     private String customerId;
 
+    private CustomerDTO customer;
 
     @Schema(description = "Username Crew")
     private String username;

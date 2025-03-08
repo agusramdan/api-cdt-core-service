@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
@@ -55,6 +56,9 @@ public class TrxDeposit {
 
     @ManyToOne
     private QRCode code;
+
+    @ManyToOne
+    private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
     private Machine machine;

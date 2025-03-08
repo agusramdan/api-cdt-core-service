@@ -37,6 +37,6 @@ public class Gateway {
     private String code;
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vendor partner;
 }

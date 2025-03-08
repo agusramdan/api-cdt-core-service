@@ -36,7 +36,7 @@ public class TrxDepositCommandService {
     private final ServiceTransactionService transactionService;
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
-        val option_trx = repository.findByTokenAndSignatureAndAmount(dto.getToken(), dto.getSignature(),dto.getAmount());
+        val option_trx = repository.findByTokenAndSignature(dto.getToken(), dto.getSignature());
         if (option_trx.isPresent()){
             log.info("Resend detected Token and Signature and Amount");
         }
@@ -46,14 +46,18 @@ public class TrxDepositCommandService {
             val validations =  new ArrayList<ErrorValidation>();
             val code = codeQueryService.getForRelation(token,validations,"qr_code");
             val machine = machineQueryService.getForRelation(dto.getMachine(),validations,"machine");
-            val product = code.getServiceProduct();
             // save deposit
             deposit.setCode(code);
-            deposit.setServiceProduct(product);
             deposit.setMachine(machine);
             if (validations.size()>0){
                 throw new BadRequestException("Invalid Transaction",validations.toArray(new ErrorValidation[0]));
             }
+            val product = code.getServiceProduct();
+            if (deposit.getUser()==null){
+                deposit.setUser(code.getUser());
+            }
+            deposit.setServiceProduct(product);
+            deposit.setBeneficiaryAccount(code.getBeneficiaryAccount());
             deposit.setStatus(TrxDepositStatus.DEPOSIT);
             log.info("Deposit; id={}; amount={}; product={};",deposit.getId(),deposit.getAmount(),product.getCode());
             deposit = repository.save(deposit);
@@ -66,7 +70,7 @@ public class TrxDepositCommandService {
     }
 
     public TrxDeposit prepareTransaction(TrxDeposit deposit){
-        ServiceTransaction trx = transactionService.prepare(deposit);
+        var trx = transactionService.prepare(deposit);
         deposit.setServiceTransaction(trx);
         deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
         deposit = repository.save(deposit);

@@ -73,7 +73,7 @@ public class Customer {
     @JsonProperty("msisdn")
     private String msisdn;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Schema(description = "Customer managed By branch")
     private Branch branch;
 }

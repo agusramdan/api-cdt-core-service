@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,9 +39,12 @@ public class ServiceTransaction {
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    private BeneficiaryAccount beneficiaryAccount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private TrxDeposit deposit;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private TrxTransfer transfer;
 }

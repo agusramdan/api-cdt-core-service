@@ -10,5 +10,9 @@ spring:
   datasource:
     url: jdbc:postgresql://db:5433/core
   jpa:
-   show-sql: true
-   hibernate.ddl-auto: create
+    show-sql: false
+
+feign-client:
+  api-cdt-gateway-service:
+    base-url:  http://merahputih-id.tech:8097
+

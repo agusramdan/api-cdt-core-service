@@ -36,7 +36,7 @@ public class TrxPickup {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "machine_id")
     private Machine machine;
 

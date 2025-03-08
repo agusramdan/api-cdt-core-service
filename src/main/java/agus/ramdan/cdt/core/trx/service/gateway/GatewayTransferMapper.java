@@ -2,8 +2,10 @@ package agus.ramdan.cdt.core.trx.service.gateway;
 
 import agus.ramdan.cdt.core.gateway.controller.dto.transfer.TransferBalanceRequestDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+@Mapper(componentModel = "spring")
 public interface GatewayTransferMapper {
 
     @Mapping(source = "gateway.code", target = "gatewayCode")

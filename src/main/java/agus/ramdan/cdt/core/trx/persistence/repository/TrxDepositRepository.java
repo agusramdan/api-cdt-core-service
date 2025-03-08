@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrxDepositRepository extends JpaRepositoryImplementation<TrxDeposit, UUID> {
-    Optional<TrxDeposit> findByTokenAndSignatureAndAmount(String token, String signature, BigDecimal amount);
+    Optional<TrxDeposit> findByTokenAndSignature(String token, String signature);
 }

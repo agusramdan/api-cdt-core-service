@@ -21,8 +21,10 @@ public class TrxTransferService {
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public  TrxTransfer prepare(ServiceTransaction transaction) {
         val transfer = new TrxTransfer();
+        transfer.setBeneficiaryAccount(transaction.getBeneficiaryAccount());
         transfer.setStatus(TrxTransferStatus.PREPARE);
         transfer.setTransaction(transaction);
+        transfer.setAmount(transaction.getAmount());
         return repository.save(transfer);
     }
     @Transactional(Transactional.TxType.REQUIRES_NEW)

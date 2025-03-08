@@ -40,7 +40,7 @@ public class CustomerCrew {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "customer_id")
     private Customer customer;
 

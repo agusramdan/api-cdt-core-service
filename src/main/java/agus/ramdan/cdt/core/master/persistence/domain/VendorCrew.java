@@ -38,7 +38,7 @@ public class VendorCrew {
     @Embedded
     private AuditMetadata auditMetadata;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name= "vendor_id")
     private Vendor vendor;
 

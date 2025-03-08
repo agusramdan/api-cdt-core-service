@@ -12,6 +12,7 @@ import agus.ramdan.cdt.core.master.persistence.repository.BeneficiaryAccountRepo
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
 import agus.ramdan.cdt.core.master.service.bank.BankQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
+import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -30,11 +31,12 @@ public class BeneficiaryAccountCommandService implements
     private final BeneficiaryAccountRepository beneficiaryAccountRepository;
     private final BeneficiaryAccountMapper beneficiaryAccountMapper;
     private final CustomerRepository customerRepository;
+    private final CustomerQueryService customerQueryService;
     private final BranchQueryService branchQueryService;
     private final BankQueryService bankQueryService;
     @Override
     public BeneficiaryAccount saveCreate(BeneficiaryAccount data) {
-        if (data.getBranch()==null){
+        if (data.getBranch()==null && data.getCustomer()!=null){
             data.setBranch(data.getCustomer().getBranch());
         }
         return beneficiaryAccountRepository.save(data);
@@ -42,7 +44,7 @@ public class BeneficiaryAccountCommandService implements
 
     @Override
     public BeneficiaryAccount saveUpdate(BeneficiaryAccount data) {
-        if (data.getBranch()==null){
+        if (data.getBranch()==null && data.getCustomer()!=null){
             data.setBranch(data.getCustomer().getBranch());
         }
         return beneficiaryAccountRepository.save(data);
@@ -62,6 +64,9 @@ public class BeneficiaryAccountCommandService implements
                         return null;
                     }));
         }else {
+            entity.setCustomer(customerQueryService.getForRelation(dto.getCustomer(),validations,"customer"));
+        }
+        if(entity.getCustomer()==null){
             validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
         }
         if (entity.getBank()==null) {

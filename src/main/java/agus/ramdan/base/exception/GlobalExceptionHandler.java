@@ -105,14 +105,6 @@ public class GlobalExceptionHandler {
         val error = new Errors(new Date(),"Validation Error",traceId,spanId, request.getDescription(false),errors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(XxxException.class)
-    public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)),ex.getHttpStatus());
-    }
-
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<?> noContentException(NoContentException ex, WebRequest request) {
         String traceId = getTraceId();
@@ -120,13 +112,20 @@ public class GlobalExceptionHandler {
         log.debug(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
         return ResponseEntity.noContent().build();
     }
-    @ExceptionHandler(InternalServerErrorException.class)
-    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Exception ex, WebRequest request) {
+    @ExceptionHandler(Propagation5xxException.class)
+    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Propagation5xxException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk",traceId,spanId, request.getDescription(false),null);
+        val error = ex.create(traceId,spanId,request.getDescription(false));;
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(XxxException.class)
+    public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request) {
+        String traceId = getTraceId();
+        String spanId = getSpanId();
+        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
+        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)),ex.getHttpStatus());
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request) {

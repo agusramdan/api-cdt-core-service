@@ -5,6 +5,10 @@ import feign.Response;
 import feign.codec.ErrorDecoder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @Log4j2
 public class CustomFeignErrorDecoder implements ErrorDecoder {
 
@@ -35,13 +39,20 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
             int status_group =status/100;
             if (status_group==4){
                 if (errors!=null) {
-                    return new Propagation3xxException("Need Validation",status,String.valueOf(status),null,errors);
+                    return new Propagation4xxException("Need Validation",status,errors.getErrCode(),null,errors);
                 }else {
-                    return new Propagation3xxException("Need Validation",status);
+                    return new Propagation4xxException("Need Validation",status);
                 }
             }else if(status_group==3){
-                return new Propagation3xxException("Redirection",status,String.valueOf(status),null,errors);
+                if (errors!=null) {
+                    return new Propagation3xxException("Redirection",status,errors.getErrCode(),null,errors);
+                }else {
+                    return new Propagation3xxException("Redirection",status);
+                }
             }
+        }
+        if (errors != null){
+            return new Propagation5xxException(errors.getMessage(),status,errors.getErrCode(),errors);
         }
         return new Propagation5xxException("Propagation Internal Server"+message,status,null,errors);
     }

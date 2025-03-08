@@ -25,6 +25,7 @@ public class BeneficiaryAccountCreateDTO {
     @Schema(description = "Customer ID associated with this account", example = "550e8400-e29b-41d4-a716-446655440000")
     @JsonProperty(value = "customer_id",required = true)
     private String customerId;
+    private CustomerDTO customer;
 
     @NotNull(message = " account_number can't null.")
     @NotBlank(message = " account_number can't blank.")

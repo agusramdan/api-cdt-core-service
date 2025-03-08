@@ -13,6 +13,7 @@ import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Random;
 
@@ -38,8 +39,9 @@ public class ServiceTransactionService {
     private final TrxTransferService transferService;
 //    private final GatewayService gatewayService;
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public  ServiceTransaction prepare() {
+    public  ServiceTransaction prepare(BigDecimal amount) {
         val trx = new ServiceTransaction();
+        trx.setAmount(amount);
         trx.setStatus(TrxStatus.PREPARE);
         while (true) {
             trx.setNo(generateRandomString(Long.toString(Instant.now().toEpochMilli())));
@@ -54,9 +56,10 @@ public class ServiceTransactionService {
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public  ServiceTransaction prepare(TrxDeposit deposit) {
-        val trx = prepare();
+        val trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
+        trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
         return repository.save(trx);
     }
     @Transactional(Transactional.TxType.REQUIRES_NEW)
@@ -67,9 +70,12 @@ public class ServiceTransactionService {
         trx.setStatus(TrxStatus.TRANSFER);
         repository.save(trx);
         transfer = transferService.transferFund(transfer);
-        if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus())){
-            trx.setStatus(TrxStatus.TRANSFER_SUCCESS);
-        }
+        trx.setStatus(switch (transfer.getStatus()){
+            case SUCCESS -> TrxStatus.TRANSFER_SUCCESS;
+            case REVERSAL -> TrxStatus.TRANSFER_REVERSAL;
+            case FAILED -> TrxStatus.TRANSFER_FAILED;
+            default -> TrxStatus.TRANSFER;
+        });
         trx = repository.save(trx);
         return trx;
     }

@@ -36,7 +36,7 @@ public class XxxException extends RuntimeException {
         this.errCode =errCode;
         this.code = code;
         this.errors = errors;
-        this.errorValidations = errors.getErrors();
+        this.errorValidations = errors!=null? errors.getErrors():null;
     }
 
     public XxxException(String message, int code, String errCode, Throwable cause, @NotNull Collection<ErrorValidation> errorValidations) {
@@ -48,10 +48,12 @@ public class XxxException extends RuntimeException {
         ErrorValidation[] errorValidations=null;
         if (errors!=null){
             errorValidations = errors.getErrors();
+            details = String.format("%s,details=%s",details,this.errors.getDetails());
         }
         if (errorValidations==null){
             errorValidations = this.errorValidations;
         }
+
         errors = new Errors(new Date(),getMessage(),trace_id,span_id,details,errorValidations);
         errors.setErrCode(this.errCode);
         return errors;

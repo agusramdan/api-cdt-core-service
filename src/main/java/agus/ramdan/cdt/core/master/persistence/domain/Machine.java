@@ -37,18 +37,18 @@ public class Machine {
     private String name;
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Branch branch;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ServiceLocation serviceLocation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vendor supplier;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vendor maintenance;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Vendor pjpur;
 }

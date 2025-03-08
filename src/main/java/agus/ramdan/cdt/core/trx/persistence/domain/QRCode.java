@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -48,19 +49,19 @@ public class QRCode {
     private QRCodeStatus status;
 
     // customer/user information
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CustomerCrew user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
     private Branch branch;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ServiceTransaction serviceTransaction;
 
     @ManyToOne

@@ -33,18 +33,20 @@ public class TrxTransfer {
     private LocalDateTime trxDate;
     @Enumerated(EnumType.STRING)
     private TrxTransferStatus status;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id")
     private ServiceTransaction transaction;
+
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiary_account_id")
     private BeneficiaryAccount beneficiaryAccount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gateway_id")
     private Gateway gateway;
 
