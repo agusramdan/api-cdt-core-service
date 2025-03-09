@@ -1,10 +1,11 @@
 package agus.ramdan.cdt.core.master.controller.dto;
+import agus.ramdan.base.dto.TID;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(name = "Branch", description = "Branch")
-public class BankDTO {
+@Schema(name = "Bank", description = "Bank")
+public class BankDTO implements TID<String> {
 
     @Schema(description = "System Identifier", example = "")
     private String id;

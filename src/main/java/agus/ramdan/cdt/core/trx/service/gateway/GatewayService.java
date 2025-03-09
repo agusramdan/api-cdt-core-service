@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.trx.service.gateway;
 import agus.ramdan.cdt.core.gateway.controller.client.transfer.TransferBalanceClient;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;

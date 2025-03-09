@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.customercrew;
 
+import agus.ramdan.base.dto.TID;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
@@ -61,5 +62,13 @@ public class CustomerCrewQueryService implements
             }
         }
         return data;
+    }
+
+    @Override
+    public CustomerCrew getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
+        if(tid instanceof CustomerCrewDTO){
+            return this.getForRelation((CustomerCrewDTO) tid,validations,key);
+        }
+        return BaseQueryEntityService.super.getForRelation(tid, validations, key);
     }
 }

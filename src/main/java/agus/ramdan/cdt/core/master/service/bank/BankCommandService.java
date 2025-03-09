@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.bank;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankQueryDTO;
@@ -48,7 +49,7 @@ public class BankCommandService implements
     @Override
     public Bank convertFromUpdateDTO(String id, BankUpdateDTO dto) {
         Bank bank = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Bank not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Bank not found"));
         mapper.updateEntityFromUpdateDto(dto, bank);
         return bank;
     }

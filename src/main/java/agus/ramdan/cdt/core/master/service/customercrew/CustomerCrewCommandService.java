@@ -66,13 +66,10 @@ public class CustomerCrewCommandService implements
             entity.setCustomer(customerQueryService.getForRelation(dto.getCustomer(),validations,"customer"));
         }
         if(entity.getCustomer()==null){
-            validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
+            validations.add(ErrorValidation.New("Customer can't not null","customer",null));
         }
         if (validations.size() > 0) {
-            throw new BadRequestException(
-                    "Validation error",
-                    validations.toArray(new ErrorValidation[validations.size()])
-            );
+            throw new BadRequestException("Validation error",validations);
         }
         return entity;
     }

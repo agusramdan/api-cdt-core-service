@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.vendorcrew;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.vendorcrew.VendorCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendorcrew.VendorCrewQueryDTO;
@@ -48,7 +49,7 @@ public class VendorCrewCommandService implements
     @Override
     public VendorCrew convertFromUpdateDTO(String id, VendorCrewUpdateDTO dto) {
         VendorCrew vendorCrew = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Vendor Crew not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Crew not found"));
         mapper.updateEntityFromUpdateDto(dto, vendorCrew);
         return vendorCrew;
     }

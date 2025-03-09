@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto.pickup;
 
+import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,7 +17,7 @@ public class TrxPickupCreateDTO {
     private String signature;
 
     @Schema(description = "ID Mesin")
-    private String machineId;
+    private MachineDTO machine;
 
     @Schema(description = "Informasi Mesin")
     private String machineInfo;

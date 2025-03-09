@@ -14,6 +14,8 @@ import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.QRCodeMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
+import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeStatus;
+import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType;
 import agus.ramdan.cdt.core.trx.persistence.repository.QRCodeRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +66,12 @@ public class QRCodeCommandService implements
         }
         return repository.save(entity);
     }
-
+    public QRCode useCode(QRCode entity) {
+        if (entity.isActive() && entity.getType().equals(QRCodeType.SINGEL_TRX_USE)){
+            entity.setStatus(QRCodeStatus.INACTIVE);
+        }
+        return repository.save(entity);
+    }
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();

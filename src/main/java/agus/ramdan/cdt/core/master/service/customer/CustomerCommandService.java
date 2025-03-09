@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.master.service.customer;
 
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerCreateDTO;
@@ -46,10 +47,7 @@ public class CustomerCommandService implements
         val validations = new ArrayList<ErrorValidation>();
         entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
         if (validations.size() > 0) {
-            throw new BadRequestException(
-                    "Validation error",
-                    validations.toArray(new ErrorValidation[validations.size()])
-            );
+            throw new BadRequestException("Validation error",validations);
         }
         return entity;
     }
@@ -57,7 +55,7 @@ public class CustomerCommandService implements
     @Override
     public Customer convertFromUpdateDTO(UUID id,CustomerUpdateDTO dto) {
         Customer entity = repository.findById(id)
-                .orElseThrow(() -> new BadRequestException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         // Use MapStruct to update only non-null fields
         mapper.updateEntityFromUpdateDto(dto, entity);

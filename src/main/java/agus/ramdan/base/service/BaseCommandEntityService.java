@@ -12,7 +12,7 @@ public interface BaseCommandEntityService<T,ID,ResultDTO,CreateDTO,UpdateDTO,DTO
         } catch (BadRequestException e){
             throw e;
         }catch (Exception e) {
-            throw new BadRequestException("Invalid Data For Create");
+            throw new BadRequestException("Invalid Data For Create",e);
         }
         T newData = saveCreate(data);
         newData = afterCreate(newData,createDTO);

@@ -1,6 +1,8 @@
 package agus.ramdan.cdt.core.trx.service.transfer;
 
-import agus.ramdan.cdt.core.trx.persistence.domain.*;
+import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
 import agus.ramdan.cdt.core.trx.service.gateway.GatewayService;
 import jakarta.transaction.Transactional;

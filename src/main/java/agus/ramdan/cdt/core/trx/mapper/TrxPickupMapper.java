@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface TrxPickupMapper {
 
     //@Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(source = "machineId", target = "machine.id", qualifiedByName = "stringToUUID")
+    //@Mapping(source = "machineId", target = "machine.id", qualifiedByName = "stringToUUID")
     TrxPickup createDtoToEntity(TrxPickupCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")

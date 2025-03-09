@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.location;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.location.ServiceLocationCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.location.ServiceLocationQueryDTO;
@@ -48,7 +49,7 @@ public class ServiceLocationCommandService implements
     @Override
     public ServiceLocation convertFromUpdateDTO(String id, ServiceLocationUpdateDTO dto) {
         ServiceLocation location = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Service Location not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service Location not found"));
         mapper.updateEntityFromUpdateDto(dto, location);
         return location;
     }

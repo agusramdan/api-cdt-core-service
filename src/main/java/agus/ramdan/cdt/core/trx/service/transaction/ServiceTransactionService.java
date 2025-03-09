@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.trx.service.transaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
 import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;

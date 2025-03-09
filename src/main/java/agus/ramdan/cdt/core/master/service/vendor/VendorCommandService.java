@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.vendor;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorQueryDTO;
@@ -48,7 +49,7 @@ public class VendorCommandService implements
     @Override
     public Vendor convertFromUpdateDTO(String id, VendorUpdateDTO dto) {
         Vendor vendor = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
         mapper.updateEntityFromUpdateDto(dto, vendor);
         return vendor;
     }

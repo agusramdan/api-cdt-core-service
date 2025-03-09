@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.gateway;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayQueryDTO;
@@ -48,7 +49,7 @@ public class GatewayCommandService implements
     @Override
     public Gateway convertFromUpdateDTO(String id, GatewayUpdateDTO dto) {
         Gateway gateway = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Gateway not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Gateway not found"));
         mapper.updateEntityFromUpdateDto(dto, gateway);
         return gateway;
     }

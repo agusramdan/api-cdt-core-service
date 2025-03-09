@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.bank;
 
+import agus.ramdan.base.dto.TID;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -66,5 +68,13 @@ public class BankQueryService implements
             }
         }
         return data;
+    }
+
+    @Override
+    public Bank getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
+        if (tid instanceof BankDTO){
+            return this.getForRelation((BankDTO) tid,validations,key);
+        }
+        return BaseQueryEntityService.super.getForRelation(tid, validations, key);
     }
 }

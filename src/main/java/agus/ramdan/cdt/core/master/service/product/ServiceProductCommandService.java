@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.product;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductQueryDTO;
@@ -48,7 +49,7 @@ public class ServiceProductCommandService implements
     @Override
     public ServiceProduct convertFromUpdateDTO(String id, ServiceProductUpdateDTO dto) {
         ServiceProduct product = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Service Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service Product not found"));
         mapper.updateEntityFromUpdateDto(dto, product);
         return product;
     }

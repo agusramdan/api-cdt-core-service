@@ -46,18 +46,18 @@ public class ServiceProductQueryService implements
                 .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
     }
 
-    public ServiceProduct getForRelation(final ServiceProductDTO branchDTO, @NotNull final List<ErrorValidation> validations, String key) {
+    public ServiceProduct getForRelation(final ServiceProductDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
         final String keyField = key==null?"product":key;
         ServiceProduct data = null;
-        if (branchDTO != null) {
-            if (branchDTO.getId() != null) {
-                data = repository.findById(convertId(branchDTO.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Product not found",keyField, branchDTO.getId()));
+        if (dto != null) {
+            if (dto.getId() != null) {
+                data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
+                    validations.add(ErrorValidation.New("Product not found",keyField, dto.getId()));
                     return null;
                 });
             } else {
-                data = repository.findByCode(branchDTO.getCode()).orElseGet( () -> {
-                    validations.add(ErrorValidation.New("Product not found",keyField, branchDTO.getCode()));
+                data = repository.findByCode(dto.getCode()).orElseGet( () -> {
+                    validations.add(ErrorValidation.New("Product not found",keyField, dto.getCode()));
                     return null;
                 });
             }
