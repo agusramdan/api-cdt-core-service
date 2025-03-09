@@ -8,13 +8,12 @@ import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccount
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.BeneficiaryAccountMapper;
-import agus.ramdan.cdt.core.master.persistence.domain.*;
+import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.repository.BeneficiaryAccountRepository;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
 import agus.ramdan.cdt.core.master.service.accounttype.AccountTypeQueryService;
 import agus.ramdan.cdt.core.master.service.bank.BankQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
-import agus.ramdan.cdt.core.master.service.channelcode.ChannelCodeQueryService;
 import agus.ramdan.cdt.core.master.service.countrycode.CountryCodeQueryService;
 import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import agus.ramdan.cdt.core.master.service.customerstatus.CustomerStatusQueryService;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

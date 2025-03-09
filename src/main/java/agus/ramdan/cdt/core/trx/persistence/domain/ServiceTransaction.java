@@ -9,6 +9,7 @@ import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -32,7 +33,7 @@ public class ServiceTransaction {
 
     @Embedded
     private AuditMetadata auditMetadata;
-
+    private LocalDateTime trxDate;
     private TrxStatus status;
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
@@ -46,4 +47,11 @@ public class ServiceTransaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private TrxTransfer transfer;
+
+    @PrePersist
+    protected void onCreate() {
+        if (trxDate == null) {
+            trxDate = LocalDateTime.now();
+        }
+    }
 }

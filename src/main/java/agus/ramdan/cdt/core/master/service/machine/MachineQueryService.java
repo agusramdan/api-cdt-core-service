@@ -1,9 +1,10 @@
 package agus.ramdan.cdt.core.master.service.machine;
 
+import agus.ramdan.base.dto.CodeOrID;
+import agus.ramdan.base.dto.TID;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
-import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.MachineMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
@@ -49,7 +50,7 @@ public class MachineQueryService implements
                 .map(mapper::entityToQueryDto)
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
     }
-    public Machine getForRelation(final MachineDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
+    public Machine getForRelation(final CodeOrID<String> dto, @NotNull final List<ErrorValidation> validations, String key) {
         final String keyField = key==null?"bank":key;
         Machine data = null;
         if (dto != null) {
@@ -66,5 +67,13 @@ public class MachineQueryService implements
             }
         }
         return data;
+    }
+
+    @Override
+    public Machine getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
+        if(tid instanceof CodeOrID<String>){
+            return this.getForRelation((CodeOrID<String>)tid,validations,key);
+        }
+        return BaseQueryEntityService.super.getForRelation(tid, validations, key);
     }
 }

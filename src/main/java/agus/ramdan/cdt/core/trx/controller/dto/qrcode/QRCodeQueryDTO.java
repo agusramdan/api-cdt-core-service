@@ -1,9 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
-import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
-import agus.ramdan.cdt.core.master.controller.dto.CustomerCrewDTO;
-import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
+import agus.ramdan.cdt.core.master.controller.dto.*;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,4 +44,10 @@ public class QRCodeQueryDTO {
     @Schema(description = "Informasi produk layanan terkait")
     @JsonProperty("service_product")
     private ServiceProductDTO serviceProduct;
+
+    private VendorDTO vendor;
+
+    private VendorCrewDTO vendorCrew;
+
+    private MachineDTO machine;
 }

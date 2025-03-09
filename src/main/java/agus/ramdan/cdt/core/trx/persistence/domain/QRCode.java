@@ -63,8 +63,17 @@ public class QRCode {
     @ManyToOne(fetch = FetchType.LAZY)
     private ServiceTransaction serviceTransaction;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private ServiceProduct serviceProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Vendor vendor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private VendorCrew vendorCrew;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Machine machine;
 
     @PrePersist
     protected void onCreate() {

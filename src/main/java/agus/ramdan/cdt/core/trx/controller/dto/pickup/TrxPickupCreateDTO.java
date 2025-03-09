@@ -13,9 +13,9 @@ import java.util.List;
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Schema(description = "DTO untuk membuat transaksi Pickup")
-public class TrxPickupCreateDTO {
+public class TrxPickupCreateDTO  {
     private String signature;
-
+    private String token;
     @Schema(description = "ID Mesin")
     private MachineDTO machine;
 
@@ -33,7 +33,7 @@ public class TrxPickupCreateDTO {
 
     @Schema(description = "Tanggal Transaksi")
     private LocalDateTime trxDate;
-
+    private Integer totalPieces;
     @Schema(description = "Total Amount")
     private BigDecimal amount;
 

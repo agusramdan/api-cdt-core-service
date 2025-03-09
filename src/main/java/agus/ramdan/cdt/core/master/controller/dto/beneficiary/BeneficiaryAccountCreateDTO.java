@@ -2,9 +2,6 @@ package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
 import agus.ramdan.cdt.core.master.controller.dto.*;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

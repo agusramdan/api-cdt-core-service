@@ -23,4 +23,5 @@ public class QRCodeDTO {
 
     @Schema(description = "Waktu kedaluwarsa QR Code")
     private String expired_time;
+
 }

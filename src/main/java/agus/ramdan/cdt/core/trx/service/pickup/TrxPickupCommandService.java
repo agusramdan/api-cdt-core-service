@@ -1,15 +1,23 @@
 package agus.ramdan.cdt.core.trx.service.pickup;
 
+import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
+import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
+import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxPickupMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickupStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
+import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -19,6 +27,8 @@ public class TrxPickupCommandService implements
 
     private final TrxPickupRepository repository;
     private final TrxPickupMapper mapper;
+    private final QRCodeQueryService codeQueryService;
+    private final MachineQueryService machineQueryService;
 
     @Override
     public UUID convertId(String id) {
@@ -42,7 +52,18 @@ public class TrxPickupCommandService implements
 
     @Override
     public TrxPickup convertFromCreateDTO(TrxPickupCreateDTO dto) {
-        return mapper.createDtoToEntity(dto);
+        val validates = new ArrayList<ErrorValidation>();
+        val code = codeQueryService.getForRelation(new QRCodeDTO(dto.getToken()),validates,"qr_code");
+        val entity = mapper.createDtoToEntity(dto);
+        if (code==null || !code.isActive()){
+            validates.add(ErrorValidation.New("Invalid Token","qr_code",dto.getToken()));
+        }else {
+            entity.setQrCode(code);
+            machineQueryService.relation(dto.getMachine(),validates,"machine").ifPresent(entity::setMachine);
+        }
+        BadRequestException.ThrowWhenError("Invalid Transaction",validates);
+        entity.setStatus(TrxPickupStatus.SUCCESS);
+        return entity;
     }
 
     @Override

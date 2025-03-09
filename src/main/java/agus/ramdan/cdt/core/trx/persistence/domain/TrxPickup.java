@@ -32,6 +32,10 @@ public class TrxPickup {
     private UUID id;
 
     private String signature;
+    private String token;
+
+    @ManyToOne
+    private QRCode qrCode;
 
     @Embedded
     private AuditMetadata auditMetadata;
@@ -53,7 +57,7 @@ public class TrxPickup {
     private LocalDateTime cdm_trx_date;
 
     private LocalDateTime trx_date;
-
+    private Integer totalPieces;
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00")
     private BigDecimal amount;

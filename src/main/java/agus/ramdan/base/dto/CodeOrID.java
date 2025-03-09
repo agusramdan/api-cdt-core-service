@@ -1,6 +1,5 @@
 package agus.ramdan.base.dto;
 
-public interface CodeOrID<ID> {
-    ID getGet();
+public interface CodeOrID<ID> extends TID<ID> {
     String getCode();
 }
