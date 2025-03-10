@@ -1,5 +1,6 @@
 package agus.ramdan.base.service;
 
+import agus.ramdan.base.dto.CodeOrID;
 import agus.ramdan.base.dto.TID;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 public interface BaseQueryEntityService<T,ID,DTO,DTO_ID> extends
         BaseQueryService<DTO,DTO_ID>,
@@ -43,12 +45,25 @@ public interface BaseQueryEntityService<T,ID,DTO,DTO_ID> extends
 
     DTO convert(T entity);
 
+    default T getForRelation(final CodeOrID<DTO_ID> dto, @NotNull final List<ErrorValidation> validations, String key) {
+        final String keyField = key==null?"branch":key;
+        T data = null;
+        if (dto != null) {
+            String name = dto.getClass().getSimpleName().replace("DTO","");
+            if (dto.getId() != null) {
+                data = findById(convertId(dto.getId())).orElseGet(() ->ErrorValidation.add(validations,name+"not found",keyField+".id", dto.getId()));
+            } else {
+                data = findByCode(dto.getCode()).orElseGet(() ->ErrorValidation.add(validations,name+" not found",keyField+".code", dto.getCode()));
+            }
+        }
+        return data;
+    }
     default T getForRelation(final TID<DTO_ID> tid, @NotNull final List<ErrorValidation> validations, String key) {
         T data = null;
         if (tid != null) {
             final String keyField = key==null?tid.getClass().getSimpleName():key;
             if (tid.getId() != null) {
-                data = getRepository().findById(convertId(tid.getId())).orElseGet(() -> {
+                data = findById(convertId(tid.getId())).orElseGet(() -> {
                     validations.add(ErrorValidation.New(tid.getClass().getSimpleName().replace("DTO","")+" not found",keyField+".id", tid.getId()));
                     return null;
                 });
@@ -56,12 +71,33 @@ public interface BaseQueryEntityService<T,ID,DTO,DTO_ID> extends
         }
         return data;
     }
+    default Optional<T> relation(final DTO_ID id, Function<DTO_ID,T> whenError) {
+        T data = null;
+        if (id !=null) {
+            try {
+                data = findById(convertId(id)).orElseGet(()->whenError.apply(id));
+            } catch (Exception e) {
+                data = whenError.apply(id);
+            }
+        }
+        return Optional.ofNullable(data);
+    }
     default Optional<T> relation(final TID<DTO_ID> tid, @NotNull final List<ErrorValidation> validations, String key) {
         if (tid !=null) {
             try {
                 return Optional.ofNullable(getForRelation(tid, validations, key));
             } catch (Exception e) {
-                validations.add(ErrorValidation.New(e.getMessage(), key + ".id", tid.getId()));
+                ErrorValidation.add(validations,e.getMessage(), key + ".id", tid.getId());
+            }
+        }
+        return Optional.empty();
+    }
+    default Optional<T> relation(CodeOrID<DTO_ID> dto, @NotNull final List<ErrorValidation> validations, String key) {
+        if (dto !=null) {
+            try {
+                return Optional.ofNullable(getForRelation(dto, validations, key));
+            } catch (Exception e) {
+                ErrorValidation.add(validations,e.getMessage(), key + ".id", dto.getId());
             }
         }
         return Optional.empty();

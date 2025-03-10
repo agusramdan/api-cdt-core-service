@@ -1,5 +1,7 @@
 package agus.ramdan.cdt.core.master.service.vendorcrew;
 
+import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.vendorcrew.VendorCrewCreateDTO;
@@ -8,9 +10,12 @@ import agus.ramdan.cdt.core.master.controller.dto.vendorcrew.VendorCrewUpdateDTO
 import agus.ramdan.cdt.core.master.mapping.VendorCrewMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.VendorCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.VendorCrewRepository;
+import agus.ramdan.cdt.core.master.service.vendor.VendorQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -20,6 +25,7 @@ public class VendorCrewCommandService implements
 
     private final VendorCrewRepository repository;
     private final VendorCrewMapper mapper;
+    private final VendorQueryService vendorQueryService;
 
     @Override
     public UUID convertId(String id) {
@@ -48,10 +54,13 @@ public class VendorCrewCommandService implements
 
     @Override
     public VendorCrew convertFromUpdateDTO(String id, VendorCrewUpdateDTO dto) {
-        VendorCrew vendorCrew = repository.findById(UUID.fromString(id))
+        val entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Crew not found"));
-        mapper.updateEntityFromUpdateDto(dto, vendorCrew);
-        return vendorCrew;
+        val validations = new ArrayList<ErrorValidation>();
+        vendorQueryService.relation(dto.getVendorId(),d->ErrorValidation.add(validations,"Vendor not found", "vendor_id",d)).ifPresent(entity::setVendor);
+        BadRequestException.ThrowWhenError("Validation error",validations);
+        mapper.updateEntityFromUpdateDto(dto, entity);
+        return entity;
     }
 
     @Override

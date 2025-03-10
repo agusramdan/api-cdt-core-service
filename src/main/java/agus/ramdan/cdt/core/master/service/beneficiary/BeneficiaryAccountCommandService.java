@@ -66,14 +66,8 @@ public class BeneficiaryAccountCommandService implements
         BeneficiaryAccount entity = beneficiaryAccountMapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
         // Fetch related Customer entity and set it
-        if (dto.getCustomerId()!=null) {
-            entity.setCustomer(customerRepository.findById(UUID.fromString(dto.getCustomerId()))
-                    .orElseGet(() -> {
-                        validations.add(ErrorValidation.New("Customer not found", "customer_id", dto.getCustomerId()));
-                        return null;
-                    }));
-        }
-        customerQueryService.relation(dto.getCustomer(),validations,"customer").ifPresent(entity::setCustomer);
+        customerQueryService.relation(dto.getCustomerId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
+                .or(()->customerQueryService.relation(dto.getCustomer(),validations,"customer")).ifPresent(entity::setCustomer);
         branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
         bankQueryService.relation(dto.getBank(),validations,"bank").ifPresent(entity::setBank);
         accountTypeQueryService.relation(dto.getAccountType(),validations,"account_type").ifPresent(entity::setAccountType);

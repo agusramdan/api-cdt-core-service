@@ -55,28 +55,15 @@ public class CustomerCrewCommandService implements
         val validations = new ArrayList<ErrorValidation>();
 //        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         // Fetch related Customer entity and set it
-
-        if (dto.getCustomerId()!=null) {
-            entity.setCustomer(customerRepository.findById(UUID.fromString(dto.getCustomerId()))
-                    .orElseGet(() -> {
-                        validations.add(ErrorValidation.New("Customer not found", "customer_id", dto.getCustomerId()));
-                        return null;
-                    }));
-        } else {
-            entity.setCustomer(customerQueryService.getForRelation(dto.getCustomer(),validations,"customer"));
-        }
-        if(entity.getCustomer()==null){
-            validations.add(ErrorValidation.New("Customer can't not null","customer",null));
-        }
-        if (validations.size() > 0) {
-            throw new BadRequestException("Validation error",validations);
-        }
+        customerQueryService.relation(dto.getCustomerId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
+                .or(()->customerQueryService.relation(dto.getCustomer(),validations,"customer")).ifPresentOrElse(entity::setCustomer,()->ErrorValidation.add(validations,"Customer can't not null","customer",null));
+        BadRequestException.ThrowWhenError("Validation error",validations);
         return entity;
     }
 
     @Override
     public CustomerCrew convertFromUpdateDTO(String id, CustomerCrewUpdateDTO dto) {
-        CustomerCrew customerCrew = repository.findById(UUID.fromString(id))
+        val customerCrew = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new RuntimeException("Customer Crew not found"));
         mapper.updateEntityFromUpdateDto(dto, customerCrew);
         return customerCrew;

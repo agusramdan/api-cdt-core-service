@@ -75,25 +75,14 @@ public class QRCodeCommandService implements
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();
-
-        if(StringUtils.hasText(dto.getCode()))
-            repository.findByCode(dto.getCode())
-                    .ifPresent(qrCode -> {
-                        validations.add(ErrorValidation.New("QR Code already exists", "code", qrCode.getCode()));
-                    });
-        val qrCode = mapper.createDtoToEntity(dto);
-        qrCode.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
-        qrCode.setServiceProduct(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product"));
-        qrCode.setBeneficiaryAccount(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account"));
-        qrCode.setUser(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user"));
-        validateActiveStatus(qrCode,validations);
-        if(validations.size() > 0) {
-            throw new BadRequestException(
-                    "Validation error",
-                    validations.toArray(new ErrorValidation[validations.size()])
-            );
-        }
-        return qrCode;
+        if(StringUtils.hasText(dto.getCode())) repository.findByCode(dto.getCode()).ifPresent(qrCode -> ErrorValidation.add(validations,"QR Code already exists", "code", qrCode.getCode()));
+        val entity = mapper.createDtoToEntity(dto);
+        branchQueryService.relation(dto.getBranch(),validations,"branch").ifPresent(entity::setBranch);
+        serviceProductQueryService.relation(dto.getServiceProduct(),validations,"service_product").ifPresent(entity::setServiceProduct);
+        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(),validations,"beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
+        customerCrewQueryService.relation(dto.getUser(),validations,"user").ifPresent(entity::setUser);
+        BadRequestException.ThrowWhenError("Validation error",validations);
+        return entity;
     }
 
     @Override
@@ -103,22 +92,17 @@ public class QRCodeCommandService implements
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
         mapper.updateEntityFromUpdateDto(dto, entity);
         val validations = new ArrayList<ErrorValidation>();
-        entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
-        entity.setServiceProduct(Optional.ofNullable(serviceProductQueryService.getForRelation(dto.getServiceProduct(),validations,"service_product")).orElse(entity.getServiceProduct()));
-        entity.setBeneficiaryAccount(Optional.ofNullable(beneficiaryAccountQueryService.getForRelation(dto.getBeneficiaryAccount(),validations,"beneficiary_account")).orElse(entity.getBeneficiaryAccount()));
-        entity.setUser(Optional.ofNullable(customerCrewQueryService.getForRelation(dto.getUser(),validations,"user")).orElse(entity.getUser()));
-
-        if(validations.size() > 0) {
-            throw new BadRequestException(
-                    "Validation error",
-                    validations.toArray(new ErrorValidation[validations.size()])
-            );
-        }
+        branchQueryService.relation(dto.getBranch(),validations,"branch").ifPresent(entity::setBranch);
+        serviceProductQueryService.relation(dto.getServiceProduct(),validations,"service_product").ifPresent(entity::setServiceProduct);
+        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(),validations,"beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
+        customerCrewQueryService.relation(dto.getUser(),validations,"user").ifPresent(entity::setUser);
+        BadRequestException.ThrowWhenError("Validation error",validations);
         return entity;
     }
 
     @Override
     public QRCodeQueryDTO convertToResultDTO(QRCode entity) {
+
         return mapper.entityToQueryDto(entity);
     }
 

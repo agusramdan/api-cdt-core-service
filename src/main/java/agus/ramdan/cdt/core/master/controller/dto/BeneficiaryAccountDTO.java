@@ -1,11 +1,12 @@
 package agus.ramdan.cdt.core.master.controller.dto;
 
+import agus.ramdan.base.dto.TID;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(name = "BeneficiaryAccountDTO", description = "DTO for querying beneficiary account details")
-public class BeneficiaryAccountDTO {
+public class BeneficiaryAccountDTO implements TID<String> {
 
     @Schema(description = "Beneficiary Account ID", example = "550e8400-e29b-41d4-a716-446655440000")
     private String id;

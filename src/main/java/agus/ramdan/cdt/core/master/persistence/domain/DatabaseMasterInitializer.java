@@ -35,5 +35,6 @@ public class DatabaseMasterInitializer {
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_vendor_crew_msisdn ON cdt_vendor_crew (msisdn) WHERE deleted_at IS NULL and msisdn is not NULL and msisdn <> '';");
 
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_product_code ON cdt_product (code) WHERE deleted_at IS NULL;");
+        jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_gateway_code ON cdt_gateway (code) WHERE deleted_at IS NULL;");
     }
 }
