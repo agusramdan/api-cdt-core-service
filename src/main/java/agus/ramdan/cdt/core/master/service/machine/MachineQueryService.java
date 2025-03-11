@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -45,7 +46,12 @@ public class MachineQueryService implements
                 .map(mapper::entityToQueryDto)
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
     }
-//    public Machine getForRelation(final CodeOrID<String> dto, @NotNull final List<ErrorValidation> validations, String key) {
+
+    @Override
+    public Optional<Machine> findByCode(String code) {
+        return repository.findByCode(code);
+    }
+    //    public Machine getForRelation(final CodeOrID<String> dto, @NotNull final List<ErrorValidation> validations, String key) {
 //        final String keyField = key==null?"bank":key;
 //        Machine data = null;
 //        if (dto != null) {
