@@ -56,14 +56,14 @@ public class MachineCommandService implements
         val validations = new ArrayList<ErrorValidation>();
         val entity = mapper.createDtoToEntity(dto);
         // Fetch related Customer entity and set it
-        serviceLocationQueryService.relation(dto.getServiceLocationId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
-                .or(()->serviceLocationQueryService.relation(dto.getServiceLocation(),validations,"customer")).ifPresent(entity::setServiceLocation);
-        branchQueryService.relation(dto.getBranchId(),d->ErrorValidation.add(validations,"Branch not found", "branch_id",d))
-                .or(()->branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
-        vendorQueryService.relation(dto.getSupplier(),validations,"supplier").ifPresent(entity::setSupplier);
-        vendorQueryService.relation(dto.getMaintenance(),validations,"maintenance").ifPresent(entity::setMaintenance);
-        vendorQueryService.relation(dto.getPjpur(),validations,"pjpur").ifPresent(entity::setPjpur);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        serviceLocationQueryService.relation(dto.getServiceLocationId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+                .or(() -> serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "customer")).ifPresent(entity::setServiceLocation);
+        branchQueryService.relation(dto.getBranchId(), d -> ErrorValidation.add(validations, "Branch not found", "branch_id", d))
+                .or(() -> branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
+        vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
+        vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
+        vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
@@ -72,15 +72,15 @@ public class MachineCommandService implements
         val entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Machine not found"));
         val validations = new ArrayList<ErrorValidation>();
-        serviceLocationQueryService.relation(dto.getServiceLocationId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
-                .or(()->serviceLocationQueryService.relation(dto.getServiceLocation(),validations,"customer")).ifPresent(entity::setServiceLocation);
-        branchQueryService.relation(dto.getBranchId(),d->ErrorValidation.add(validations,"Branch not found", "branch_id",d))
-                .or(()->branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
-        vendorQueryService.relation(dto.getSupplier(),validations,"supplier").ifPresent(entity::setSupplier);
-        vendorQueryService.relation(dto.getMaintenance(),validations,"maintenance").ifPresent(entity::setMaintenance);
-        vendorQueryService.relation(dto.getPjpur(),validations,"pjpur").ifPresent(entity::setPjpur);
+        serviceLocationQueryService.relation(dto.getServiceLocationId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+                .or(() -> serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "customer")).ifPresent(entity::setServiceLocation);
+        branchQueryService.relation(dto.getBranchId(), d -> ErrorValidation.add(validations, "Branch not found", "branch_id", d))
+                .or(() -> branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
+        vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
+        vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
+        vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
         mapper.updateEntityFromUpdateDto(dto, entity);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 

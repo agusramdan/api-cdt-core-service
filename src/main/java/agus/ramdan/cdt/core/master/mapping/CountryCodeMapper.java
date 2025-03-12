@@ -12,7 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface CountryCodeMapper {
 
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     CountryCode createDtoToEntity(CountryCodeCreateDTO dto);
 
     CountryCodeQueryDTO entityToQueryDto(CountryCode entity);

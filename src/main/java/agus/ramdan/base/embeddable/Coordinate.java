@@ -7,6 +7,6 @@ import lombok.Data;
 @Data
 @Embeddable
 public class Coordinate {
-    private Double longitude ;
+    private Double longitude;
     private Double latitude;
 }

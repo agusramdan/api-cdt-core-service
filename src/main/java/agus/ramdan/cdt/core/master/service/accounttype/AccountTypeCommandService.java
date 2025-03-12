@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.service.accounttype;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.accounttype.AccountTypeCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.accounttype.AccountTypeQueryDTO;
@@ -46,7 +47,7 @@ public class AccountTypeCommandService implements
     @Override
     public AccountType convertFromUpdateDTO(String id, AccountTypeUpdateDTO dto) {
         AccountType accountType = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account Type not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Account Type not found"));
         mapper.updateEntityFromUpdateDto(dto, accountType);
         return accountType;
     }

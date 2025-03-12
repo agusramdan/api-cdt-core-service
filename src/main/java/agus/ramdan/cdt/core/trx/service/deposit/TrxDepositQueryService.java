@@ -2,14 +2,11 @@ package agus.ramdan.cdt.core.trx.service.deposit;
 
 import agus.ramdan.base.service.BaseQueryEntityService;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
-import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
-import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxDepositRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

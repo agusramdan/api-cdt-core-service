@@ -10,9 +10,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Validated
-public interface BaseCommandController<ResultDTO,CreateDTO,UpdateDTO, ID_DTO>{
+public interface BaseCommandController<ResultDTO, CreateDTO, UpdateDTO, ID_DTO> {
 
-    BaseCommandService<ResultDTO,CreateDTO,UpdateDTO, ID_DTO> getService();
+    BaseCommandService<ResultDTO, CreateDTO, UpdateDTO, ID_DTO> getService();
 
     @PostMapping
     @Operation(summary = "Create new data")
@@ -25,7 +25,7 @@ public interface BaseCommandController<ResultDTO,CreateDTO,UpdateDTO, ID_DTO>{
     @Operation(summary = "Update data details (partial update supported)")
     @ApiResponse(responseCode = "200", description = "Customer updated successfully")
     default ResponseEntity<ResultDTO> updateCustomer(@PathVariable("id") ID_DTO id, @Valid @RequestBody UpdateDTO dto) {
-        return ResponseEntity.ok(getService().commandUpdate(id,dto));
+        return ResponseEntity.ok(getService().commandUpdate(id, dto));
     }
 
     @DeleteMapping("/{id}")

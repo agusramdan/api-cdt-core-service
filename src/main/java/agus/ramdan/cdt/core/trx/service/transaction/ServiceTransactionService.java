@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.service.transaction;
 
+import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
@@ -34,50 +35,63 @@ public class ServiceTransactionService {
         }
         return result.toString();
     }
+
     private final ServiceTransactionRepository repository;
     private final TrxTransferService transferService;
-//    private final GatewayService gatewayService;
+
+    //    private final GatewayService gatewayService;
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public  ServiceTransaction prepare(BigDecimal amount) {
+    public ServiceTransaction prepare(BigDecimal amount) {
         val trx = new ServiceTransaction();
         trx.setAmount(amount);
         trx.setStatus(TrxStatus.PREPARE);
         while (true) {
             trx.setNo(generateRandomString(Long.toString(Instant.now().toEpochMilli())));
             try {
-                log.info("prepare {}",trx.getNo());
+                log.info("prepare {}", trx.getNo());
                 return repository.save(trx);
             } catch (Exception e) {
-                log.info("duplicate {}",trx.getNo());
+                log.info("duplicate {}", trx.getNo());
             }
         }
     }
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public  ServiceTransaction prepare(TrxDeposit deposit) {
+    public ServiceTransaction prepare(TrxDeposit deposit) {
         val trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
         trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
         return repository.save(trx);
     }
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
     public ServiceTransaction executeTransaction(ServiceTransaction trx) {
-        log.info("Transfer Transaction; id={}; amount={}; trx={};",trx.getId(),trx.getAmount(),trx.getNo());
-        var transfer = transferService.prepare(trx);
-        trx.setTransfer(transfer);
+        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+        var transfer = trx.getTransfer();
+        if (transfer == null) {
+            transfer = transferService.prepare(trx);
+            trx.setTransfer(transfer);
+            trx.setStatus(TrxStatus.TRANSFER);
+            repository.save(trx);
+        }
         trx.setStatus(TrxStatus.TRANSFER);
         repository.save(trx);
-        transfer = transferService.transferFund(transfer);
-        trx.setStatus(switch (transfer.getStatus()){
-            case SUCCESS -> TrxStatus.TRANSFER_SUCCESS;
-            case REVERSAL -> TrxStatus.TRANSFER_REVERSAL;
-            case FAILED -> TrxStatus.TRANSFER_FAILED;
-            default -> TrxStatus.TRANSFER;
-        });
-        trx = repository.save(trx);
+        try {
+            transfer = transferService.transferFund(transfer);
+            trx.setStatus(switch (transfer.getStatus()) {
+                case SUCCESS -> TrxStatus.TRANSFER_SUCCESS;
+                case REVERSAL -> TrxStatus.TRANSFER_REVERSAL;
+                case FAILED -> TrxStatus.TRANSFER_FAILED;
+                default -> TrxStatus.TRANSFER;
+            });
+            trx = repository.save(trx);
+        } catch (Propagation5xxException e) {
+            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
+            repository.save(trx);
+            throw e;
+        }
         return trx;
     }
-
 }
 

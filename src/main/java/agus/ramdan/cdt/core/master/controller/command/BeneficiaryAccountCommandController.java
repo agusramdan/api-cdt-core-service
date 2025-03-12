@@ -17,6 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Beneficiary Account Command API", description = "APIs for creating, updating, and deleting beneficiary")
 @RequiredArgsConstructor
 @Getter
-public class BeneficiaryAccountCommandController implements BaseCommandController< BeneficiaryAccountQueryDTO,BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO,String> {
+public class BeneficiaryAccountCommandController implements BaseCommandController<BeneficiaryAccountQueryDTO, BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO, String> {
     private final BeneficiaryAccountCommandService service;
 }

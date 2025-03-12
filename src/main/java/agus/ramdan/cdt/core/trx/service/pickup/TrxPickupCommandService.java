@@ -4,7 +4,6 @@ import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
-import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
@@ -53,15 +52,9 @@ public class TrxPickupCommandService implements
     @Override
     public TrxPickup convertFromCreateDTO(TrxPickupCreateDTO dto) {
         val validates = new ArrayList<ErrorValidation>();
-        val code = codeQueryService.getForRelation(new QRCodeDTO(dto.getToken()),validates,"qr_code");
         val entity = mapper.createDtoToEntity(dto);
-        if (code==null || !code.isActive()){
-            validates.add(ErrorValidation.New("Invalid Token","qr_code",dto.getToken()));
-        }else {
-            entity.setQrCode(code);
-            machineQueryService.relation(dto.getMachine(),validates,"machine").ifPresent(entity::setMachine);
-        }
-        BadRequestException.ThrowWhenError("Invalid Transaction",validates);
+        machineQueryService.relation(dto.getMachine(), validates, "machine").ifPresent(entity::setMachine);
+        BadRequestException.ThrowWhenError("Invalid Transaction", validates);
         entity.setStatus(TrxPickupStatus.SUCCESS);
         return entity;
     }

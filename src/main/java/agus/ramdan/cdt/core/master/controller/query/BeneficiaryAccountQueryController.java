@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Beneficiary Query Account API", description = "APIs for query Beneficiary Account")
 @RequiredArgsConstructor
 @Getter
-public class BeneficiaryAccountQueryController implements BaseQueryController<BeneficiaryAccountQueryDTO,String> {
+public class BeneficiaryAccountQueryController implements BaseQueryController<BeneficiaryAccountQueryDTO, String> {
     private final BeneficiaryAccountQueryService service;
 }

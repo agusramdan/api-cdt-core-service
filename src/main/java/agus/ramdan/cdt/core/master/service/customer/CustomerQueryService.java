@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter
 public class CustomerQueryService implements
-        BaseQueryEntityService<Customer, UUID, CustomerQueryDTO,String> {
+        BaseQueryEntityService<Customer, UUID, CustomerQueryDTO, String> {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
@@ -43,18 +43,18 @@ public class CustomerQueryService implements
     }
 
     public Customer getForRelation(final CustomerDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
-        final String keyField = key==null?"bank":key;
+        final String keyField = key == null ? "bank" : key;
         val validation = new ArrayList<ErrorValidation>();
         Customer data = null;
         if (dto != null) {
             if (dto.getId() != null) {
                 data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-                    validation.add(ErrorValidation.New("Customer not found",keyField+".id", dto.getId()));
+                    validation.add(ErrorValidation.New("Customer not found", keyField + ".id", dto.getId()));
                     return null;
                 });
             } else {
-                data = repository.findByKtp(dto.getRef()).orElseGet( () -> {
-                    validation.add(ErrorValidation.New("Customer not found",keyField+".ref", dto.getRef()));
+                data = repository.findByKtp(dto.getRef()).orElseGet(() -> {
+                    validation.add(ErrorValidation.New("Customer not found", keyField + ".ref", dto.getRef()));
                     return null;
                 });
             }
@@ -64,7 +64,7 @@ public class CustomerQueryService implements
 
     @Override
     public Customer getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
-        if (tid instanceof CustomerDTO) return this.getForRelation((CustomerDTO) tid,validations,key);
+        if (tid instanceof CustomerDTO) return this.getForRelation((CustomerDTO) tid, validations, key);
         return BaseQueryEntityService.super.getForRelation(tid, validations, key);
     }
 }

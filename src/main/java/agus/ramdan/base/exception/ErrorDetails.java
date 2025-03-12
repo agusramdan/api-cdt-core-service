@@ -3,6 +3,7 @@ package agus.ramdan.base.exception;
 import lombok.Getter;
 
 import java.util.Date;
+
 @Getter
 public class ErrorDetails {
     private final Date timestamp;

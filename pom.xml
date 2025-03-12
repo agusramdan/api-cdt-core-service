@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>3.3.8.1.20250313</version>
+	<version>3.3.8.1.20250314</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>
@@ -160,7 +160,8 @@
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
-			<version>7.4</version>
+<!--			<version>7.4</version>-->
+			<version>8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,11 @@ public class TrxDepositCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public ResponseEntity<TrxDepositQueryDTO> create(@RequestBody TrxDepositCreateDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createTrxDeposit(dto));
+        val result = service.createTrxDeposit(dto);
+        if ("TRANSFER_GATEWAY_TIMEOUT".equals(result.getStatus())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping
@@ -40,7 +45,7 @@ public class TrxDepositCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public ResponseEntity<TrxDepositQueryDTO> update(@RequestBody TrxDepositUpdateDTO dto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.updateTrxDeposit(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(service.updateTrxDeposit(dto));
     }
 
     @DeleteMapping("/{id}")

@@ -13,7 +13,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface CustomerStatusMapper {
 
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     CustomerStatus createDtoToEntity(CustomerStatusCreateDTO dto);
 
     CustomerStatusQueryDTO entityToQueryDto(CustomerStatus entity);

@@ -31,5 +31,5 @@ public class AccountType {
 
     private String name;
     private String description;
-    
+
 }

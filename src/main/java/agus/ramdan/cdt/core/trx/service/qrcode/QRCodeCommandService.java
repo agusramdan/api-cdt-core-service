@@ -25,7 +25,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -44,7 +43,7 @@ public class QRCodeCommandService implements
     private final CustomerCrewQueryService customerCrewQueryService;
 
     public void validateActiveStatus(QRCode entity, List<ErrorValidation> validations) {
-       // TODO Tambahkan validasi bila konsisi status entity aktif
+        // TODO Tambahkan validasi bila konsisi status entity aktif
     }
 
     @Override
@@ -66,22 +65,25 @@ public class QRCodeCommandService implements
         }
         return repository.save(entity);
     }
+
     public QRCode useCode(QRCode entity) {
-        if (entity.isActive() && entity.getType().equals(QRCodeType.SINGEL_TRX_USE)){
+        if (entity.isActive() && entity.getType().equals(QRCodeType.SINGEL_TRX_USE)) {
             entity.setStatus(QRCodeStatus.INACTIVE);
         }
         return repository.save(entity);
     }
+
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();
-        if(StringUtils.hasText(dto.getCode())) repository.findByCode(dto.getCode()).ifPresent(qrCode -> ErrorValidation.add(validations,"QR Code already exists", "code", qrCode.getCode()));
+        if (StringUtils.hasText(dto.getCode()))
+            repository.findByCode(dto.getCode()).ifPresent(qrCode -> ErrorValidation.add(validations, "QR Code already exists", "code", qrCode.getCode()));
         val entity = mapper.createDtoToEntity(dto);
-        branchQueryService.relation(dto.getBranch(),validations,"branch").ifPresent(entity::setBranch);
-        serviceProductQueryService.relation(dto.getServiceProduct(),validations,"service_product").ifPresent(entity::setServiceProduct);
-        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(),validations,"beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
-        customerCrewQueryService.relation(dto.getUser(),validations,"user").ifPresent(entity::setUser);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
+        serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
+        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
+        customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
@@ -92,11 +94,11 @@ public class QRCodeCommandService implements
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
         mapper.updateEntityFromUpdateDto(dto, entity);
         val validations = new ArrayList<ErrorValidation>();
-        branchQueryService.relation(dto.getBranch(),validations,"branch").ifPresent(entity::setBranch);
-        serviceProductQueryService.relation(dto.getServiceProduct(),validations,"service_product").ifPresent(entity::setServiceProduct);
-        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(),validations,"beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
-        customerCrewQueryService.relation(dto.getUser(),validations,"user").ifPresent(entity::setUser);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
+        serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
+        beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
+        customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
@@ -110,6 +112,7 @@ public class QRCodeCommandService implements
     public void delete(UUID id) {
         repository.deleteById(id);
     }
+
     public UUID convertId(String id) {
         return UUID.fromString(id);
     }

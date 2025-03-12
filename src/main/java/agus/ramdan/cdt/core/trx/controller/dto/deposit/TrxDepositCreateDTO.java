@@ -10,7 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -20,21 +21,35 @@ public class TrxDepositCreateDTO {
     @NotNull
     @NotEmpty
     private String token;
-    @NotNull
-    @NotEmpty
-    private String signature;
+    private String username;
+
     @NotNull
     @NotEmpty
     private MachineDTO machine;
+
+    @JsonProperty("machine_info")
+    private String machineInfo;
+
     @JsonProperty("cdm_trx_no")
     @Schema(description = "Trx Number form cdm")
     @NotNull
     @NotEmpty
-    private String cdm_trx_no;
-    private LocalDateTime cdm_trx_date;
-    private LocalDateTime cdm_trx_time;
+    private String cdmTrxNo;
+
+    @NotNull
+    @NotEmpty
+    @JsonProperty("cdm_trx_date")
+    private LocalDate cdmTrxDate;
+
+    @JsonProperty("cdm_trx_time")
+    private LocalTime cdmTrxTime;
+
+    @JsonProperty("cdm_trx_type")
+    private String cdmTrxType;
+
     @NotNull
     @NotEmpty
     private BigDecimal amount;
+
     private List<TrxDepositDenCreateDTO> denominations;
 }

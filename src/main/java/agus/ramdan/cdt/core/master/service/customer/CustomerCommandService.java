@@ -26,11 +26,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerCommandService implements
         BaseCommandService<CustomerQueryDTO, CustomerCreateDTO, CustomerUpdateDTO, UUID>,
-        BaseCommandEntityService<Customer,UUID, CustomerQueryDTO, CustomerCreateDTO, CustomerUpdateDTO, UUID> {
+        BaseCommandEntityService<Customer, UUID, CustomerQueryDTO, CustomerCreateDTO, CustomerUpdateDTO, UUID> {
 
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
     private final BranchQueryService branchQueryService;
+
     @Override
     public Customer saveCreate(Customer data) {
         return repository.save(data);
@@ -43,17 +44,17 @@ public class CustomerCommandService implements
 
     @Override
     public Customer convertFromCreateDTO(CustomerCreateDTO dto) {
-        val entity= mapper.createDtoToEntity(dto);
+        val entity = mapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
         entity.setBranch(Optional.ofNullable(branchQueryService.getForRelation(dto.getBranch(), validations, "branch")).orElse(entity.getBranch()));
         if (validations.size() > 0) {
-            throw new BadRequestException("Validation error",validations);
+            throw new BadRequestException("Validation error", validations);
         }
         return entity;
     }
 
     @Override
-    public Customer convertFromUpdateDTO(UUID id,CustomerUpdateDTO dto) {
+    public Customer convertFromUpdateDTO(UUID id, CustomerUpdateDTO dto) {
         Customer entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 

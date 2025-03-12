@@ -39,7 +39,7 @@ public class VendorCrew {
     private AuditMetadata auditMetadata;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "vendor_id")
+    @JoinColumn(name = "vendor_id")
     private Vendor vendor;
 
     private String ktp;
@@ -57,12 +57,12 @@ public class VendorCrew {
     private Boolean gateway;
 
     @PrePersist
-    protected void onCreate(){
-        username= UserUtils.username(username);
+    protected void onCreate() {
+        username = UserUtils.username(username);
     }
 
     @PreUpdate
-    protected void onUpdate(){
-        username=UserUtils.username(username);
+    protected void onUpdate() {
+        username = UserUtils.username(username);
     }
 }

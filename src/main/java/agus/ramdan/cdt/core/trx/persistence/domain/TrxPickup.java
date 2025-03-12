@@ -20,7 +20,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "cdt_trx_pickup",
         indexes = {@Index(name = "idx_cdt_trx_pickup_token_signature", columnList = "cdm_trx_no, cdm_trx_date, signature")},
-        uniqueConstraints = { @UniqueConstraint(columnNames = { "cdm_trx_no", "cdm_trx_date","signature" }) }
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"cdm_trx_no", "cdm_trx_date", "signature"})}
 )
 @Schema
 @EntityListeners(AuditingEntityListener.class)

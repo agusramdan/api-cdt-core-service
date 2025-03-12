@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "feign-client.api-cdm-core-trx-command-service.trx-pickup", url = "${feign-client.api-cdm-core-trx-command-service.base-url}/api/cdt/core/trx/pickup/command")
+@FeignClient(name = "feign-client.api-cdt-core-trx-command-service.trx-pickup", url = "${feign-client.api-cdt-core-trx-command-service.base-url}/api/cdt/core/trx/pickup/command")
 public interface TrxPickupCommandClient {
 
     @PostMapping

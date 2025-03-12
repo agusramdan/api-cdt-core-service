@@ -15,9 +15,10 @@ public class GatewayService {
     private final GatewayTransferMapper gatewayTransferMapper;
     private final TransferBalanceClient transferBalanceClient;
 
-    public TrxTransfer setupGateway(TrxTransfer trx){
+    public TrxTransfer setupGateway(TrxTransfer trx) {
         return trx;
     }
+
     public TrxTransfer transferFund(TrxTransfer trx) {
         val dto = gatewayTransferMapper.mapDTO(trx);
 
@@ -29,7 +30,7 @@ public class GatewayService {
          * 4 = Failed
          * 5 = Reverse
          */
-        if ("2".equals(response.getStatus())){
+        if ("2".equals(response.getStatus())) {
             trx.setStatus(TrxTransferStatus.SUCCESS);
         } else if ("4".equals(response.getStatus())) {
             trx.setStatus(TrxTransferStatus.FAILED);

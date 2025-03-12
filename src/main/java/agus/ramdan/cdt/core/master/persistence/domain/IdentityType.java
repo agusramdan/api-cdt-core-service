@@ -31,5 +31,5 @@ public class IdentityType {
 
     private String name;
     private String description;
-    
+
 }

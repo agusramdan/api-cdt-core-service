@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class VendorCrewQueryService implements
-        BaseQueryEntityService<VendorCrew, UUID, VendorCrewQueryDTO,String> {
+        BaseQueryEntityService<VendorCrew, UUID, VendorCrewQueryDTO, String> {
     @Getter
     private final VendorCrewRepository repository;
     private final VendorCrewMapper mapper;
@@ -33,29 +33,30 @@ public class VendorCrewQueryService implements
     public VendorCrewQueryDTO convert(VendorCrew entity) {
         return mapper.entityToQueryDto(entity);
     }
+
     @Override
     public UUID convertId(String uuid) {
         return UUID.fromString(uuid);
     }
 
-    public VendorCrewQueryDTO getByUsername(String username){
+    public VendorCrewQueryDTO getByUsername(String username) {
         return repository.findByUsername(username)
                 .map(mapper::entityToQueryDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Crew username not found"));
     }
+
     public VendorCrew getForRelation(final VendorCrewDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
-        final String keyField = key==null?"branch":key;
+        final String keyField = key == null ? "branch" : key;
         VendorCrew data = null;
         if (dto != null) {
             if (dto.getId() != null) {
                 data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Vendor Crew not found",keyField+".id", dto.getId()));
+                    validations.add(ErrorValidation.New("Vendor Crew not found", keyField + ".id", dto.getId()));
                     return null;
                 });
-            }
-            else {
-                data = repository.findByUsername(dto.getUsername()).orElseGet( () -> {
-                    validations.add(ErrorValidation.New("Vendor Crew not found",keyField+".username", dto.getUsername()));
+            } else {
+                data = repository.findByUsername(dto.getUsername()).orElseGet(() -> {
+                    validations.add(ErrorValidation.New("Vendor Crew not found", keyField + ".username", dto.getUsername()));
                     return null;
                 });
             }

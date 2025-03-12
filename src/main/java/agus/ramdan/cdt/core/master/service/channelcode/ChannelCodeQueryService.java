@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.master.service.channelcode;
+
 import agus.ramdan.base.service.BaseQueryEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.channelcode.ChannelCodeQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.ChannelCodeMapper;

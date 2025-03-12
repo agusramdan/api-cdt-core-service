@@ -31,5 +31,5 @@ public class CustomerType {
 
     private String name;
     private String description;
-    
+
 }

@@ -41,7 +41,7 @@ public class CustomerCrew {
     private AuditMetadata auditMetadata;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "customer_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     private String ktp;
@@ -52,12 +52,12 @@ public class CustomerCrew {
     private String msisdn;
 
     @PrePersist
-    protected void onCreate(){
-        username=UserUtils.username(username);
+    protected void onCreate() {
+        username = UserUtils.username(username);
     }
 
     @PreUpdate
-    protected void onUpdate(){
-        username=UserUtils.username(username);
+    protected void onUpdate() {
+        username = UserUtils.username(username);
     }
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequestMapping("/api/cdt/core/master/customers/command")
 @Tag(name = "Customer Command API", description = "APIs for creating, updating, and deleting customers")
 @RequiredArgsConstructor
-public class CustomerCommandController implements BaseCommandController<CustomerQueryDTO,CustomerCreateDTO, CustomerUpdateDTO,UUID> {
+public class CustomerCommandController implements BaseCommandController<CustomerQueryDTO, CustomerCreateDTO, CustomerUpdateDTO, UUID> {
 
     @Getter
     private final CustomerCommandService service;

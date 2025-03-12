@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto;
 
+import agus.ramdan.base.dto.CodeOrID;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Schema(description = "DTO untuk membaca data QR Code")
 @NoArgsConstructor
-public class QRCodeDTO {
+public class QRCodeDTO implements CodeOrID<String> {
     public QRCodeDTO(String code) {
         this.code = code;
     }

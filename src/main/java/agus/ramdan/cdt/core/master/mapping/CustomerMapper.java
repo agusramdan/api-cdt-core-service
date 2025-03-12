@@ -11,11 +11,13 @@ import org.mapstruct.*;
 public interface CustomerMapper {
 
     String map(CustomerType source);
+
     @Named("mapCustomerType")
-    default CustomerType mapCustomerType(String source){
-        if (source==null) return null;
+    default CustomerType mapCustomerType(String source) {
+        if (source == null) return null;
         return CustomerType.valueOf(source);
     }
+
     // Convert Entity to Query DTO
     CustomerQueryDTO entityToQueryDto(Customer customer);
 

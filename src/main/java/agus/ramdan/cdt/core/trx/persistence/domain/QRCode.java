@@ -33,9 +33,9 @@ public class QRCode {
     @Schema(description = "QR Code")
     private String code;
 
-    private LocalDateTime expired_time ;
+    private LocalDateTime expired_time;
 
-    private boolean active=true;
+    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "code_type", nullable = false)
@@ -83,13 +83,13 @@ public class QRCode {
         if (status == null) {
             status = QRCodeStatus.PENDING;
         }
-        if (expired_time == null){
+        if (expired_time == null) {
             if (type == QRCodeType.SINGEL_TRX_USE)
                 expired_time = LocalDateTime.now().plusDays(1);
             else
                 expired_time = LocalDateTime.now().plusYears(1);
         }
-        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())) {
             status = QRCodeStatus.EXPIRED;
         }
         active = status == QRCodeStatus.ACTIVE;
@@ -97,13 +97,13 @@ public class QRCode {
 
     @PreUpdate
     protected void onUpdate() {
-        if (expired_time == null){
+        if (expired_time == null) {
             if (type == QRCodeType.SINGEL_TRX_USE)
                 expired_time = LocalDateTime.now().plusDays(1);
             else
                 expired_time = LocalDateTime.now().plusYears(1);
         }
-        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())) {
             status = QRCodeStatus.EXPIRED;
         }
         active = status == QRCodeStatus.ACTIVE;

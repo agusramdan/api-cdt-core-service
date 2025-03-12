@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.trx.service.deposit;
 
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
@@ -36,63 +37,57 @@ public class TrxDepositCommandService {
     private final ServiceTransactionService transactionService;
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
-        val option_trx = repository.findByTokenAndSignature(dto.getToken(), dto.getSignature());
-        if (option_trx.isPresent()){
-            log.info("Resend detected Token and Signature and Amount");
-        }
-        return option_trx.or(() -> {
-            val token = new QRCodeDTO(dto.getToken());
-            val validations =  new ArrayList<ErrorValidation>();
-            val code = codeQueryService.getForRelation(token,validations,"qr_code");
-            val machine = machineQueryService.getForRelation(dto.getMachine(),validations,"machine");
-            // save deposit
-            if (validations.isEmpty() && code!=null && !code.isActive()) {
-                validations.add(ErrorValidation.New("QR Code not active!","qr_code",dto.getToken()));
+        val token = dto.getToken();
+        val qrCodeDTO = new QRCodeDTO(dto.getToken());
+        val validations = new ArrayList<ErrorValidation>();
+        val code = codeQueryService.getForRelation(qrCodeDTO, validations, "qr_code");
+        val machine = machineQueryService.getForRelation(dto.getMachine(), validations, "machine");
+        val option_trx = repository.findByTokenAndCdmTrxNoAndCdmTrxDateAndMachine(token, dto.getCdmTrxNo(), dto.getCdmTrxDate(), machine);
+        option_trx.ifPresentOrElse(depo -> {
+            if (TrxDepositStatus.TRANSFER_GATEWAY_TIMEOUT != depo.getStatus()) {
+                throw new BadRequestException("Duplicate Deposit");
             }
-            if (validations.isEmpty()){
-                if (machine==null) {
-                    validations.add(ErrorValidation.New("Machine/Terminal not register!","machine",dto.getMachine().getCode()));
+        }, () -> {
+            if (validations.isEmpty() && code != null && !code.isActive()) {
+                validations.add(ErrorValidation.New("QR Code not active!", "qr_code", dto.getToken()));
+            }
+            if (validations.isEmpty()) {
+                if (machine == null) {
+                    validations.add(ErrorValidation.New("Machine/Terminal not register!", "machine", dto.getMachine().getCode()));
                 }
                 val product = code.getServiceProduct();
-                if (product==null){
-                    validations.add(ErrorValidation.New("Invalid Product qr code","qr_code",dto.getToken()));
-                } else if (!"MUL-ST-TR".equals(product.getCode())) {
-                    validations.add(ErrorValidation.New("Invalid Product qr code","qr_code",dto.getToken()));
+                if (product == null || !"MUL-ST-TR".equals(product.getCode())) {
+                    validations.add(ErrorValidation.New("Invalid Product qr code", "qr_code", dto.getToken()));
                 }
                 val beneficiaryAccount = code.getBeneficiaryAccount();
-                if (beneficiaryAccount==null){
-                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount qr code","qr_code",dto.getToken()));
+                if (beneficiaryAccount == null) {
+                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount qr code", "qr_code", dto.getToken()));
                 } else {
-                    if(beneficiaryAccount.getBank()==null){
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Bank qr code","qr_code",dto.getToken()));
+                    if (beneficiaryAccount.getBank() == null) {
+                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Bank qr code", "qr_code", dto.getToken()));
                     }
-                    if(beneficiaryAccount.getCountryCode()==null){
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode qr code","qr_code",dto.getToken()));
+                    if (beneficiaryAccount.getCountryCode() == null) {
+                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode qr code", "qr_code", dto.getToken()));
                     }
                 }
             }
-            if (validations.size()>0){
-                throw new BadRequestException("Invalid Transaction",validations);
-            }
-            var deposit = trxDepositMapper.toEntity(dto);
-            deposit.setMachine(machine);
-            deposit.setCode(code);
-            deposit.setUser(code.getUser());
-            deposit.setServiceProduct(code.getServiceProduct());
-            deposit.setBeneficiaryAccount(code.getBeneficiaryAccount());
-            deposit.setStatus(TrxDepositStatus.DEPOSIT);
-            log.info("Deposit; id={}; amount={}; product={};",deposit.getId(),deposit.getAmount(),deposit.getServiceProduct().getCode());
-            deposit = repository.save(deposit);
-            codeCommandService.useCode(deposit.getCode());
-            return Optional.of(deposit);
-        }).map(this::prepareTransaction
-        ).map(this::executeTransaction
-        ).map(trxDepositMapper::entityToQueryDto
-        ).orElse(null);
+            BadRequestException.ThrowWhenError("Invalid Parameter Transaction", validations);
+        });
+        return option_trx.or(() -> Optional.of(trxDepositMapper.toEntity(dto, machine, code))
+                        .stream()
+                        .peek(deposit -> deposit.setStatus(TrxDepositStatus.DEPOSIT))
+                        .peek(deposit -> log.info("Deposit; id={}; amount={}; product={};", deposit.getId(), deposit.getAmount(), deposit.getServiceProduct().getCode()))
+                        .map(repository::save)
+                        .peek(deposit -> codeCommandService.useCode(deposit.getCode()))
+                        .findFirst())
+                .map(this::prepareTransaction)
+                .map(this::executeTransaction)
+                .map(trxDepositMapper::entityToQueryDto)
+                .orElse(null);
     }
 
-    protected TrxDeposit prepareTransaction(TrxDeposit deposit){
-        if(TrxDepositStatus.DEPOSIT.equals(deposit.getStatus())){
+    protected TrxDeposit prepareTransaction(TrxDeposit deposit) {
+        if (TrxDepositStatus.DEPOSIT.equals(deposit.getStatus())) {
             var trx = transactionService.prepare(deposit);
             deposit.setServiceTransaction(trx);
             deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
@@ -101,13 +96,17 @@ public class TrxDepositCommandService {
         return deposit;
     }
 
-    protected TrxDeposit executeTransaction(TrxDeposit deposit){
+    protected TrxDeposit executeTransaction(TrxDeposit deposit) {
         if (TrxDepositStatus.TRANSFER_IN_PROGRESS.equals(deposit.getStatus())) {
-            val trx = transactionService.executeTransaction(deposit.getServiceTransaction());
-            switch (trx.getStatus()) {
-                case SUCCESS, TRANSFER_SUCCESS:
-                    deposit.setStatus(TrxDepositStatus.SUCCESS);
-                    break;
+            try {
+                val trx = transactionService.executeTransaction(deposit.getServiceTransaction());
+                switch (trx.getStatus()) {
+                    case SUCCESS, TRANSFER_SUCCESS:
+                        deposit.setStatus(TrxDepositStatus.SUCCESS);
+                        break;
+                }
+            } catch (Propagation5xxException e) {
+                deposit.setStatus(TrxDepositStatus.TRANSFER_GATEWAY_TIMEOUT);
             }
             deposit = repository.save(deposit);
         }

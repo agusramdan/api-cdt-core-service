@@ -26,6 +26,7 @@ public class GatewayCommandService implements
     private final GatewayRepository repository;
     private final GatewayMapper mapper;
     private final VendorQueryService vendorQueryService;
+
     @Override
     public UUID convertId(String id) {
         return UUID.fromString(id);
@@ -50,9 +51,9 @@ public class GatewayCommandService implements
     public Gateway convertFromCreateDTO(GatewayCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();
         val entity = mapper.createDtoToEntity(dto);
-        vendorQueryService.relation(dto.getPartnerId(),d->ErrorValidation.add(validations,"Vendor not found", "partner_id",d))
+        vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d))
                 .ifPresent(entity::setPartner);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
@@ -62,8 +63,8 @@ public class GatewayCommandService implements
                 .orElseThrow(() -> new ResourceNotFoundException("Gateway not found"));
         val validations = new ArrayList<ErrorValidation>();
         mapper.updateEntityFromUpdateDto(dto, entity);
-        vendorQueryService.relation(dto.getPartnerId(),d ->ErrorValidation.add(validations,"Vendor not found", "partner_id", d)).ifPresent(entity::setPartner);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d)).ifPresent(entity::setPartner);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 

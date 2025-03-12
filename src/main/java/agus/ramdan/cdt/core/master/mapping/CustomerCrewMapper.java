@@ -11,19 +11,19 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface CustomerCrewMapper {
 
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
     CustomerCrew createDtoToEntity(CustomerCrewCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     @Mapping(source = "customer.id", target = "customerId", qualifiedByName = "uuidToString")
-    //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
+        //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
     CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
-    //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
+        //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
     void updateEntityFromUpdateDto(CustomerCrewUpdateDTO dto, @MappingTarget CustomerCrew entity);
 
     @Named("stringToUUID")

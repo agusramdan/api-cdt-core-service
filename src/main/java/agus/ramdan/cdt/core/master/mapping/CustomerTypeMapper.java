@@ -12,7 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface CustomerTypeMapper {
 
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     CustomerType createDtoToEntity(CustomerTypeCreateDTO dto);
 
     CustomerTypeQueryDTO entityToQueryDto(CustomerType entity);

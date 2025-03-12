@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NO_CONTENT)
 @Getter
-public class NoContentException extends RuntimeException implements FeighResponError{
+public class NoContentException extends RuntimeException implements FeighResponError {
 
     private static final long serialVersionUID = 1L;
     private Response response;
-    public NoContentException(String message){
+
+    public NoContentException(String message) {
         super(message);
     }
 

@@ -31,7 +31,7 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 public class BeneficiaryAccountCommandService implements
-        BaseCommandEntityService<BeneficiaryAccount,UUID , BeneficiaryAccountQueryDTO, BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO, String> {
+        BaseCommandEntityService<BeneficiaryAccount, UUID, BeneficiaryAccountQueryDTO, BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO, String> {
 
     private final BeneficiaryAccountRepository beneficiaryAccountRepository;
     private final BeneficiaryAccountMapper beneficiaryAccountMapper;
@@ -47,7 +47,7 @@ public class BeneficiaryAccountCommandService implements
 
     @Override
     public BeneficiaryAccount saveCreate(BeneficiaryAccount data) {
-        if (data.getBranch()==null && data.getCustomer()!=null){
+        if (data.getBranch() == null && data.getCustomer() != null) {
             data.setBranch(data.getCustomer().getBranch());
         }
         return beneficiaryAccountRepository.save(data);
@@ -55,7 +55,7 @@ public class BeneficiaryAccountCommandService implements
 
     @Override
     public BeneficiaryAccount saveUpdate(BeneficiaryAccount data) {
-        if (data.getBranch()==null && data.getCustomer()!=null){
+        if (data.getBranch() == null && data.getCustomer() != null) {
             data.setBranch(data.getCustomer().getBranch());
         }
         return beneficiaryAccountRepository.save(data);
@@ -66,48 +66,48 @@ public class BeneficiaryAccountCommandService implements
         BeneficiaryAccount entity = beneficiaryAccountMapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
         // Fetch related Customer entity and set it
-        customerQueryService.relation(dto.getCustomerId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
-                .or(()->customerQueryService.relation(dto.getCustomer(),validations,"customer")).ifPresent(entity::setCustomer);
+        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresent(entity::setCustomer);
         branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
-        bankQueryService.relation(dto.getBank(),validations,"bank").ifPresent(entity::setBank);
-        accountTypeQueryService.relation(dto.getAccountType(),validations,"account_type").ifPresent(entity::setAccountType);
-        countryCodeQueryService.relation(dto.getCountryCode(), validations,"country_code").ifPresent(entity::setCountryCode);
-        customerStatusQueryService.relation(dto.getCustomerStatus(),validations,"customer_status").ifPresent(entity::setCustomerStatus);
-        customerTypeQueryService.relation(dto.getCustomerType(),validations,"customer_type").ifPresent(entity::setCustomerType);
-        regionCodeQueryService.relation(dto.getRegionCode(),validations,"region_code").ifPresent(entity::setRegionCode);
-        if (validations.isEmpty()){
-            if(entity.getCustomer()==null){
-                validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
+        bankQueryService.relation(dto.getBank(), validations, "bank").ifPresent(entity::setBank);
+        accountTypeQueryService.relation(dto.getAccountType(), validations, "account_type").ifPresent(entity::setAccountType);
+        countryCodeQueryService.relation(dto.getCountryCode(), validations, "country_code").ifPresent(entity::setCountryCode);
+        customerStatusQueryService.relation(dto.getCustomerStatus(), validations, "customer_status").ifPresent(entity::setCustomerStatus);
+        customerTypeQueryService.relation(dto.getCustomerType(), validations, "customer_type").ifPresent(entity::setCustomerType);
+        regionCodeQueryService.relation(dto.getRegionCode(), validations, "region_code").ifPresent(entity::setRegionCode);
+        if (validations.isEmpty()) {
+            if (entity.getCustomer() == null) {
+                validations.add(ErrorValidation.New("Customer can't not null", "customer_id", null));
             }
-            if (entity.getBank()==null) {
+            if (entity.getBank() == null) {
                 validations.add(ErrorValidation.New("Bank not found", "bank", null));
             }
         }
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
-    public BeneficiaryAccount convertFromUpdateDTO(String id,BeneficiaryAccountUpdateDTO dto) {
+    public BeneficiaryAccount convertFromUpdateDTO(String id, BeneficiaryAccountUpdateDTO dto) {
         BeneficiaryAccount entity = beneficiaryAccountRepository.findById(convertId(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Beneficiary Account not found"));
         val validations = new ArrayList<ErrorValidation>();
         beneficiaryAccountMapper.updateEntityFromDto(dto, entity);
         branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
-        bankQueryService.relation(dto.getBank(),validations,"bank").ifPresent(entity::setBank);
-        accountTypeQueryService.relation(dto.getAccountType(),validations,"account_type").ifPresent(entity::setAccountType);
-        countryCodeQueryService.relation(dto.getCountryCode(), validations,"country_code").ifPresent(entity::setCountryCode);
-        customerStatusQueryService.relation(dto.getCustomerStatus(),validations,"customer_status").ifPresent(entity::setCustomerStatus);
-        customerTypeQueryService.relation(dto.getCustomerType(),validations,"customer_type").ifPresent(entity::setCustomerType);
-        regionCodeQueryService.relation(dto.getCustomerStatus(),validations,"region_code").ifPresent(entity::setRegionCode);
-        if (validations.isEmpty()){
-            if(entity.getCustomer()==null){
-                validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
+        bankQueryService.relation(dto.getBank(), validations, "bank").ifPresent(entity::setBank);
+        accountTypeQueryService.relation(dto.getAccountType(), validations, "account_type").ifPresent(entity::setAccountType);
+        countryCodeQueryService.relation(dto.getCountryCode(), validations, "country_code").ifPresent(entity::setCountryCode);
+        customerStatusQueryService.relation(dto.getCustomerStatus(), validations, "customer_status").ifPresent(entity::setCustomerStatus);
+        customerTypeQueryService.relation(dto.getCustomerType(), validations, "customer_type").ifPresent(entity::setCustomerType);
+        regionCodeQueryService.relation(dto.getCustomerStatus(), validations, "region_code").ifPresent(entity::setRegionCode);
+        if (validations.isEmpty()) {
+            if (entity.getCustomer() == null) {
+                validations.add(ErrorValidation.New("Customer can't not null", "customer_id", null));
             }
-            if (entity.getBank()==null) {
+            if (entity.getBank() == null) {
                 validations.add(ErrorValidation.New("Bank not found", "bank", null));
             }
         }
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 

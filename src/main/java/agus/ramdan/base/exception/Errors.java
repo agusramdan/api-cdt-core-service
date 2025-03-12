@@ -1,5 +1,6 @@
 package agus.ramdan.base.exception;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -11,19 +12,22 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Errors {
     private Date timestamp;
     private String message;
-    private String trace_id;
-    private String span_id;
+    @JsonProperty("trace_id")
+    private String traceId;
+    @JsonProperty("span_id")
+    private String spanId;
     private String details;
     private ErrorValidation[] errors;
 
-    public Errors(Date timestamp, String message, String trace_id, String span_id, String details, ErrorValidation ... errors) {
+    public Errors(Date timestamp, String message, String traceId, String spanId, String details, ErrorValidation... errors) {
         this.timestamp = timestamp;
         this.message = message;
-        this.trace_id = trace_id;
-        this.span_id = span_id;
+        this.traceId = traceId;
+        this.spanId = spanId;
         this.details = details;
         this.errors = errors;
     }

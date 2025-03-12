@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DatabaseMasterInitializer {
     private final JdbcTemplate jdbcTemplate;
+
     @EventListener(ApplicationReadyEvent.class)
     public void createPartialUniqueIndex() {
 

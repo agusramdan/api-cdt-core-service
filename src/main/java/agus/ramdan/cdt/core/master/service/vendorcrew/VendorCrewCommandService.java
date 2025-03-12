@@ -57,8 +57,8 @@ public class VendorCrewCommandService implements
         val entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Crew not found"));
         val validations = new ArrayList<ErrorValidation>();
-        vendorQueryService.relation(dto.getVendorId(),d->ErrorValidation.add(validations,"Vendor not found", "vendor_id",d)).ifPresent(entity::setVendor);
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        vendorQueryService.relation(dto.getVendorId(), d -> ErrorValidation.add(validations, "Vendor not found", "vendor_id", d)).ifPresent(entity::setVendor);
+        BadRequestException.ThrowWhenError("Validation error", validations);
         mapper.updateEntityFromUpdateDto(dto, entity);
         return entity;
     }

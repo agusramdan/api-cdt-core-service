@@ -13,7 +13,9 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "cdt_trx_cdm",
         indexes = {@Index(name = "idx_cdt_trx_cdm_token_signature", columnList = "token, signature")},
-        uniqueConstraints = { @UniqueConstraint(columnNames = { "token", "signature" }) }
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"token", "signature"})}
 )
 @Schema
 @EntityListeners(AuditingEntityListener.class)
@@ -62,26 +64,29 @@ public class TrxDeposit {
 
     @ManyToOne
     private Machine machine;
+    private String machineInfo;
+    @Column(name = "cdm_trx_no")
+    private String cdmTrxNo;
+    @Column(name = "cdm_trx_datetime")
+    private LocalDateTime cdmTrxDateTime;
+    @Column(name = "cdm_trx_date")
+    private LocalDate cdmTrxDate;
+    @Column(name = "cdm_trx_time")
+    private LocalTime cdmTrxTime;
 
-    private String cdm_trx_no;
-
-    private LocalDateTime cdm_trx_date;
-
-    private LocalDateTime trx_date;
+    @PostLoad
+    private void combineDateAndTime() {
+        if (cdmTrxDate != null && cdmTrxTime != null) {
+            this.cdmTrxDateTime = cdmTrxDate.atTime(cdmTrxTime);
+        }
+    }
 
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "trx_cdm_id")
+    @JoinColumn(name = "trx_deposit_id")
     @OrderBy("denomination")
     private List<TrxDepositDenom> denominations = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        if (trx_date == null) {
-            trx_date = LocalDateTime.now();
-        }
-    }
 }

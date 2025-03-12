@@ -31,5 +31,5 @@ public class CountryCode {
 
     private String name;
     private String description;
-    
+
 }

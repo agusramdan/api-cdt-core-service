@@ -16,11 +16,11 @@ public interface TrxPickupMapper {
     TrxPickup createDtoToEntity(TrxPickupCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    //@Mapping(source = "machine.id", target = "machineId", qualifiedByName = "uuidToString")
+        //@Mapping(source = "machine.id", target = "machineId", qualifiedByName = "uuidToString")
     TrxPickupQueryDTO entityToQueryDto(TrxPickup entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    //@Mapping(source = "machineId", target = "machine.id", qualifiedByName = "stringToUUID")
+        //@Mapping(source = "machineId", target = "machine.id", qualifiedByName = "stringToUUID")
     void updateEntityFromUpdateDto(TrxPickupUpdateDTO dto, @MappingTarget TrxPickup entity);
 
     @Named("stringToUUID")

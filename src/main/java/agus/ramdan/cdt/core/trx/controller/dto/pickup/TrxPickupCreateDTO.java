@@ -1,41 +1,85 @@
 package agus.ramdan.cdt.core.trx.controller.dto.pickup;
 
 import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Schema(description = "DTO untuk membuat transaksi Pickup")
-public class TrxPickupCreateDTO  {
-    private String signature;
-    private String token;
-    @Schema(description = "ID Mesin")
-    private MachineDTO machine;
+public class TrxPickupCreateDTO {
 
-    @Schema(description = "Informasi Mesin")
+    @NotNull
+    private MachineDTO machine;
+    @JsonProperty("machine_info")
     private String machineInfo;
 
-    @Schema(description = "Status Transaksi Pickup")
-    private String status;
-
-    @Schema(description = "Nomor Referensi CDM")
+    @JsonProperty("cdm_trx_no")
+    @Schema(description = "Trx Number form cdm")
+    @NotNull
+    @NotEmpty
     private String cdmTrxNo;
 
-    @Schema(description = "Tanggal Transaksi CDM")
-    private LocalDateTime cdmTrxDate;
+    @NotNull
+    @Schema(description = "Pickup Date")
+    @JsonProperty("cdm_trx_date")
+    private LocalDate cdmTrxDate;
 
-    @Schema(description = "Tanggal Transaksi")
-    private LocalDateTime trxDate;
+    @Schema(description = "Time of pickup")
+    @JsonProperty("cdm_trx_time")
+    private LocalTime cdmTrxTime;
+
+    @JsonProperty("cdm_trx_type")
+    private String cdmTrxType;
+
+    @NotNull
+    @JsonProperty("total_pieces")
     private Integer totalPieces;
+
+    @NotNull
+    @NotEmpty
+    @JsonProperty("new_banknote_bag_no")
+    private String newBanknoteBagNo;
+
+    @NotNull
+    @NotEmpty
+    @JsonProperty("old_banknote_bag_no")
+    private String oldBanknoteBagNo;
+
     @Schema(description = "Total Amount")
+    @NotNull
     private BigDecimal amount;
+
+    @JsonProperty("otp_used")
+    private String otpUsed;
+
+    @JsonProperty("reset_bag_time")
+    @NotNull
+    private LocalDateTime resetBagTime;
+
+    @JsonProperty("last_action")
+    private String lastAction;
+
+    @JsonProperty("action_date")
+    @NotNull
+    private LocalDate actionDate;
+    @JsonProperty("action_start_time")
+    @NotNull
+    private LocalTime actionStartTime;
+    @JsonProperty("action_End_time")
+    @NotNull
+    private LocalTime actionEndTime;
 
     @Schema(description = "Denominasi Pickup")
     private List<TrxPickupDenomCreateDTO> denominations;

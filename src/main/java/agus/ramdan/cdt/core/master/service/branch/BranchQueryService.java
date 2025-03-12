@@ -19,7 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Getter
-public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, BranchQueryDTO, String>{
+public class BranchQueryService implements BaseQueryEntityService<Branch, UUID, BranchQueryDTO, String> {
 
     private final BranchRepository repository;
     private final BranchMapper mapper;
@@ -38,9 +38,11 @@ public class BranchQueryService implements BaseQueryEntityService<Branch,UUID, B
         log.debug("Converting Branch entity to DTO: {}", entity.getId());
         return mapper.entityToQueryDto(entity);
     }
-    public Optional<Branch> findByCode(String code){
+
+    public Optional<Branch> findByCode(String code) {
         return repository.findByCode(code);
     }
+
     public BranchQueryDTO getByCode(String code) {
         return findByCode(code)
                 .map(mapper::entityToQueryDto)

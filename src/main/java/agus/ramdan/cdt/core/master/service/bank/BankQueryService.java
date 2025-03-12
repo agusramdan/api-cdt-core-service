@@ -39,6 +39,7 @@ public class BankQueryService implements
     public BankQueryDTO convert(Bank entity) {
         return mapper.entityToQueryDto(entity);
     }
+
     public BankQueryDTO getByCode(String code) {
         return repository.findByCode(code)
                 .map(mapper::entityToQueryDto)

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface BaseGetAllController<T, DTO>{
+public interface BaseGetAllController<T, DTO> {
 
     JpaSpecificationExecutor<T> getRepository();
 
@@ -61,7 +61,7 @@ public interface BaseGetAllController<T, DTO>{
         if (page.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        val content =page.getContent().stream().map(this::convert).collect(Collectors.toList());
+        val content = page.getContent().stream().map(this::convert).collect(Collectors.toList());
         return ResponseEntity.ok(content);
     }
 }

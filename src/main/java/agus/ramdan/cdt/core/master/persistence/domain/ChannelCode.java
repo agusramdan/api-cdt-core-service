@@ -31,5 +31,5 @@ public class ChannelCode {
 
     private String name;
     private String description;
-    
+
 }

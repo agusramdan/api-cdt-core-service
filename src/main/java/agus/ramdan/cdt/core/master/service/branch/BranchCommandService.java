@@ -37,10 +37,12 @@ public class BranchCommandService implements
     public Branch convertFromCreateDTO(BranchCreateDTO dto) {
         return mapper.createDtoToEntity(dto);
     }
+
     public Branch getById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
     }
+
     @Override
     public Branch convertFromUpdateDTO(String id, BranchUpdateDTO dto) {
         Branch branch = getById(convertId(id));

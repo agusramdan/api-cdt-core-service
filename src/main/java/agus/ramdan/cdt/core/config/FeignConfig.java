@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.config;
+
 import agus.ramdan.base.exception.CustomFeignErrorDecoder;
 import agus.ramdan.base.interceptor.AuthorizationRequestInterceptor;
 import feign.RequestInterceptor;

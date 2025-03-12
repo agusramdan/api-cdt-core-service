@@ -190,13 +190,13 @@ services:
     networks:
       - backend
 
-  api-cdt-core-trx-service:
+  api-cdt-core-service:
     image: agusramdan/api-cdt-core-service:dev
     container_name: api-cdt-core-service
     env_file:
       - ./core.env
     environment:
-      - SPRING_PROFILES_ACTIVE=devdocker,local
+      #- SPRING_PROFILES_ACTIVE=devdocker,local
       - JAVA_OPTS="-Xms128M -Xmx128M"
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
@@ -220,7 +220,7 @@ services:
     env_file:
       - ./gateway.env
     environment:
-      - SPRING_PROFILES_ACTIVE=oauth2,keycloak,dev
+      #- SPRING_PROFILES_ACTIVE=oauth2,keycloak,dev
       - JAVA_OPTS="-Xms128M -Xmx128M"
     ports:
       - "8091:8080"

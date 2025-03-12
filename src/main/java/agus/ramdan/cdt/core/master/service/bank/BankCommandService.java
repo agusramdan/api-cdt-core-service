@@ -9,6 +9,7 @@ import agus.ramdan.cdt.core.master.mapping.BankMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Bank;
 import agus.ramdan.cdt.core.master.persistence.repository.BankRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -48,10 +49,10 @@ public class BankCommandService implements
 
     @Override
     public Bank convertFromUpdateDTO(String id, BankUpdateDTO dto) {
-        Bank bank = repository.findById(UUID.fromString(id))
+        val entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Bank not found"));
-        mapper.updateEntityFromUpdateDto(dto, bank);
-        return bank;
+        mapper.updateEntityFromUpdateDto(dto, entity);
+        return entity;
     }
 
     @Override

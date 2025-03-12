@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.service.transfer;
 
+import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
@@ -21,7 +22,7 @@ public class TrxTransferService {
     private final GatewayService gatewayService;
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public  TrxTransfer prepare(ServiceTransaction transaction) {
+    public TrxTransfer prepare(ServiceTransaction transaction) {
         val transfer = new TrxTransfer();
         transfer.setBeneficiaryAccount(transaction.getBeneficiaryAccount());
         transfer.setStatus(TrxTransferStatus.PREPARE);
@@ -29,12 +30,19 @@ public class TrxTransferService {
         transfer.setAmount(transaction.getAmount());
         return repository.save(transfer);
     }
+
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxTransfer transferFund(TrxTransfer transfer) {
         transfer = gatewayService.setupGateway(transfer);
         transfer = repository.save(transfer);
-        transfer = gatewayService.transferFund(transfer);
-        transfer = repository.save(transfer);
+        try {
+            transfer = gatewayService.transferFund(transfer);
+            transfer = repository.save(transfer);
+        } catch (Propagation5xxException e) {
+            transfer.setStatus(TrxTransferStatus.GATEWAY_TIME_OUT);
+            repository.save(transfer);
+            throw e;
+        }
         return transfer;
     }
 

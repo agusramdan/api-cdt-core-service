@@ -21,7 +21,7 @@ public interface GatewayMapper {
     GatewayQueryDTO entityToQueryDto(Gateway entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    //@Mapping(source = "partnerId", target = "partner.id", ignore = true)
+        //@Mapping(source = "partnerId", target = "partner.id", ignore = true)
     void updateEntityFromUpdateDto(GatewayUpdateDTO dto, @MappingTarget Gateway entity);
 
     @Named("stringToUUID")

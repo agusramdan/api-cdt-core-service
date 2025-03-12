@@ -20,7 +20,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CustomerCrewQueryService implements
-        BaseQueryEntityService<CustomerCrew, UUID, CustomerCrewQueryDTO,String> {
+        BaseQueryEntityService<CustomerCrew, UUID, CustomerCrewQueryDTO, String> {
     @Getter
     private final CustomerCrewRepository repository;
     private final CustomerCrewMapper mapper;
@@ -34,29 +34,30 @@ public class CustomerCrewQueryService implements
     public CustomerCrewQueryDTO convert(CustomerCrew entity) {
         return mapper.entityToQueryDto(entity);
     }
+
     @Override
     public UUID convertId(String uuid) {
         return UUID.fromString(uuid);
     }
 
-    public CustomerCrewQueryDTO getByUsername(String username){
+    public CustomerCrewQueryDTO getByUsername(String username) {
         return repository.findByUsername(username)
                 .map(mapper::entityToQueryDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer Crew username not found"));
     }
+
     public CustomerCrew getForRelation(final CustomerCrewDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
-        final String keyField = key==null?"branch":key;
+        final String keyField = key == null ? "branch" : key;
         CustomerCrew data = null;
         if (dto != null) {
             if (dto.getId() != null) {
                 data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Customer Crew not found",keyField+".id", dto.getId()));
+                    validations.add(ErrorValidation.New("Customer Crew not found", keyField + ".id", dto.getId()));
                     return null;
                 });
-            }
-            else {
-                data = repository.findByUsername(dto.getUsername()).orElseGet( () -> {
-                    validations.add(ErrorValidation.New("Customer Crew not found",keyField+".username", dto.getUsername()));
+            } else {
+                data = repository.findByUsername(dto.getUsername()).orElseGet(() -> {
+                    validations.add(ErrorValidation.New("Customer Crew not found", keyField + ".username", dto.getUsername()));
                     return null;
                 });
             }
@@ -66,8 +67,8 @@ public class CustomerCrewQueryService implements
 
     @Override
     public CustomerCrew getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
-        if(tid instanceof CustomerCrewDTO){
-            return this.getForRelation((CustomerCrewDTO) tid,validations,key);
+        if (tid instanceof CustomerCrewDTO) {
+            return this.getForRelation((CustomerCrewDTO) tid, validations, key);
         }
         return BaseQueryEntityService.super.getForRelation(tid, validations, key);
     }

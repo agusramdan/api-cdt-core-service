@@ -44,8 +44,9 @@ public interface QRCodeMapper {
     TrxUserDTO map(CustomerCrew source);
 
     String map(QRCodeType source);
-    default QRCodeType mapQRCodeType(String source){
-        if (source==null) return null;
+
+    default QRCodeType mapQRCodeType(String source) {
+        if (source == null) return null;
         return QRCodeType.valueOf(source);
     }
 
@@ -61,9 +62,10 @@ public interface QRCodeMapper {
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     BankDTO map(Bank source);
 
-//    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "stringToUUID")
+    //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
     QRCode createDtoToEntity(QRCodeCreateDTO dto);
+
     //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "uuidToString")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "uuidToString")
     //@Mapping(source = "serviceTransaction.id", target = "serviceTransaction.id", qualifiedByName = "uuidToString")
@@ -75,14 +77,14 @@ public interface QRCodeMapper {
     void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
 
     @Named("uuidToString")
-    default String uuidToString(UUID source){
-        if(source == null) return null;
+    default String uuidToString(UUID source) {
+        if (source == null) return null;
         return source.toString();
     }
 
     @Named("stringToUUID")
-    default UUID stringToUUID(String source){
-        if(source == null) return null;
+    default UUID stringToUUID(String source) {
+        if (source == null) return null;
         return UUID.fromString(source);
     }
 

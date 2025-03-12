@@ -11,7 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface RegionCodeMapper {
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     RegionCode createDtoToEntity(RegionCodeCreateDTO dto);
 
     RegionCodeQueryDTO entityToQueryDto(RegionCode entity);

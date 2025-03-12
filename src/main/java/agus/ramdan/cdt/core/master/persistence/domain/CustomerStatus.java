@@ -31,5 +31,5 @@ public class CustomerStatus {
 
     private String name;
     private String description;
-    
+
 }

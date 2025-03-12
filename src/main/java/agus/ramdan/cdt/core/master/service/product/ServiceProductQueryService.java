@@ -20,8 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Getter
 public class ServiceProductQueryService implements
-        BaseQueryEntityService<ServiceProduct, UUID, ServiceProductQueryDTO, String>
-{
+        BaseQueryEntityService<ServiceProduct, UUID, ServiceProductQueryDTO, String> {
     private final ServiceProductRepository repository;
     private final ServiceProductMapper mapper;
 
@@ -47,17 +46,17 @@ public class ServiceProductQueryService implements
     }
 
     public ServiceProduct getForRelation(final ServiceProductDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
-        final String keyField = key==null?"product":key;
+        final String keyField = key == null ? "product" : key;
         ServiceProduct data = null;
         if (dto != null) {
             if (dto.getId() != null) {
                 data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Product not found",keyField, dto.getId()));
+                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getId()));
                     return null;
                 });
             } else {
-                data = repository.findByCode(dto.getCode()).orElseGet( () -> {
-                    validations.add(ErrorValidation.New("Product not found",keyField, dto.getCode()));
+                data = repository.findByCode(dto.getCode()).orElseGet(() -> {
+                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getCode()));
                     return null;
                 });
             }

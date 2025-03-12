@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "DTO untuk membuat Machine")
-public class MachineCreateDTO  {
+public class MachineCreateDTO {
 
     @Schema(description = "Kode Mesin")
     private String code;

@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.master.mapping;
+
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorUpdateDTO;
@@ -10,7 +11,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface VendorMapper {
 
-//    @Mapping(source = "id", target = "id", ignore = true)
+    //    @Mapping(source = "id", target = "id", ignore = true)
     Vendor createDtoToEntity(VendorCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")

@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface BaseQueryAllService<T,DTO>{
+public interface BaseQueryAllService<T, DTO> {
     JpaSpecificationExecutor<T> getJpaSpecificationExecutor();
 
     DTO convertOne(T entity);
 
-    default List<DTO> getAll(int offset, int limit, String search, String ids ) {
+    default List<DTO> getAll(int offset, int limit, String search, String ids) {
         val builder = new BaseSpecificationsBuilder<T>();
         if (StringUtils.hasText(ids)) {
             val list = Arrays.stream(ids.split(","))
@@ -34,7 +34,7 @@ public interface BaseQueryAllService<T,DTO>{
         val pageable = new OffsetBasedPageRequest(offset, limit);
         val page = getJpaSpecificationExecutor().findAll(spec, pageable);
         ChekUtils.ifEmptyThrow(page);
-        val content =page.getContent().stream().map(this::convertOne).collect(Collectors.toList());
+        val content = page.getContent().stream().map(this::convertOne).collect(Collectors.toList());
         return content;
     }
 }

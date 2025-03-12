@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "QR Code Command API", description = "APIs for creating, updating, and deleting CR Code")
 @RequiredArgsConstructor
 @Getter
-public class QRCodeCommandController implements BaseCommandController<QRCodeQueryDTO, QRCodeCreateDTO, QRCodeUpdateDTO, String>  {
+public class QRCodeCommandController implements BaseCommandController<QRCodeQueryDTO, QRCodeCreateDTO, QRCodeUpdateDTO, String> {
     private final QRCodeCommandService service;
 
 }

@@ -13,15 +13,16 @@ public class ErrorValidation {
     private final String key;
     private final Object value;
 
-    public static ErrorValidation New(String message, String key, Object value){
+    public static ErrorValidation New(String message, String key, Object value) {
         return new ErrorValidation(message, key, value);
     }
-    public static <T>T add(@NotNull Collection<ErrorValidation> collection, String message, String key, Object value){
+
+    public static <T> T add(@NotNull Collection<ErrorValidation> collection, String message, String key, Object value) {
         collection.add(New(message, key, value));
         return null;
     }
 
-    public static ErrorValidation[] validations(ErrorValidation ... error){
+    public static ErrorValidation[] validations(ErrorValidation... error) {
         return error;
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BankQueryController implements
         BaseQueryController<BankQueryDTO, String> {
     private final BankQueryService service;
+
     @GetMapping("/code/{code}")
     public ResponseEntity<BankQueryDTO> getByCode(@PathVariable String code) {
         return ResponseEntity.ok(service.getByCode(code));

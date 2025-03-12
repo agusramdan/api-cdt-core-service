@@ -51,13 +51,13 @@ public class CustomerCrewCommandService implements
 
     @Override
     public CustomerCrew convertFromCreateDTO(CustomerCrewCreateDTO dto) {
-        val entity =mapper.createDtoToEntity(dto);
+        val entity = mapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
 //        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         // Fetch related Customer entity and set it
-        customerQueryService.relation(dto.getCustomerId(),d->ErrorValidation.add(validations,"Customer not found", "customer_id",d))
-                .or(()->customerQueryService.relation(dto.getCustomer(),validations,"customer")).ifPresentOrElse(entity::setCustomer,()->ErrorValidation.add(validations,"Customer can't not null","customer",null));
-        BadRequestException.ThrowWhenError("Validation error",validations);
+        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+        BadRequestException.ThrowWhenError("Validation error", validations);
         return entity;
     }
 
