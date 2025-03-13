@@ -23,10 +23,6 @@ public class MachineUpdateDTO {
     @JsonProperty("branch_id")
     private String branchId;
 
-    @Schema(description = "Service Location ID")
-    @JsonProperty("service_location_id")
-    private String serviceLocationId;
-
     @Schema(description = "Branch")
     private BranchDTO branch;
     @Schema(description = "Service Location")

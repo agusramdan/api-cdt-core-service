@@ -21,6 +21,7 @@ public class TrxDepositQueryDTO {
     private UUID id;
     private String token;
     private String status;
+    private String username;
 
     @JsonProperty("service_transaction")
     private ServiceTransactionDTO serviceTransaction;

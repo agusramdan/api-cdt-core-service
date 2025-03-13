@@ -31,7 +31,7 @@ public interface TrxDepositMapper {
     TrxDeposit toEntity(TrxDepositCreateDTO dto, Machine machine, QRCode qrCode);
 
     TrxDepositDenom toEntity(TrxDepositDenCreateDTO dto);
-
+    @Mapping(target = "username", source = "user.username")
     TrxDepositQueryDTO entityToQueryDto(TrxDeposit entity);
 
     TrxDepositDenQueryDTO entityToQueryDto(TrxDepositDenom entity);

@@ -51,30 +51,4 @@ public class MachineQueryService implements
     public Optional<Machine> findByCode(String code) {
         return repository.findByCode(code);
     }
-    //    public Machine getForRelation(final CodeOrID<String> dto, @NotNull final List<ErrorValidation> validations, String key) {
-//        final String keyField = key==null?"bank":key;
-//        Machine data = null;
-//        if (dto != null) {
-//            if (dto.getId() != null) {
-//                data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-//                    validations.add(ErrorValidation.New("Machine not found",keyField+".id", dto.getId()));
-//                    return null;
-//                });
-//            } else {
-//                data = repository.findByCode(dto.getCode()).orElseGet( () -> {
-//                    validations.add(ErrorValidation.New("Machine not found",keyField+".code", dto.getCode()));
-//                    return null;
-//                });
-//            }
-//        }
-//        return data;
-//    }
-
-//    @Override
-//    public Machine getForRelation(TID<String> tid, List<ErrorValidation> validations, String key) {
-//        if(tid instanceof CodeOrID<String>){
-//            return this.getForRelation((CodeOrID<String>)tid,validations,key);
-//        }
-//        return BaseQueryEntityService.super.getForRelation(tid, validations, key);
-//    }
 }
