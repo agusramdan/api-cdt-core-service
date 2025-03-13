@@ -1,6 +1,10 @@
 package agus.ramdan.base.service;
 
 import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorMessage;
+import agus.ramdan.base.exception.Errors;
+import lombok.val;
+import org.springframework.dao.DataIntegrityViolationException;
 
 public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO, DTO_ID> extends
         BaseCommandService<ResultDTO, CreateDTO, UpdateDTO, DTO_ID> {
@@ -14,7 +18,17 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
         } catch (Exception e) {
             throw new BadRequestException("Invalid Data For Create", e);
         }
-        T newData = saveCreate(data);
+        T newData ;
+        try{
+            newData = saveCreate(data);
+        }catch (BadRequestException e) {
+            throw e;
+        }catch (DataIntegrityViolationException ex){
+            val msg =ErrorMessage.get(ex,"Data Integrity Violation");
+            throw new BadRequestException("Data Integrity Violation", new Errors(msg,createDTO));
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage(),new Errors("Invalid Data For Create",createDTO));
+        }
         newData = afterCreate(newData, createDTO);
         return convertToResultDTO(newData);
     }
@@ -30,9 +44,19 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            throw new BadRequestException("Invalid Data For Update", null, e);
+            throw new BadRequestException(e.getMessage(),new Errors("Invalid Data For Update",updateDTO));
         }
-        T newData = saveUpdate(data);
+        T newData;
+        try{
+            newData = saveUpdate(data);
+        }catch (BadRequestException e) {
+            throw e;
+        }catch (DataIntegrityViolationException ex){
+            val msg =ErrorMessage.get(ex,"Data Integrity Violation");
+            throw new BadRequestException("Data Integrity Violation", new Errors(msg,updateDTO));
+        } catch (Exception e) {
+            throw new BadRequestException(e.getMessage(),new Errors("Invalid Data For Update",updateDTO));
+        }
         newData = afterUpdate(newData, updateDTO);
         return convertToResultDTO(newData);
     }
@@ -52,8 +76,6 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
         }
         delete(data);
     }
-
-    ;
 
     ID convertId(DTO_ID id);
 

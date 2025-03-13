@@ -31,6 +31,10 @@ public class Errors {
         this.details = details;
         this.errors = errors;
     }
+    public Errors(String message,Object requestBody) {
+        this.message = message;
+        this.requestBody=requestBody;
+    }
 
     @Schema(description = "Extension Error code")
     @JsonProperty("err_code")

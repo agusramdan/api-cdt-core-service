@@ -46,12 +46,12 @@ public class GlobalExceptionHandler {
         return spanId;
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Errors> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)), HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler(ResourceNotFoundException.class)
+//    public ResponseEntity<Errors> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+//        String traceId = getTraceId();
+//        String spanId = getSpanId();
+//        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)), HttpStatus.NOT_FOUND);
+//    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
@@ -64,29 +64,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-        String errorMsg = "Data integrity violation";
-        Throwable rootCause = ex.getRootCause(); // Ambil error dari database
-        if (rootCause instanceof SQLException sqlException) {
-            String message = sqlException.getMessage();
-            if (message.contains("duplicate key value")) {
-                errorMsg = extractDuplicateKeyMessage(message);
-            }
-        }
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
+        String errorMsg = ErrorMessage.get(ex,null);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, errorMsg), ex);
         val error = new Errors(new Date(), errorMsg, traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    private String extractDuplicateKeyMessage(String message) {
-        // Pola regex untuk menangkap "Key (msisdn)=(+6281234567890) already exists."
-        Pattern pattern = Pattern.compile("Key \\((.*?)\\)=\\((.*?)\\) already exists");
-        Matcher matcher = pattern.matcher(message);
-        if (matcher.find()) {
-            return "Key (" + matcher.group(1) + ")=(" + matcher.group(2) + ") already exists.";
-        }
-        return "Duplicate key constraint violation.";
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -120,15 +103,6 @@ public class GlobalExceptionHandler {
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(Propagation5xxException.class)
-    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Propagation5xxException ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
-        val error = ex.create(traceId, spanId, request.getDescription(false));
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(XxxException.class)
