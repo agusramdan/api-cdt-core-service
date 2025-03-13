@@ -2,12 +2,14 @@ package agus.ramdan.base.exception;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
 import java.util.Date;
 
 @Getter
+@Log4j2
 public class XxxException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     private final int code;
@@ -59,6 +61,9 @@ public class XxxException extends RuntimeException {
 
         errors = new Errors(new Date(), getMessage(), trace_id, span_id, details, errorValidations);
         errors.setErrCode(this.errCode);
+        if (log.isDebugEnabled()) {
+            errors.setRequestBody(this.errors.getRequestBody());
+        }
         return errors;
     }
 

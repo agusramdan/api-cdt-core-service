@@ -54,22 +54,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.warn("trace_id={},span_id={}:{}", traceId, spanId, "Message Error");
         val error = new Errors(new Date(), "Message Error", traceId, spanId, request.getDescription(false));
-        if(log.isDebugEnabled()) {
-            String requestBody = getRequestBody(httpRequest);
-            if (error.getRequestBody()==null) error.setRequestBody(requestBody);
-        }else {
-            error.setRequestBody(null);
-        }
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         String errorMsg = "Data integrity violation";
         Throwable rootCause = ex.getRootCause(); // Ambil error dari database
         if (rootCause instanceof SQLException sqlException) {
@@ -80,14 +74,8 @@ public class GlobalExceptionHandler {
         }
         String traceId = getTraceId();
         String spanId = getSpanId();
-        String requestBody = getRequestBody(httpRequest);
-        log.error(String.format("trace_id=%s,span_id=%s:%s,body=%s", traceId, spanId, ex.getMessage(),requestBody), ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         val error = new Errors(new Date(), errorMsg, traceId, spanId, request.getDescription(false));
-        if(log.isDebugEnabled()) {
-            if (error.getRequestBody()==null) error.setRequestBody(requestBody);
-        }else {
-            error.setRequestBody(null);
-        }
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -102,7 +90,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Errors> handleMethodArgumentNotValidException(ConstraintViolationException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> handleMethodArgumentNotValidException(ConstraintViolationException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.warn(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, "ConstraintViolationException"), ex);
@@ -110,17 +98,11 @@ public class GlobalExceptionHandler {
                 .map(violation -> new ErrorValidation(violation.getMessage(), String.valueOf(violation.getPropertyPath()), violation.getInvalidValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
         val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false), errors);
-        String requestBody = getRequestBody(httpRequest);
-        if(log.isDebugEnabled()) {
-            if (error.getRequestBody()==null) error.setRequestBody(requestBody);
-        }else {
-            error.setRequestBody(null);
-        }
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Errors> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request,HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, "MethodArgumentNotValidException"), ex);
@@ -129,63 +111,41 @@ public class GlobalExceptionHandler {
                 .map(violation -> new ErrorValidation(violation.getDefaultMessage(), violation.getField(), violation.getRejectedValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
         val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false), errors);
-        if(log.isDebugEnabled()) {
-            String requestBody = getRequestBody(httpRequest);
-            if (error.getRequestBody()==null) error.setRequestBody(requestBody);
-        }else {
-            error.setRequestBody(null);
-        }
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoContentException.class)
-    public ResponseEntity<?> noContentException(NoContentException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> noContentException(NoContentException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        String requestBody = getRequestBody(httpRequest);
-        log.error(String.format("trace_id=%s,span_id=%s:%s,body=%s", traceId, spanId, ex.getMessage(),requestBody), ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler(Propagation5xxException.class)
-    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Propagation5xxException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Propagation5xxException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        String requestBody = getRequestBody(httpRequest);
-        log.error(String.format("trace_id=%s,span_id=%s:%s,body=%s", traceId, spanId, ex.getMessage(),requestBody), ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         val error = ex.create(traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(XxxException.class)
-    public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        String requestBody = getRequestBody(httpRequest);
-
-        log.error(String.format("trace_id=%s,span_id=%s:%s,body=%s", traceId, spanId, ex.getMessage(),requestBody), ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         return new ResponseEntity<>(ex.create(traceId, spanId, request.getDescription(false)), ex.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        String requestBody = getRequestBody(httpRequest);
-        log.error(String.format("trace_id=%s,span_id=%s:%s,body=%s", traceId, spanId, ex.getMessage(),requestBody), ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false), null);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    private String getRequestBody(HttpServletRequest request) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = request.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (IOException e) {
-            log.error("Error reading request body", e);
-        }
-        return stringBuilder.toString();
-    }
+
 }
