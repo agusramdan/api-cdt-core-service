@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>3.3.8.1.202503183</version>
+	<version>3.3.8.1.202503184</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>

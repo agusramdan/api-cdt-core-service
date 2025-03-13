@@ -24,7 +24,7 @@ public class ErrorMessage {
             return get(throwable,"Data integrity violation");
         }
         if (throwable instanceof SQLException){
-            return get(throwable,msg);
+            return get((SQLException)throwable,msg);
         }
         String error =get(throwable.getCause(),msg);
         if (error==null){
