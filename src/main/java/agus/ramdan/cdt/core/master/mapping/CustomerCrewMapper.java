@@ -14,6 +14,7 @@ public interface CustomerCrewMapper {
     //    @Mapping(source = "id", target = "id", ignore = true)
     @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
+    @Mapping(target ="auditMetadata", ignore = true )
     CustomerCrew createDtoToEntity(CustomerCrewCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
@@ -21,6 +22,7 @@ public interface CustomerCrewMapper {
         //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
     CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
 
+    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
         //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")

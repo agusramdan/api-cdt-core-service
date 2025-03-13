@@ -12,6 +12,7 @@ import java.util.UUID;
 public interface BankMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target ="auditMetadata", ignore = true )
     Bank createDtoToEntity(BankCreateDTO dto);
 
     //@Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")

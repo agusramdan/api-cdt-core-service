@@ -20,7 +20,7 @@ public interface TrxDepositMapper {
     default TrxDepositStatus toTrxDepositStatus(String string) {
         return TrxDepositStatus.valueOf(string);
     }
-
+    @Mapping(target ="auditMetadata", ignore = true )
     TrxDeposit toEntity(TrxDepositCreateDTO dto);
 
     @Mapping(target = "status", constant = "PREPARE")

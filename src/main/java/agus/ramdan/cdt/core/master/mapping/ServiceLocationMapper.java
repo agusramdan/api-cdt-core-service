@@ -11,13 +11,15 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface ServiceLocationMapper {
 
-    //@Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target ="auditMetadata", ignore = true )
     ServiceLocation createDtoToEntity(ServiceLocationCreateDTO dto);
 
     @Mapping(source = "id", target = "id")
     ServiceLocationQueryDTO entityToQueryDto(ServiceLocation entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(ServiceLocationUpdateDTO dto, @MappingTarget ServiceLocation entity);
 
     default UUID stringToUUID(String value) {

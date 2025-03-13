@@ -19,6 +19,7 @@ import java.util.List;
 public class TrxPickupQueryDTO {
     @Schema(description = "ID Transaksi Pickup dalam format String")
     private String id;
+    private String username;
     private MachineDTO machine;
     @JsonProperty("machine_info")
     private String machineInfo;
@@ -51,7 +52,7 @@ public class TrxPickupQueryDTO {
     private LocalDate actionDate;
     @JsonProperty("action_start_time")
     private LocalTime actionStartTime;
-    @JsonProperty("action_End_time")
+    @JsonProperty("action_end_time")
     private LocalTime actionEndTime;
 
     @Schema(description = "Denominasi Pickup")

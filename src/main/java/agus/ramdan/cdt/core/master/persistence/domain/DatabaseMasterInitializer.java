@@ -13,7 +13,7 @@ public class DatabaseMasterInitializer {
 
     @EventListener(ApplicationReadyEvent.class)
     public void createPartialUniqueIndex() {
-
+        jdbcTemplate.execute("ALTER TABLE IF EXISTS cdt_trx_pickup DROP COLUMN IF EXISTS cdm_trx_time;");
         jdbcTemplate.execute("DROP INDEX IF EXISTS idx_unique_cdt_branch_ktp;");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_branch_code ON cdt_branch (code) WHERE deleted_at IS NULL;");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_bank_code ON cdt_bank (code) WHERE deleted_at IS NULL;");

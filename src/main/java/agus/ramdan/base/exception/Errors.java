@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -35,4 +36,6 @@ public class Errors {
     @Schema(description = "Extension Error code")
     @JsonProperty("err_code")
     private String errCode;
+    @JsonProperty("request_body")
+    private Object requestBody;
 }

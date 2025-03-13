@@ -12,12 +12,14 @@ import java.util.UUID;
 public interface VendorMapper {
 
     //    @Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(target ="auditMetadata", ignore = true )
     Vendor createDtoToEntity(VendorCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     VendorQueryDTO entityToQueryDto(Vendor entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(VendorUpdateDTO dto, @MappingTarget Vendor entity);
 
     @Named("stringToUUID")

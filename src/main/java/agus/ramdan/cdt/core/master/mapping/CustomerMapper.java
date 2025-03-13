@@ -23,10 +23,12 @@ public interface CustomerMapper {
 
     // Convert Create DTO to Entity
     @Mapping(source = "customerType", target = "customerType", qualifiedByName = "mapCustomerType")
+    @Mapping(target ="auditMetadata", ignore = true )
     Customer createDtoToEntity(CustomerCreateDTO customerCreateDTO);
 
     // Update existing Entity from Update DTO (null fields ignored)
     @Mapping(source = "customerType", target = "customerType", qualifiedByName = "mapCustomerType")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(CustomerUpdateDTO customerUpdateDTO, @MappingTarget Customer entity);
 }

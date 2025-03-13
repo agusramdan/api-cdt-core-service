@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.trx.controller.dto.pickup;
 
 import agus.ramdan.cdt.core.master.controller.dto.MachineDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -24,6 +25,7 @@ public class TrxPickupCreateDTO {
     private MachineDTO machine;
     @JsonProperty("machine_info")
     private String machineInfo;
+    private String username;
 
     @JsonProperty("cdm_trx_no")
     @Schema(description = "Trx Number form cdm")
@@ -47,13 +49,9 @@ public class TrxPickupCreateDTO {
     @JsonProperty("total_pieces")
     private Integer totalPieces;
 
-    @NotNull
-    @NotEmpty
     @JsonProperty("new_banknote_bag_no")
     private String newBanknoteBagNo;
 
-    @NotNull
-    @NotEmpty
     @JsonProperty("old_banknote_bag_no")
     private String oldBanknoteBagNo;
 
@@ -65,20 +63,20 @@ public class TrxPickupCreateDTO {
     private String otpUsed;
 
     @JsonProperty("reset_bag_time")
-    @NotNull
     private LocalDateTime resetBagTime;
 
     @JsonProperty("last_action")
     private String lastAction;
 
     @JsonProperty("action_date")
-    @NotNull
     private LocalDate actionDate;
+
     @JsonProperty("action_start_time")
-    @NotNull
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime actionStartTime;
-    @JsonProperty("action_End_time")
-    @NotNull
+
+    @JsonProperty("action_end_time")
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime actionEndTime;
 
     @Schema(description = "Denominasi Pickup")

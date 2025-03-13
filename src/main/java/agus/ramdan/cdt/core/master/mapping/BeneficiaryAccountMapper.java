@@ -12,11 +12,13 @@ public interface BeneficiaryAccountMapper {
     @Mapping(source = "customer.id", target = "customerId")
     BeneficiaryAccountQueryDTO entityToQueryDto(BeneficiaryAccount beneficiaryAccount);
 
+    @Mapping(target ="auditMetadata", ignore = true )
     BeneficiaryAccount createDtoToEntity(BeneficiaryAccountCreateDTO createDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(BeneficiaryAccountUpdateDTO updateDTO, @MappingTarget BeneficiaryAccount entity);
 
+    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(BeneficiaryAccount target, @MappingTarget BeneficiaryAccount entity);
 }

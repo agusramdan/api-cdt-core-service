@@ -4,19 +4,18 @@ import agus.ramdan.cdt.core.master.controller.dto.accounttype.AccountTypeCreateD
 import agus.ramdan.cdt.core.master.controller.dto.accounttype.AccountTypeQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.accounttype.AccountTypeUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.AccountType;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface AccountTypeMapper {
 
     //    @Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(target ="auditMetadata", ignore = true )
     AccountType createDtoToEntity(AccountTypeCreateDTO dto);
 
     AccountTypeQueryDTO entityToQueryDto(AccountType entity);
 
+    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(AccountTypeUpdateDTO dto, @MappingTarget AccountType entity);
 }

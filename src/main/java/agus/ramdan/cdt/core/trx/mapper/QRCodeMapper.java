@@ -64,6 +64,7 @@ public interface QRCodeMapper {
 
     //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
+    @Mapping(target ="auditMetadata", ignore = true )
     QRCode createDtoToEntity(QRCodeCreateDTO dto);
 
     //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "uuidToString")
@@ -74,6 +75,7 @@ public interface QRCodeMapper {
     QRCodeQueryDTO entityToQueryDto(QRCode entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
 
     @Named("uuidToString")

@@ -4,10 +4,7 @@ import agus.ramdan.cdt.core.master.controller.dto.machine.MachineCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 import java.util.UUID;
 
@@ -15,12 +12,14 @@ import java.util.UUID;
 public interface MachineMapper {
 
     //@Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(target ="auditMetadata", ignore = true )
     Machine createDtoToEntity(MachineCreateDTO dto);
 
     //@Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     MachineQueryDTO entityToQueryDto(Machine entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(MachineUpdateDTO dto, @MappingTarget Machine entity);
 
     default UUID stringToUUID(String value) {
