@@ -56,8 +56,8 @@ public class MachineCommandService implements
         val validations = new ArrayList<ErrorValidation>();
         val entity = mapper.createDtoToEntity(dto);
         // Fetch related Customer entity and set it
-        serviceLocationQueryService.relation(dto.getServiceLocationId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
-                .or(() -> serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "customer")).ifPresent(entity::setServiceLocation);
+        serviceLocationQueryService.relation(dto.getServiceLocationId(), d -> ErrorValidation.add(validations, "Service Location not found", "customer_id", d))
+                .or(() -> serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "service_location")).ifPresent(entity::setServiceLocation);
         branchQueryService.relation(dto.getBranchId(), d -> ErrorValidation.add(validations, "Branch not found", "branch_id", d))
                 .or(() -> branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
         vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
