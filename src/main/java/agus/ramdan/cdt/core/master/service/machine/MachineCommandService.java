@@ -57,8 +57,7 @@ public class MachineCommandService implements
         val entity = mapper.createDtoToEntity(dto);
         // Fetch related Customer entity and set it
         serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "service_location").ifPresent(entity::setServiceLocation);
-        branchQueryService.relation(dto.getBranchId(), d -> ErrorValidation.add(validations, "Branch not found", "branch_id", d))
-                .or(() -> branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
         vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
         vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
         vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
@@ -68,12 +67,11 @@ public class MachineCommandService implements
 
     @Override
     public Machine convertFromUpdateDTO(String id, MachineUpdateDTO dto) {
-        val entity = repository.findById(UUID.fromString(id))
+        val entity = repository.findById(convertId(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Machine not found"));
         val validations = new ArrayList<ErrorValidation>();
         serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "service_location").ifPresent(entity::setServiceLocation);
-        branchQueryService.relation(dto.getBranchId(), d -> ErrorValidation.add(validations, "Branch not found", "branch_id", d))
-                .or(() -> branchQueryService.relation(dto.getBranch(), validations, "branch")).ifPresent(entity::setBranch);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
         vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
         vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
         vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);

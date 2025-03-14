@@ -19,9 +19,9 @@ public class MachineUpdateDTO {
 
     private String description;
 
-    @Schema(description = "Branch ID")
-    @JsonProperty("branch_id")
-    private String branchId;
+//    @Schema(description = "Branch ID")
+//    @JsonProperty("branch_id")
+//    private String branchId;
 
     @Schema(description = "Branch")
     private BranchDTO branch;
