@@ -30,17 +30,31 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
         } catch (IOException e) {
             return new Exception(e.getMessage());
         }
-        if (status == HttpStatus.BAD_REQUEST.value()) {
-            return new BadRequestException(errors.getMessage(), errors);
-        } else {
-            int status_group = status / 100;
-            if (status_group == 4) {
-                return new Propagation4xxException("Need Validation", status, errors.getErrCode(), null, errors);
-            } else if (status_group == 3) {
-                return new Propagation3xxException("Redirection", status, errors.getErrCode(), null, errors);
+        if(errors!=null) {
+            if (status == HttpStatus.BAD_REQUEST.value()) {
+                return new BadRequestException(errors.getMessage(), errors);
+            } else {
+                int status_group = status / 100;
+                if (status_group == 4) {
+                    return new Propagation4xxException("Need Validation", status, errors.getErrCode(), null, errors);
+                } else if (status_group == 3) {
+                    return new Propagation3xxException("Redirection", status, errors.getErrCode(), null, errors);
+                }
             }
-        }
-        return new Propagation5xxException(errors.getMessage(), status, errors.getErrCode(), errors);
+            return new Propagation5xxException(errors.getMessage(), status, errors.getErrCode(), errors);
+        }else {
+            if (status == HttpStatus.BAD_REQUEST.value()) {
+                return new BadRequestException("Bad Request");
+            } else {
+                int status_group = status / 100;
+                if (status_group == 4) {
+                    return new Propagation4xxException("Need Validation", status);
+                } else if (status_group == 3) {
+                    return new Propagation3xxException("Redirection", status);
+                }
+            }
+            return new Propagation5xxException("Error", status,null);
 
+        }
     }
 }
