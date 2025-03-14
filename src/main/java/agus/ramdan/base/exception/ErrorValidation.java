@@ -2,16 +2,23 @@ package agus.ramdan.base.exception;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class ErrorValidation {
-    private final String message;
-    private final String key;
-    private final Object value;
+    private String message;
+    private String key;
+    private Object value;
+
+    public ErrorValidation(String message, String key, Object value) {
+        this.message = message;
+        this.key = key;
+        this.value = value;
+    }
 
     public static ErrorValidation New(String message, String key, Object value) {
         return new ErrorValidation(message, key, value);
