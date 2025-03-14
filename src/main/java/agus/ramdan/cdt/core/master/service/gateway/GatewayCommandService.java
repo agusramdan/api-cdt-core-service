@@ -53,7 +53,7 @@ public class GatewayCommandService implements
         val entity = mapper.createDtoToEntity(dto);
         vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d))
                 .ifPresent(entity::setPartner);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
@@ -64,7 +64,7 @@ public class GatewayCommandService implements
         val validations = new ArrayList<ErrorValidation>();
         mapper.updateEntityFromUpdateDto(dto, entity);
         vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d)).ifPresent(entity::setPartner);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 

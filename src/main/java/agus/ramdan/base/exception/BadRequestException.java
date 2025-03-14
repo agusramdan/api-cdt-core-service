@@ -1,6 +1,7 @@
 package agus.ramdan.base.exception;
 
 import lombok.Getter;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -10,10 +11,14 @@ import java.util.Collection;
 @Getter
 public class BadRequestException extends ClientError4xxException {
     private static final long serialVersionUID = 1L;
-
-    public static void ThrowWhenError(String message, Collection<ErrorValidation> errorValidations) {
+    public static void ThrowWhenError(String message, Collection<ErrorValidation> errorValidations,Object object) {
         if (errorValidations != null && errorValidations.size() > 0) {
-            throw new BadRequestException(message, errorValidations);
+            val error = new Errors();
+            error.setMessage(message);
+            error.setErrCode("400");
+            error.setRequestBody(object);
+            error.setErrors(errorValidations.toArray(new ErrorValidation[0]));
+            throw new BadRequestException(message, error);
         }
     }
 

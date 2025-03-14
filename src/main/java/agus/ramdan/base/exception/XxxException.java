@@ -50,19 +50,22 @@ public class XxxException extends RuntimeException {
 
     public Errors create(String trace_id, String span_id, String details) {
         Errors errors = this.errors;
-        ErrorValidation[] errorValidations = null;
         if (errors != null) {
-            errorValidations = errors.getErrors();
-            details = String.format("%s,details=%s", details, this.errors.getDetails());
-        }
-        if (errorValidations == null) {
-            errorValidations = this.errorValidations;
+            if (errors.getDetails()!=null) {
+                errors.setDetails(String.format("%s,details=%s", details, errors.getDetails()));
+            }
+            if(errors.getErrCode()==null){
+                errors.setErrCode(this.errCode);
+            }
+            errors.setSpanId(span_id);
+            errors.setTraceId(trace_id);
+        }else {
+            errors = new Errors(new Date(), getMessage(), trace_id, span_id, details, this.errorValidations);
+            errors.setErrCode(this.errCode);
         }
 
-        errors = new Errors(new Date(), getMessage(), trace_id, span_id, details, errorValidations);
-        errors.setErrCode(this.errCode);
-        if (log.isDebugEnabled()) {
-            errors.setRequestBody(this.errors.getRequestBody());
+        if (!log.isDebugEnabled()) {
+            errors.setRequestBody(null);
         }
         return errors;
     }

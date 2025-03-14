@@ -83,7 +83,7 @@ public class QRCodeCommandService implements
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
         customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
@@ -98,7 +98,7 @@ public class QRCodeCommandService implements
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
         customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 

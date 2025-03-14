@@ -21,7 +21,7 @@ public class ErrorMessage {
             return msg;
         }
         if (throwable instanceof DataIntegrityViolationException){
-            return get(throwable,"Data integrity violation");
+            return get(throwable.getCause(),"Data integrity violation");
         }
         if (throwable instanceof SQLException){
             return get((SQLException)throwable,msg);
@@ -35,9 +35,12 @@ public class ErrorMessage {
     public static String get(SQLException sqlException,String msg) {
         String message = sqlException.getMessage();
         if (message.contains("duplicate key value")) {
-            msg = extractDuplicateKeyMessage(message);
+            return extractDuplicateKeyMessage(message);
         }
-        return msg;
+        if (msg==null){
+            msg = message;
+        }
+        return get(sqlException.getCause(),msg);
     }
 
     public static String extractDuplicateKeyMessage(String message) {

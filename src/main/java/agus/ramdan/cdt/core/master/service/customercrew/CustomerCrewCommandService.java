@@ -57,7 +57,7 @@ public class CustomerCrewCommandService implements
         // Fetch related Customer entity and set it
         customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
                 .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 

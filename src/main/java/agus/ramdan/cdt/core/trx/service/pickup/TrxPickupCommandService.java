@@ -54,7 +54,7 @@ public class TrxPickupCommandService implements
         val validates = new ArrayList<ErrorValidation>();
         val entity = mapper.createDtoToEntity(dto);
         machineQueryService.relation(dto.getMachine(), validates, "machine").ifPresent(entity::setMachine);
-        BadRequestException.ThrowWhenError("Invalid Transaction", validates);
+        BadRequestException.ThrowWhenError("Invalid Transaction", validates,dto);
         entity.setStatus(TrxPickupStatus.SUCCESS);
         return entity;
     }

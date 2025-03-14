@@ -62,7 +62,7 @@ public class MachineCommandService implements
         vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
         vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
         vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
@@ -78,7 +78,7 @@ public class MachineCommandService implements
         vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
         vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
         mapper.updateEntityFromUpdateDto(dto, entity);
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 

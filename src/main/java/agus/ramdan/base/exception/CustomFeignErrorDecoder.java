@@ -15,8 +15,6 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
         Errors errors = null;
         try {
             if (response.body() != null) {
-                message = response.body().toString();
-                log.error(message);
                 errors = new ObjectMapper().readValue(response.body().asInputStream(), Errors.class);
             }
         } catch (Exception ignored) {

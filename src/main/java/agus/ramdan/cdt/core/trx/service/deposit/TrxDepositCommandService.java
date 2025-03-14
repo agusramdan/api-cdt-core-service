@@ -71,7 +71,7 @@ public class TrxDepositCommandService {
                     }
                 }
             }
-            BadRequestException.ThrowWhenError("Invalid Parameter Transaction", validations);
+            BadRequestException.ThrowWhenError("Invalid Parameter Transaction", validations,dto);
         });
 
         return option_trx.or(() -> Optional.of(trxDepositMapper.toEntity(dto, machine, code))

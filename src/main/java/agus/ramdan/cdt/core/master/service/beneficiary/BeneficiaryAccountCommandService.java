@@ -83,7 +83,7 @@ public class BeneficiaryAccountCommandService implements
                 validations.add(ErrorValidation.New("Bank not found", "bank", null));
             }
         }
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
@@ -107,7 +107,7 @@ public class BeneficiaryAccountCommandService implements
                 validations.add(ErrorValidation.New("Bank not found", "bank", null));
             }
         }
-        BadRequestException.ThrowWhenError("Validation error", validations);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
