@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.service.deposit;
 
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
@@ -21,15 +22,15 @@ public class TrxDepositQueryService implements
     private final TrxDepositRepository repository;
     private final TrxDepositMapper queryMapper;
 
-    public List<TrxDepositQueryDTO> getAllTrxDeposits() {
-        return queryMapper.toDtoList(repository.findAll());
-    }
-
-    public TrxDepositQueryDTO getTrxDepositById(UUID id) {
-        return repository.findById(id)
-                .map(queryMapper::entityToQueryDto)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
-    }
+//    public List<TrxDepositQueryDTO> getAllTrxDeposits() {
+//        return queryMapper.map(repository.findAll());
+//    }
+//
+//    public TrxDepositQueryDTO getTrxDepositById(UUID id) {
+//        return repository.findById(id)
+//                .map(queryMapper::entityToQueryDto)
+//                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+//    }
 
     @Override
     public UUID convertId(String string) {

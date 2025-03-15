@@ -1,4 +1,4 @@
-package agus.ramdan.cdt.core.master.persistence.domain;
+package agus.ramdan.cdt.core.master.persistence;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
