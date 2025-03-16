@@ -3,6 +3,7 @@ package agus.ramdan.cdt.core.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,15 +24,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui.html","/swagger-ui/**", "/v3/api-docs/**","/v3/api-docs.yaml").permitAll()
 
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.read","SCOPE_admin.internal.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.create","SCOPE_admin.internal.create")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.update","SCOPE_admin.internal.update")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.delete","SCOPE_admin.internal.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/qr-code/code").hasAuthority("SCOPE_cdm.read")
 
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/qr-code/**").hasAnyAuthority("SCOPE_web.internal.read","SCOPE_cdm.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.create")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.update")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/master/**","/api/cdt/core/trx/**").hasAnyAuthority("SCOPE_cdm.read","SCOPE_web.internal.read","SCOPE_admin.internal.read")
+                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/master/**","/api/cdt/core/trx/qr-code/**").hasAnyAuthority("SCOPE_web.internal.create","SCOPE_admin.internal.create")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/master/**","/api/cdt/core/trx/qr-code/**").hasAnyAuthority("SCOPE_web.internal.update","SCOPE_admin.internal.update")
+                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/master/**","/api/cdt/core/trx/qr-code/**").hasAnyAuthority("SCOPE_web.internal.delete","SCOPE_admin.internal.delete")
 
                         .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.read")
                         .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.write")
