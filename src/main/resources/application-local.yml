@@ -2,11 +2,11 @@ server:
   port: 8082
 
 spring:
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://merahputih-id.tech:9000
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://merahputih-id.tech:9000
   datasource:
     url: jdbc:postgresql://db:5433/core
   jpa:
