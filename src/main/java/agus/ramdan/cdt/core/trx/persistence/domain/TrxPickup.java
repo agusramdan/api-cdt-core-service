@@ -17,14 +17,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+//indexes = {@Index(name = "idx_cdt_trx_pickup_token_signature", columnList = "cdm_trx_no, cdm_trx_date, signature")}
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_trx_pickup",
-        indexes = {@Index(name = "idx_cdt_trx_pickup_token_signature", columnList = "cdm_trx_no, cdm_trx_date, signature")},
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"cdm_trx_no", "cdm_trx_date", "signature"})}
-)
+@Table(name = "cdt_trx_pickup")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class TrxPickup {

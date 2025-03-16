@@ -19,14 +19,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+//indexes = {@Index(name = "idx_cdt_trx_cdm_token_signature", columnList = "token, signature")},
+//uniqueConstraints = {@UniqueConstraint(columnNames = {"token", "signature"})}
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_trx_cdm",
-        indexes = {@Index(name = "idx_cdt_trx_cdm_token_signature", columnList = "token, signature")},
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"token", "signature"})}
-)
+@Table(name = "cdt_trx_cdm")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class TrxDeposit {
