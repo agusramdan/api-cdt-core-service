@@ -21,7 +21,7 @@ public interface BaseQueryAllService<T, DTO> {
     JpaSpecificationExecutor<T> getJpaSpecificationExecutor();
 
     DTO convertOne(T entity);
-    default void exceptionLog(Throwable e){
+    default void exceptionLog(Throwable e , Object object){
         LoggerFactory.getLogger("agus.ramdan.base.service.BaseQueryAllService").error(e.getMessage(),e);
     }
     default List<DTO> getAll(int offset, int limit, String search, String ids) {
@@ -43,7 +43,7 @@ public interface BaseQueryAllService<T, DTO> {
         ChekUtils.ifEmptyThrow(page);
         return page.getContent().stream().map( t->
                 Try.tryCall(()->convertOne(t)).recover(
-                        e->{exceptionLog(e);
+                        e->{exceptionLog(e,t);
                             return null;
                         }).orElse(null)
         ).filter(d-> d!=null ).collect(Collectors.toList());

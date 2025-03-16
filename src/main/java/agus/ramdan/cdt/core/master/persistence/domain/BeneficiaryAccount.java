@@ -5,11 +5,13 @@ import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -19,8 +21,9 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "cdt_beneficiary_account")
-@SQLDelete(sql = "UPDATE cdt_beneficiary_account SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at is null")
+@SQLDelete(sql = "UPDATE cdt_beneficiary_account SET deleted_at = CURRENT_TIMESTAMP , deleted = true WHERE id = ?")
+//@Where(clause = "deleted_at is null")
+@SoftDelete
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class BeneficiaryAccount {
