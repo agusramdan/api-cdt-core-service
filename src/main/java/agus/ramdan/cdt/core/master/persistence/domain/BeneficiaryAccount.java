@@ -23,7 +23,7 @@ import java.util.UUID;
 @Table(name = "cdt_beneficiary_account")
 //@SQLDelete(sql = "UPDATE cdt_beneficiary_account SET deleted_at = CURRENT_TIMESTAMP , deleted = true WHERE id = ?")
 //@Where(clause = "deleted_at is null")
-@SoftDelete
+//@SoftDelete
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 public class BeneficiaryAccount {
