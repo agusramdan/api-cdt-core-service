@@ -7,7 +7,4 @@ spring:
 
 logging:
   level:
-    agus:
-      ramdan:
-        base:
-          exception: debug
+    agus.ramdan.base.exception: debug
