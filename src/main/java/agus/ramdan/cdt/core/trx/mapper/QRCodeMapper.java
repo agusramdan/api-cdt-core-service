@@ -30,7 +30,14 @@ public interface QRCodeMapper {
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     BeneficiaryAccountDTO map(BeneficiaryAccount source);
-
+    @AfterMapping
+    default void handleException(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity) {
+        try {
+            dto.setId(entity.getId().toString());
+        } catch (Exception e) {
+            dto.setAccount_number("Unknown");
+        }
+    }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     ServiceTransaction map(ServiceTransactionDTO source);
 

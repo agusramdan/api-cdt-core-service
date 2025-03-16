@@ -4,19 +4,26 @@ import agus.ramdan.base.utils.BaseSpecifications;
 import agus.ramdan.base.utils.BaseSpecificationsBuilder;
 import agus.ramdan.base.utils.ChekUtils;
 import agus.ramdan.base.utils.OffsetBasedPageRequest;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dataloader.Try;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 
 public interface BaseQueryAllService<T, DTO> {
     JpaSpecificationExecutor<T> getJpaSpecificationExecutor();
 
     DTO convertOne(T entity);
-
+    default void exceptionLog(Throwable e){
+        LoggerFactory.getLogger("agus.ramdan.base.service.BaseQueryAllService").error(e.getMessage(),e);
+    }
     default List<DTO> getAll(int offset, int limit, String search, String ids) {
         val builder = new BaseSpecificationsBuilder<T>();
         if (StringUtils.hasText(ids)) {
@@ -34,7 +41,11 @@ public interface BaseQueryAllService<T, DTO> {
         val pageable = new OffsetBasedPageRequest(offset, limit);
         val page = getJpaSpecificationExecutor().findAll(spec, pageable);
         ChekUtils.ifEmptyThrow(page);
-        val content = page.getContent().stream().map(this::convertOne).collect(Collectors.toList());
-        return content;
+        return page.getContent().stream().map( t->
+                Try.tryCall(()->convertOne(t)).recover(
+                        e->{exceptionLog(e);
+                            return null;
+                        }).orElse(null)
+        ).filter(d-> d!=null ).collect(Collectors.toList());
     }
 }
