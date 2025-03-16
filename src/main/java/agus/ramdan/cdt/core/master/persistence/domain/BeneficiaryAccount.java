@@ -21,7 +21,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "cdt_beneficiary_account")
-@SQLDelete(sql = "UPDATE cdt_beneficiary_account SET deleted_at = CURRENT_TIMESTAMP , deleted = true WHERE id = ?")
+//@SQLDelete(sql = "UPDATE cdt_beneficiary_account SET deleted_at = CURRENT_TIMESTAMP , deleted = true WHERE id = ?")
 //@Where(clause = "deleted_at is null")
 @SoftDelete
 @Schema
