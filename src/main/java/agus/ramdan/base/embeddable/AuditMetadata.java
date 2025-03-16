@@ -18,10 +18,11 @@ public class AuditMetadata {
     private LocalDateTime deletedAt;
 
     @CreationTimestamp
-    @Column(updatable = false)
+    @Column(name = "created_on")
     private LocalDateTime created_on;
 
     @UpdateTimestamp
+    @Column(name = "updated_on")
     private LocalDateTime updated_on;
 
     @CreatedBy
