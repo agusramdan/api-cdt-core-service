@@ -28,20 +28,20 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.update","SCOPE_admin.internal.update")
                         .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/master/**").hasAnyAuthority("SCOPE_web.internal.delete","SCOPE_admin.internal.delete")
 
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/qr-code/command").hasAnyAuthority("SCOPE_web.internal.read","SCOPE_cdm.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/qr-code/command").hasAuthority("SCOPE_web.internal.create")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/qr-code/command").hasAuthority("SCOPE_web.internal.update")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/qr-code/command").hasAuthority("SCOPE_web.internal.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/qr-code/**").hasAnyAuthority("SCOPE_web.internal.read","SCOPE_cdm.read")
+                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.create")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.update")
+                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/qr-code/**").hasAuthority("SCOPE_web.internal.delete")
 
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/deposit/command").hasAuthority("SCOPE_cdm.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/deposit/command").hasAuthority("SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/deposit/command").hasAuthority("SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/deposit/command").hasAuthority("SCOPE_admin.internal.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.read")
+                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_admin.internal.delete")
 
-                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/pickup/command").hasAuthority("SCOPE_cdm.read")
-                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/pickup/command").hasAuthority("SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/pickup/command").hasAuthority("SCOPE_cdm.write")
-                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/pickup/command").hasAuthority("SCOPE_admin.internal.delete")
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.read")
+                        .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.write")
+                        .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_admin.internal.delete")
 
                         .anyRequest().authenticated()
             ).oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
