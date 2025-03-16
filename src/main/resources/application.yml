@@ -35,6 +35,24 @@ spring:
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: validate
 
+  kafka:
+    bootstrap-servers: kafka:9092
+#    consumer:
+#      group-id: gateway-callback-group
+#      auto-offset-reset: earliest
+#      enable-auto-commit: true
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    admin:
+      auto-create-topics: true
+
   flyway:
     enabled: false
 
@@ -64,15 +82,14 @@ feign-client:
   api-cdt-gateway-service:
     base-url: http://api-cdt-gateway-service:8080
 
+
 logging:
   level:
     root: WARN
-    org.springframework: WARN
-    org.hibernate: WARN
-    org.apache.http: WARN
-    org.apache.http.wire: WARN
-    org.apache.http.headers: WARN
-    agus.ramdan.base: WARN
-    agus.ramdan.base.exception: DEBUG
+#    org.springframework: WARN
+#    org.hibernate: WARN
+#    org.apache.http: WARN
+#    org.apache.http.wire: WARN
+#    org.apache.http.headers: WARN
+#    agus.ramdan.base: WARN
     agus.ramdan.cdt.core: INFO
-    agus.ramdan.base: WARN
