@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -26,17 +27,13 @@ import java.util.UUID;
 @Schema(description = "Gateway Bank Parameter Config")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class GatewayBank {
+public class GatewayBank extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
 
-    // audit
-    @Embedded
-    @JsonProperty("audit_metadata")
-    private AuditMetadata auditMetadata;
     private String code;
     private String name;
     private String description;

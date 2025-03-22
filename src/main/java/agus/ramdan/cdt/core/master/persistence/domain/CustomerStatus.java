@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,16 +21,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class CustomerStatus {
+public class CustomerStatus extends BaseEntity {
 
     @Id
     @JsonProperty(index = 1)
     private String id;
-
-    @Embedded
-    @JsonProperty("audit_metadata")
-    private AuditMetadata auditMetadata;
-
     private String name;
     private String description;
 

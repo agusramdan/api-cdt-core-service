@@ -1,7 +1,9 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -21,7 +23,7 @@ import java.util.UUID;
 @Table(name = "service_trx")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class ServiceTransaction {
+public class ServiceTransaction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,22 +32,23 @@ public class ServiceTransaction {
 
     @Column(length = 20, updatable = false, unique = true)
     private String no;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
     private LocalDateTime trxDate;
     private TrxStatus status;
+
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
     private TrxDeposit deposit;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
     private TrxTransfer transfer;
 
     @PrePersist

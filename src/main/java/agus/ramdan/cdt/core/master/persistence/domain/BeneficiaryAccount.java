@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
@@ -23,16 +24,12 @@ import java.util.UUID;
 //@Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class BeneficiaryAccount {
+public class BeneficiaryAccount extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
-
-    @Embedded
-    @JsonProperty("audit_metadata")
-    private AuditMetadata auditMetadata;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")

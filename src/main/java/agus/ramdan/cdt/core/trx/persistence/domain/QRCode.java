@@ -1,7 +1,9 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -20,14 +22,11 @@ import java.util.UUID;
 })
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class QRCode {
+public class QRCode extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     @Column(name = "code")
     @JsonProperty(index = 2)
     @Schema(description = "QR Code")
@@ -49,30 +48,48 @@ public class QRCode {
 
     // customer/user information
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("customer_id")
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("customer_crew_id")
     private CustomerCrew user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("beneficiary_account_id")
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("branch_id")
     private Branch branch;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("service_transaction_id")
     private ServiceTransaction serviceTransaction;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("service_product_id")
     private ServiceProduct serviceProduct;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("vendor_id")
     private Vendor vendor;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("vendor_crew_id")
     private VendorCrew vendorCrew;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("machine_id")
     private Machine machine;
 
     @PrePersist

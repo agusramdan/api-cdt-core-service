@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -28,16 +29,12 @@ import java.util.UUID;
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Branch {
+public class Branch extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
-
-    @Embedded
-    @JsonProperty("audit_metadata")
-    private AuditMetadata auditMetadata;
 
     private String name;
     private String code;

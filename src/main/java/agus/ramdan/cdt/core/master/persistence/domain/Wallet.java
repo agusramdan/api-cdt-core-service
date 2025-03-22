@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +24,7 @@ import java.math.BigDecimal;
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Wallet {
+public class Wallet extends BaseEntity {
 
     @Id
     @Column(name = "number")
@@ -34,9 +35,6 @@ public class Wallet {
     private String name;
 
     private BigDecimal balance;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

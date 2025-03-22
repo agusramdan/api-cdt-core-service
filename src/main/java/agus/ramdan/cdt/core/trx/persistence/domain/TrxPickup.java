@@ -1,8 +1,10 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.VendorCrew;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -24,23 +26,25 @@ import java.util.UUID;
 @Table(name = "cdt_trx_pickup")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class TrxPickup {
+
+public class TrxPickup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
     private String username;
+
     @ManyToOne
+    @JsonProperty("vendor_crew_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private VendorCrew user;
 //    @ManyToOne
 //    private QRCode qrCode;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "machine_id")
+    @JsonProperty("machine_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Machine machine;
 
     @JsonProperty("machine_info")
@@ -57,8 +61,10 @@ public class TrxPickup {
     @Column(name="cdm_trx_date")
     private LocalDate cdmTrxDate;
 
-    @Column(name="cdm_trx_time1")
+    @Column(name="cdm_trx_time")
+    @JsonProperty("cdm_trx_time")
     private LocalTime cdmTrxTime;
+    @JsonProperty("cdm_trx_type")
     private String cdmTrxType;
     private Integer totalPieces;
     private String newBanknoteBagNo;
@@ -70,18 +76,15 @@ public class TrxPickup {
     private String otpUsed;
     private LocalDateTime resetBagTime;
     private String lastAction;
+
     private LocalDate actionDate;
+
     private LocalTime actionStartTime;
+
     private LocalTime actionEndTime;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "trx_pickup_id")
     @OrderBy("denomination")
     private List<TrxPickupDenom> denominations = new ArrayList<>();
 
-//    @PrePersist
-//    protected void onCreate() {
-//        if (trx_date == null) {
-//            trx_date = LocalDateTime.now();
-//        }
-//    }
 }

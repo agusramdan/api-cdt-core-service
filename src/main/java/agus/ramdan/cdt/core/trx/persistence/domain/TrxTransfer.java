@@ -1,8 +1,10 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -20,15 +22,13 @@ import java.util.UUID;
 @Table(name = "cdt_transfer")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class TrxTransfer {
+public class TrxTransfer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
 
-    @Embedded
-    private AuditMetadata auditMetadata;
     @Column(name = "trx_date")
     private LocalDateTime trxDate;
     @Enumerated(EnumType.STRING)
@@ -44,10 +44,14 @@ public class TrxTransfer {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiary_account_id")
+    @JsonProperty("beneficiary_account_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gateway_id")
+    @JsonProperty("gateway_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Gateway gateway;
 
     private String description;

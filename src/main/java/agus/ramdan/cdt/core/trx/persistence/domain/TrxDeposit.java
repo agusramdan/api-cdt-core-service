@@ -1,10 +1,12 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -27,16 +29,12 @@ import java.util.UUID;
 @Table(name = "cdt_trx_cdm")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class TrxDeposit {
+public class TrxDeposit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     private String token;
     private String signature;
 
@@ -44,24 +42,35 @@ public class TrxDeposit {
     private TrxDepositStatus status;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("customer_crew_id")
     private CustomerCrew user;
 
     @ManyToOne
-    @JsonProperty("service_transaction")
+    @JsonProperty("service_transaction_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private ServiceTransaction serviceTransaction;
 
     @ManyToOne
-    @JsonProperty("service_product")
+    @JsonProperty("service_product_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private ServiceProduct serviceProduct;
 
     @ManyToOne
+    @JsonProperty("qr_code_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private QRCode code;
 
     @ManyToOne
+    @JsonProperty("beneficiary_account_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
+    @JsonProperty("machine_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Machine machine;
+    @JsonProperty("machine_info")
     private String machineInfo;
     @Column(name = "cdm_trx_no")
     private String cdmTrxNo;
