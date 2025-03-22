@@ -3,7 +3,10 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
@@ -29,6 +32,7 @@ import java.util.UUID;
 @Where(clause = "deleted_at IS NULL")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Customer {
 
     @Id
@@ -38,6 +42,7 @@ public class Customer {
     private UUID id;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     @Column(name = "name", nullable = false)
@@ -75,5 +80,7 @@ public class Customer {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Schema(description = "Customer managed By branch")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("branch_id")
     private Branch branch;
 }

@@ -1,19 +1,18 @@
 package agus.ramdan.cdt.core.master.service.countrycode;
 
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.countrycode.CountryCodeCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.countrycode.CountryCodeQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.countrycode.CountryCodeUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CountryCodeMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.CountryCode;
 import agus.ramdan.cdt.core.master.persistence.repository.CountryCodeRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CountryCodeCommandService implements
-        BaseCommandEntityService<CountryCode, String, CountryCodeQueryDTO, CountryCodeCreateDTO, CountryCodeUpdateDTO, String> {
+public class CountryCodeCommandService extends MasterDataEventProducer<CountryCode, String, CountryCodeQueryDTO, CountryCodeCreateDTO, CountryCodeUpdateDTO, String> {
 
     private final CountryCodeRepository repository;
     private final CountryCodeMapper mapper;

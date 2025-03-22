@@ -3,7 +3,6 @@ package agus.ramdan.base.exception;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 

@@ -1,4 +1,16 @@
-version: '3.8'
+# docker plugin install  grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+# docker plugin enable loki
+
+x-logging: &default-logging
+  driver: loki
+  options:
+    loki-url: 'http://localhost:3100/api/prom/push'
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
 
 services:
   keycloak-db:
@@ -13,7 +25,6 @@ services:
       POSTGRES_DB: keycloak
   #    ports:
   #      - "5433:5432"
-
 
   keycloak:
     image: quay.io/keycloak/keycloak:22.0
@@ -139,6 +150,18 @@ services:
     networks:
       - backend
 
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8060:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      - backend
+#    volumes:
+#      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+
   mongodb:
     image: mongo
     container_name: mongodb
@@ -159,6 +182,50 @@ services:
       - mongodb
     networks:
       - backend
+
+  # Infrastructure
+  loki:
+    image: grafana/loki:3.0.0
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./etc/prometheus:/workspace
+    command:
+      - --config.file=/workspace/prometheus.yml
+      - --enable-feature=exemplar-storage
+    depends_on:
+      - loki
+    logging: *default-logging
+
+  tempo:
+    image: grafana/tempo:2.4.1
+    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
+    ports:
+      - "14250:14250"
+      - "4317:4317"
+    depends_on:
+      - loki
+    logging: *default-logging
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports:
+      - "3200:3000"
+    volumes:
+      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./etc/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - loki
+      - prometheus
+    logging: *default-logging
+
 
   watchtower:
     image: containrrr/watchtower
@@ -184,7 +251,6 @@ services:
     environment:
       - SERVER_PORT=8097
       - SPRING_PROFILES_ACTIVE=dev
-      - JAVA_OPTS="-Xms128M -Xmx128M"
     ports:
       - "8097:8097"
     networks:
@@ -197,7 +263,6 @@ services:
       - ./core.env
     environment:
       #- SPRING_PROFILES_ACTIVE=devdocker,local
-      - JAVA_OPTS="-Xms128M -Xmx128M"
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8082:8080"
@@ -207,6 +272,7 @@ services:
       - backend
       - core
       - frontend
+      - kafka
 
   api-cdt-cdm-service:
     image: agusramdan/api-cdt-cdm-service:dev

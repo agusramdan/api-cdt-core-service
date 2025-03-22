@@ -1,7 +1,9 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,8 +20,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "cdt_country_code")
 @SQLDelete(sql = "UPDATE cdt_country_code SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @Where(clause = "deleted_at is null")
-@Schema
+@Schema(description = "ISO Country Code")
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class CountryCode {
 
     @Id
@@ -27,6 +30,7 @@ public class CountryCode {
     private String id;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     private String name;

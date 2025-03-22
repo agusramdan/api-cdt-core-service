@@ -1,13 +1,13 @@
 package agus.ramdan.cdt.core.master.service.bank;
 
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.bank.BankUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.BankMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Bank;
 import agus.ramdan.cdt.core.master.persistence.repository.BankRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class BankCommandService implements
-        BaseCommandEntityService<Bank, UUID, BankQueryDTO, BankCreateDTO, BankUpdateDTO, String> {
+public class BankCommandService extends MasterDataEventProducer<Bank, UUID, BankQueryDTO, BankCreateDTO, BankUpdateDTO, String> {
 
     private final BankRepository repository;
     private final BankMapper mapper;

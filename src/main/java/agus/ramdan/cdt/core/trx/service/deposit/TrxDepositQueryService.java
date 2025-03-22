@@ -1,6 +1,5 @@
 package agus.ramdan.cdt.core.trx.service.deposit;
 
-import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
@@ -10,7 +9,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service

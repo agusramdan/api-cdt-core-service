@@ -3,13 +3,13 @@ package agus.ramdan.cdt.core.master.service.gateway;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.gateway.GatewayUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.GatewayMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
 import agus.ramdan.cdt.core.master.persistence.repository.GatewayRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.vendor.VendorQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -20,8 +20,8 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class GatewayCommandService implements
-        BaseCommandEntityService<Gateway, UUID, GatewayQueryDTO, GatewayCreateDTO, GatewayUpdateDTO, String> {
+public class GatewayCommandService extends
+        MasterDataEventProducer<Gateway, UUID, GatewayQueryDTO, GatewayCreateDTO, GatewayUpdateDTO, String> {
 
     private final GatewayRepository repository;
     private final GatewayMapper mapper;

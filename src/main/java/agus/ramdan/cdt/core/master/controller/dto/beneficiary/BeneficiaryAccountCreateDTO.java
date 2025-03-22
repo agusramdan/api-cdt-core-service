@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 
 import agus.ramdan.cdt.core.master.controller.dto.*;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,10 +25,14 @@ public class BeneficiaryAccountCreateDTO {
     @NotNull(message = " account_number can't null.")
     @NotBlank(message = " account_number can't blank.")
     @Schema(description = "Bank account number", example = "1234567890")
-    private String account_number;
+    private String firstname;
+    private String lastname;
+    @JsonProperty("account_number")
+    private String accountNumber;
     @NotBlank
     @Schema(description = "Account holder name", example = "John Doe")
-    private String account_name;
+    @JsonProperty("account_name")
+    private String accountName;
     private AccountTypeDTO accountType;
 
     @NotNull(message = "bank can't null.")

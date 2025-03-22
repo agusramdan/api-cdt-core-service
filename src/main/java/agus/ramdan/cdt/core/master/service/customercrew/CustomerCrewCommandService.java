@@ -2,7 +2,6 @@ package agus.ramdan.cdt.core.master.service.customercrew;
 
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
@@ -10,6 +9,7 @@ import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerCrewRepository;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -20,8 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerCrewCommandService implements
-        BaseCommandEntityService<CustomerCrew, UUID, CustomerCrewQueryDTO, CustomerCrewCreateDTO, CustomerCrewUpdateDTO, String> {
+public class CustomerCrewCommandService extends MasterDataEventProducer<CustomerCrew, UUID, CustomerCrewQueryDTO, CustomerCrewCreateDTO, CustomerCrewUpdateDTO, String> {
 
     private final CustomerCrewRepository repository;
     private final CustomerCrewMapper mapper;

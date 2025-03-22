@@ -2,7 +2,9 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
@@ -25,6 +27,7 @@ import java.util.UUID;
 @Where(clause = "deleted_at IS NULL")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Branch {
 
     @Id
@@ -33,6 +36,7 @@ public class Branch {
     private UUID id;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     private String name;

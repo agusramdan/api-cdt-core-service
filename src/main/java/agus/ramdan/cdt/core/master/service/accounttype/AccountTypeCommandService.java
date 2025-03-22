@@ -19,6 +19,7 @@ public class AccountTypeCommandService implements
     private final AccountTypeRepository repository;
     private final AccountTypeMapper mapper;
 
+
     @Override
     public String convertId(String id) {
         return id;

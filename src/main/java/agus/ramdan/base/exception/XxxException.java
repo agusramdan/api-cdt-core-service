@@ -6,7 +6,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collection;
-import java.util.Date;
 
 @Getter
 @Log4j2
@@ -47,23 +46,23 @@ public class XxxException extends RuntimeException {
     public XxxException(String message, int code, String errCode, Throwable cause, @NotNull Collection<ErrorValidation> errorValidations) {
         this(message, code, errCode, cause, errorValidations.toArray(new ErrorValidation[0]));
     }
-
-    public Errors create(String trace_id, String span_id, String details) {
+    public Errors getOrCreate(String trace_id, String span_id, String path) {
         Errors errors = this.errors;
         if (errors != null) {
             if (errors.getDetails()!=null) {
-                errors.setDetails(String.format("%s,details=%s", details, errors.getDetails()));
+                errors.setDetails(String.format("%s,details=%s", path, errors.getDetails()));
             }
             if(errors.getErrCode()==null){
                 errors.setErrCode(this.errCode);
             }
-            errors.setSpanId(span_id);
-            errors.setTraceId(trace_id);
         }else {
-            errors = new Errors(new Date(), getMessage(), trace_id, span_id, details, this.errorValidations);
+            errors = new Errors(getMessage(),this.errorValidations);
             errors.setErrCode(this.errCode);
         }
-
+        errors.setup(code, trace_id, span_id, path);
+        if (!log.isTraceEnabled()) {
+            errors.setTrace(null);
+        }
         if (!log.isDebugEnabled()) {
             errors.setRequestBody(null);
         }

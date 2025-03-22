@@ -3,12 +3,11 @@ package agus.ramdan.cdt.core.trx.service.qrcode;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
-import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
+import agus.ramdan.cdt.core.trx.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
@@ -29,9 +28,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class QRCodeCommandService implements
-        BaseCommandService<QRCodeQueryDTO, QRCodeCreateDTO, QRCodeUpdateDTO, String>,
-        BaseCommandEntityService<QRCode, UUID, QRCodeQueryDTO, QRCodeCreateDTO, QRCodeUpdateDTO, String> {
+public class QRCodeCommandService extends TrxDataEventProducer<QRCode, UUID, QRCodeQueryDTO, QRCodeCreateDTO, QRCodeUpdateDTO, String> {
 
     @Getter
     private final QRCodeRepository repository;
@@ -72,7 +69,17 @@ public class QRCodeCommandService implements
         }
         return repository.save(entity);
     }
-
+    public QRCode activateQrCode(QRCode entity) {
+        if (QRCodeStatus.PENDING.equals(entity.getStatus())) {
+            List<ErrorValidation> validations = new ArrayList<>();
+            validateActiveStatus(entity, validations);
+            entity.setStatus(QRCodeStatus.ACTIVE);
+            BadRequestException.ThrowWhenError("Activate QR error", validations,null);
+        }else {
+            throw new BadRequestException("QR Code is not in pending status");
+        }
+        return repository.save(entity);
+    }
     @Override
     public QRCode convertFromCreateDTO(QRCodeCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();
@@ -83,15 +90,20 @@ public class QRCodeCommandService implements
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
         customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        if (QRCodeStatus.ACTIVE.equals(entity.getStatus())) {
+            validateActiveStatus(entity, validations);
+        }
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
     @Override
     public QRCode convertFromUpdateDTO(String id, QRCodeUpdateDTO dto) {
-
         QRCode entity = repository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new ResourceNotFoundException("QR Code not found"));
+        if (!QRCodeStatus.PENDING.equals(entity.getStatus())) {
+            throw new BadRequestException("QR Code is not in pending status. Cannot be updated");
+        }
         mapper.updateEntityFromUpdateDto(dto, entity);
         val validations = new ArrayList<ErrorValidation>();
         branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
@@ -104,10 +116,8 @@ public class QRCodeCommandService implements
 
     @Override
     public QRCodeQueryDTO convertToResultDTO(QRCode entity) {
-
         return mapper.entityToQueryDto(entity);
     }
-
 
     public void delete(UUID id) {
         repository.deleteById(id);

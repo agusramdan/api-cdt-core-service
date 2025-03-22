@@ -18,7 +18,13 @@ public class TransferBalanceRequestDTO {
      * 1 = BI Fast Transfer
      */
     @JsonProperty("transfer_type")
-    private String transferType = "0";
+    private String transferType = "1";
+
+    @JsonProperty("destination_account_firstname")
+    private String destinationAccountFirstname;
+
+    @JsonProperty("destination_account_lastname")
+    private String destinationAccountLastname;
 
     @JsonProperty("destination_account")
     private String destinationAccount;

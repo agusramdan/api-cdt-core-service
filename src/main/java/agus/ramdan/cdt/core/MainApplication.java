@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 @ComponentScan(basePackages = {
         "agus.ramdan.base.exception",
+        "agus.ramdan.base.exetime",
         "agus.ramdan.cdt.core"}
 )
 public class MainApplication {

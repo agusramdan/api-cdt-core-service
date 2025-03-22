@@ -1,13 +1,13 @@
 package agus.ramdan.cdt.core.master.service.vendor;
 
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.VendorMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Vendor;
 import agus.ramdan.cdt.core.master.persistence.repository.VendorRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class VendorCommandService implements
-        BaseCommandEntityService<Vendor, UUID, VendorQueryDTO, VendorCreateDTO, VendorUpdateDTO, String> {
+public class VendorCommandService extends MasterDataEventProducer<Vendor, UUID, VendorQueryDTO, VendorCreateDTO, VendorUpdateDTO, String> {
 
     private final VendorRepository repository;
     private final VendorMapper mapper;

@@ -4,18 +4,20 @@ jvm:
   initial-heap-size: 256m
   max-heap-size: 512m
 
----
-spring:
-  application:
-    name: API-CDT-CORE-SERVICE
-
----
 server:
   port: 8080
   error:
     include-stacktrace: never
 
+---
 spring:
+  application:
+    name: api-cdt-core-service
+  threads:
+    virtual:
+      enabled: true
+  thread-executor: virtual
+
   config:
     use-legacy-processing: true
   jmx:
@@ -84,6 +86,8 @@ feign-client:
 
 
 logging:
+  pattern:
+    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
   level:
     root: WARN
 #    org.springframework: WARN
@@ -93,3 +97,30 @@ logging:
 #    org.apache.http.headers: WARN
     agus.ramdan.base: DEBUG
     agus.ramdan.cdt.core: INFO
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://tempo:4317
+  service:
+    name: api-cdt-core-service
+  resource:
+    attributes:
+      compose_service: api-cdt-core-service
+  metrics:
+    exporter: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: api-cdt-core-service
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: 'true'
+

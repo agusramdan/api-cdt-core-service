@@ -19,20 +19,23 @@ public class AuditMetadata {
 
     @CreationTimestamp
     @Column(name = "created_on")
-    private LocalDateTime created_on;
+    private LocalDateTime createdOn;
 
     @UpdateTimestamp
     @Column(name = "updated_on")
-    private LocalDateTime updated_on;
+    private LocalDateTime updatedOn;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    private String created_by;
+    private String createdBy;
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private String updated_by;
+    private String updatedBy;
 
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
     // Getters and Setters
 
 

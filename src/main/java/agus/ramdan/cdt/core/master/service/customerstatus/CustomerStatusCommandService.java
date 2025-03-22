@@ -1,19 +1,18 @@
 package agus.ramdan.cdt.core.master.service.customerstatus;
 
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.customerstatus.CustomerStatusCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customerstatus.CustomerStatusQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customerstatus.CustomerStatusUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CustomerStatusMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerStatus;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerStatusRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerStatusCommandService implements
-        BaseCommandEntityService<CustomerStatus, String, CustomerStatusQueryDTO, CustomerStatusCreateDTO, CustomerStatusUpdateDTO, String> {
+public class CustomerStatusCommandService extends MasterDataEventProducer<CustomerStatus, String, CustomerStatusQueryDTO, CustomerStatusCreateDTO, CustomerStatusUpdateDTO, String> {
 
     private final CustomerStatusRepository repository;
     private final CustomerStatusMapper mapper;

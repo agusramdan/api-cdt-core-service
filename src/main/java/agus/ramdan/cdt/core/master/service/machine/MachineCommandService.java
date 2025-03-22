@@ -3,13 +3,13 @@ package agus.ramdan.cdt.core.master.service.machine;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.MachineMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.repository.MachineRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.location.ServiceLocationQueryService;
 import agus.ramdan.cdt.core.master.service.vendor.VendorQueryService;
@@ -22,8 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MachineCommandService implements
-        BaseCommandEntityService<Machine, UUID, MachineQueryDTO, MachineCreateDTO, MachineUpdateDTO, String> {
+public class MachineCommandService extends MasterDataEventProducer <Machine, UUID, MachineQueryDTO, MachineCreateDTO, MachineUpdateDTO, String> {
 
     private final MachineRepository repository;
     private final MachineMapper mapper;

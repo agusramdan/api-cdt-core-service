@@ -1,19 +1,18 @@
 package agus.ramdan.cdt.core.master.service.customertype;
 
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CustomerTypeMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerType;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerTypeRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerTypeCommandService implements
-        BaseCommandEntityService<CustomerType, String, CustomerTypeQueryDTO, CustomerTypeCreateDTO, CustomerTypeUpdateDTO, String> {
+public class CustomerTypeCommandService extends MasterDataEventProducer<CustomerType, String, CustomerTypeQueryDTO, CustomerTypeCreateDTO, CustomerTypeUpdateDTO, String> {
 
     private final CustomerTypeRepository repository;
     private final CustomerTypeMapper mapper;

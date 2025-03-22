@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.service.pickup;
 
+import agus.ramdan.base.dto.DataEvent;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
@@ -14,6 +15,7 @@ import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +30,10 @@ public class TrxPickupCommandService implements
     private final TrxPickupMapper mapper;
     private final QRCodeQueryService codeQueryService;
     private final MachineQueryService machineQueryService;
-
+    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+    public void publishDataEvent(DataEvent dataEvent) {
+        kafkaTemplate.send("core-trx-event", dataEvent);
+    }
     @Override
     public UUID convertId(String id) {
         return UUID.fromString(id);

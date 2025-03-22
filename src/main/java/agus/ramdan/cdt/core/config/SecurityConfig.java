@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,6 +14,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("oauth2")
 @Configuration
 public class SecurityConfig {
+//    @Bean
+//    public OpenAPI customOpenAPI() {
+//        return new OpenAPI()
+//                .info(new Info().title("JavaInUse Authentication Service"))
+//                .addSecurityItem(new SecurityRequirement().addList("JavaInUseSecurityScheme"))
+//                .components(new Components().addSecuritySchemes("JavaInUseSecurityScheme",
+//                        new SecurityScheme()
+//                        .name("JavaInUseSecurityScheme")
+//                        .type(SecurityScheme.Type.OAUTH2).scheme("basic")));
+//    }
     // @formatter:off
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

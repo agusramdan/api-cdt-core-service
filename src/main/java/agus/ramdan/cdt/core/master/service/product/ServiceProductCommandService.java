@@ -1,13 +1,13 @@
 package agus.ramdan.cdt.core.master.service.product;
 
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.ServiceProductMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import agus.ramdan.cdt.core.master.persistence.repository.ServiceProductRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ServiceProductCommandService implements
-        BaseCommandEntityService<ServiceProduct, UUID, ServiceProductQueryDTO, ServiceProductCreateDTO, ServiceProductUpdateDTO, String> {
+public class ServiceProductCommandService extends MasterDataEventProducer<ServiceProduct, UUID, ServiceProductQueryDTO, ServiceProductCreateDTO, ServiceProductUpdateDTO, String> {
 
     private final ServiceProductRepository repository;
     private final ServiceProductMapper mapper;

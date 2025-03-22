@@ -1,19 +1,18 @@
 package agus.ramdan.cdt.core.master.service.channelcode;
 
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.channelcode.ChannelCodeCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.channelcode.ChannelCodeQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.channelcode.ChannelCodeUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.ChannelCodeMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.ChannelCode;
 import agus.ramdan.cdt.core.master.persistence.repository.ChannelCodeRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ChannelCodeCommandService implements
-        BaseCommandEntityService<ChannelCode, String, ChannelCodeQueryDTO, ChannelCodeCreateDTO, ChannelCodeUpdateDTO, String> {
+public class ChannelCodeCommandService extends MasterDataEventProducer<ChannelCode, String, ChannelCodeQueryDTO, ChannelCodeCreateDTO, ChannelCodeUpdateDTO, String> {
 
     private final ChannelCodeRepository repository;
     private final ChannelCodeMapper mapper;

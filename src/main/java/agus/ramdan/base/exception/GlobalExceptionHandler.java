@@ -1,7 +1,6 @@
 package agus.ramdan.base.exception;
 
 import io.micrometer.tracing.Tracer;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -80,7 +74,8 @@ public class GlobalExceptionHandler {
         val errors = ex.getConstraintViolations().stream()
                 .map(violation -> new ErrorValidation(violation.getMessage(), String.valueOf(violation.getPropertyPath()), violation.getInvalidValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
-        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false), errors);
+        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false));
+        error.setErrors(errors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -93,7 +88,9 @@ public class GlobalExceptionHandler {
         val errors = result.getFieldErrors().stream()
                 .map(violation -> new ErrorValidation(violation.getDefaultMessage(), violation.getField(), violation.getRejectedValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
-        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false), errors);
+        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false));
+        error.setErrors(errors);
+
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -110,7 +107,7 @@ public class GlobalExceptionHandler {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
-        return new ResponseEntity<>(ex.create(traceId, spanId, request.getDescription(false)), ex.getHttpStatus());
+        return new ResponseEntity<>(ex.getOrCreate(traceId, spanId, request.getDescription(false)), ex.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
@@ -118,7 +115,7 @@ public class GlobalExceptionHandler {
         String traceId = getTraceId();
         String spanId = getSpanId();
         log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
-        val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false), null);
+        val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

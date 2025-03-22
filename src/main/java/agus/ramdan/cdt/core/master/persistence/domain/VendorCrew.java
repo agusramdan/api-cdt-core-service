@@ -2,7 +2,10 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.base.utils.UserUtils;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +26,7 @@ import java.util.UUID;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class VendorCrew {
 
     @Id
@@ -36,10 +40,12 @@ public class VendorCrew {
     private String name;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendor_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Vendor vendor;
 
     private String ktp;

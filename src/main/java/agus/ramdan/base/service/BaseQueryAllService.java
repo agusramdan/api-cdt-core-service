@@ -4,7 +4,6 @@ import agus.ramdan.base.utils.BaseSpecifications;
 import agus.ramdan.base.utils.BaseSpecificationsBuilder;
 import agus.ramdan.base.utils.ChekUtils;
 import agus.ramdan.base.utils.OffsetBasedPageRequest;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dataloader.Try;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 

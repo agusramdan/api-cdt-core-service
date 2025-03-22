@@ -1,5 +1,7 @@
 package agus.ramdan.cdt.core.trx.service.deposit;
 
+import agus.ramdan.base.dto.DataEvent;
+import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.Propagation5xxException;
@@ -19,6 +21,7 @@ import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,7 +38,10 @@ public class TrxDepositCommandService {
     private final QRCodeCommandService codeCommandService;
     private final MachineQueryService machineQueryService;
     private final ServiceTransactionService transactionService;
-
+    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+    public void publishDataEvent(DataEvent dataEvent) {
+        kafkaTemplate.send("core-trx-event", dataEvent);
+    }
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
         val token = dto.getToken();
         val qrCodeDTO = new QRCodeDTO(dto.getToken());
@@ -93,6 +99,11 @@ public class TrxDepositCommandService {
             deposit.setServiceTransaction(trx);
             deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
             deposit = repository.save(deposit);
+            publishDataEvent(DataEvent.builder()
+                    .data(deposit)
+                    .dataType(TrxDeposit.class.getCanonicalName())
+                    .eventType(EventType.CREATE)
+                    .build());
         }
         return deposit;
     }
@@ -110,6 +121,12 @@ public class TrxDepositCommandService {
                 deposit.setStatus(TrxDepositStatus.TRANSFER_GATEWAY_TIMEOUT);
             }
             deposit = repository.save(deposit);
+            publishDataEvent(DataEvent.builder()
+                    .data(deposit)
+                    .dataType(TrxDeposit.class.getCanonicalName())
+                    .eventType(EventType.UPDATE)
+                    .build());
+
         }
         return deposit;
     }

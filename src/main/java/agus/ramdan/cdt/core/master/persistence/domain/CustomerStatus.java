@@ -27,6 +27,7 @@ public class CustomerStatus {
     private String id;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     private String name;

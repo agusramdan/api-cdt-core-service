@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.master.service.beneficiary;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountUpdateDTO;
@@ -11,6 +10,7 @@ import agus.ramdan.cdt.core.master.mapping.BeneficiaryAccountMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.repository.BeneficiaryAccountRepository;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.accounttype.AccountTypeQueryService;
 import agus.ramdan.cdt.core.master.service.bank.BankQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
@@ -30,8 +30,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BeneficiaryAccountCommandService implements
-        BaseCommandEntityService<BeneficiaryAccount, UUID, BeneficiaryAccountQueryDTO, BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO, String> {
+public class BeneficiaryAccountCommandService extends MasterDataEventProducer<BeneficiaryAccount, UUID, BeneficiaryAccountQueryDTO, BeneficiaryAccountCreateDTO, BeneficiaryAccountUpdateDTO, String> {
 
     private final BeneficiaryAccountRepository beneficiaryAccountRepository;
     private final BeneficiaryAccountMapper beneficiaryAccountMapper;

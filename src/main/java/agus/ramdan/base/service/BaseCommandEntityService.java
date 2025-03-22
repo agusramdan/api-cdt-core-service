@@ -1,5 +1,7 @@
 package agus.ramdan.base.service;
 
+import agus.ramdan.base.dto.DataEvent;
+import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorMessage;
 import agus.ramdan.base.exception.Errors;
@@ -8,7 +10,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO, DTO_ID> extends
         BaseCommandService<ResultDTO, CreateDTO, UpdateDTO, DTO_ID> {
-
+    default T getById(ID id) {
+        return null;
+    }
+    default void publishEntityEvent( EventType eventType,T entity) {
+        publishDataEvent(new DataEvent(eventType,entity.getClass().getCanonicalName(),entity));
+    }
+    default void publishDataEvent(DataEvent dataEvent) {
+    }
     default ResultDTO commandCreate(CreateDTO createDTO) {
         T data;
         try {
@@ -29,6 +38,7 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage(),new Errors("Invalid Data For Create",createDTO));
         }
+        publishEntityEvent(EventType.CREATE,newData);
         newData = afterCreate(newData, createDTO);
         return convertToResultDTO(newData);
     }
@@ -57,6 +67,7 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage(),new Errors("Invalid Data For Update",updateDTO));
         }
+        publishEntityEvent(EventType.UPDATE,newData);
         newData = afterUpdate(newData, updateDTO);
         return convertToResultDTO(newData);
     }
@@ -67,14 +78,17 @@ public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO
 
     default void commandDelete(DTO_ID delete) {
         ID data;
+        T entity ;
         try {
             data = convertId(delete);
+            entity = getById(data);
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
             throw new BadRequestException("Invalid ID");
         }
         delete(data);
+        if (entity != null) publishEntityEvent(EventType.DELETE,entity);
     }
 
     ID convertId(DTO_ID id);

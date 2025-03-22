@@ -3,7 +3,9 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 import agus.ramdan.base.embeddable.Address;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.base.embeddable.Coordinate;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +25,7 @@ import java.util.UUID;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ServiceLocation {
 
     @Id
@@ -32,6 +35,7 @@ public class ServiceLocation {
     private UUID id;
 
     @Embedded
+    @JsonProperty("audit_metadata")
     private AuditMetadata auditMetadata;
 
     private String code;
