@@ -12,14 +12,12 @@ import java.util.UUID;
 public interface BankMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     Bank createDtoToEntity(BankCreateDTO dto);
 
     //@Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     BankQueryDTO entityToQueryDto(Bank entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "auditMetadata", ignore = true)
     void updateEntityFromUpdateDto(BankUpdateDTO dto, @MappingTarget Bank entity);
 
     default UUID stringToUUID(String value) {

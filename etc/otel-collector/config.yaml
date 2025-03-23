@@ -1,0 +1,22 @@
+receivers:
+  hostmetrics:
+    collection_interval: 1m
+    scrapers:
+      cpu:
+      load:
+      memory:
+      disk:
+      filesystem:
+      network:
+      paging:
+      processes:
+
+exporters:
+  prometheus:
+    endpoint: "otel-collector:8889"
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      exporters: [prometheus]

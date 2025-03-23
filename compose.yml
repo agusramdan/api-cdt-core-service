@@ -24,6 +24,7 @@ services:
       - POSTGRES_PASSWORD=core_pwd
     ports:
       - "5432:5432"
+    logging: *default-logging
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -32,6 +33,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
       - backend
+    logging: *default-logging
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -47,6 +49,13 @@ services:
       - zookeeper
     networks:
       - backend
+    healthcheck:
+      test: nc -z kafka 9092
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    logging: *default-logging
 
   mongodb:
     image: mongo
@@ -55,6 +64,7 @@ services:
       - "27017:27017"
     networks:
       - backend
+    logging: *default-logging
 
   mongo-express:
     image: mongo-express
@@ -68,6 +78,7 @@ services:
       - mongodb
     networks:
       - backend
+    logging: *default-logging
 
   # Infrastructure
   loki:
@@ -88,15 +99,20 @@ services:
     depends_on:
       - loki
     logging: *default-logging
+    networks:
+      - infrastructure
 
   tempo:
     image: grafana/tempo:2.4.1
+    hostname: tempo
     command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
     ports:
       - "14250:14250"
       - "4317:4317"
     depends_on:
       - loki
+    networks:
+      - infrastructure
     logging: *default-logging
 
   grafana:
@@ -110,19 +126,27 @@ services:
     depends_on:
       - loki
       - prometheus
+    networks:
+      - infrastructure
     logging: *default-logging
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    hostname: otel-collector
+    restart: always
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./etc/otel-collector/config.yaml:/etc/otel-collector-config.yaml
+    networks:
+      - infrastructure
 
   api-cdt-gateway-service:
     image: agusramdan/api-cdt-gateway-service:dev
-    build:
-      context: .
     container_name: api-cdt-gateway-service
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - mongodb
-    env_file:
-      - ./gateway.env
+#    env_file:
+#      - ./docker/dev/gateway.env
     environment:
       - SERVER_PORT=8097
       - SPRING_PROFILES_ACTIVE=dev
@@ -135,40 +159,45 @@ services:
     build: .
     #image: agusramdan/api-cdt-core-service:dev
     container_name: api-cdt-core-service
-    env_file:
-      - ./core.env
     environment:
-      #- SPRING_PROFILES_ACTIVE=devdocker,local
+      - SPRING_PROFILES_ACTIVE=devdocker,itsjeck
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # send traces to Tempo
+#      - OTEL_SERVICE_NAME=api-cdt-core-service # service name for Span
+#      - OTEL_RESOURCE_ATTRIBUTES=compose_service=api-cdt-core-service # add custom resource attribute to Span for Grafana Trace to Logs feature
+#      - OTEL_METRICS_EXPORTER=none # disable metrics exporter
     ports:
       - "8082:8080"
     depends_on:
       - db
+      - kafka
+      - loki
+      - tempo
     networks:
+      - infrastructure
       - backend
       - core
       - frontend
 
-#  api-cdt-cdm-service:
-#    image: agusramdan/api-cdt-cdm-service:dev
+  api-cdt-cdm-service:
+    image: agusramdan/api-cdt-cdm-service:dev
 #    build:
 #      context: .
-#    container_name: api-cdt-cdm-service
+    container_name: api-cdt-cdm-service
 #    labels:
 #      - "com.centurylinklabs.watchtower.enable=true"
-#    depends_on:
-#      - mongodb
+    depends_on:
+      - mongodb
 #    env_file:
 #      - ./gateway.env
-#    environment:
-#      #- SPRING_PROFILES_ACTIVE=oauth2,keycloak,dev
-#      - JAVA_OPTS="-Xms128M -Xmx128M"
-#    ports:
-#      - "8091:8080"
-#    networks:
-#      - backend
-#      - core
-#      - frontend
+    environment:
+      - SPRING_PROFILES_ACTIVE=oauth2,devdocker,dev
+    ports:
+      - "8091:8080"
+    networks:
+      - backend
+      - core
+      - frontend
 
 networks:
   frontend:
@@ -180,4 +209,6 @@ networks:
   kafka:
     driver: bridge
   keycloak:
+    driver: bridge
+  infrastructure:
     driver: bridge

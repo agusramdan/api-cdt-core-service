@@ -27,6 +27,14 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ServiceProduct extends BaseEntity {
+    /**
+     * Multiple use QR
+     */
+    public static final String MUL_ST_TR = "MUL-ST-TR";
+    /**
+     * Single use QR
+     */
+    public static final String SUS_ST_TR = "SQR-ST-TR";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

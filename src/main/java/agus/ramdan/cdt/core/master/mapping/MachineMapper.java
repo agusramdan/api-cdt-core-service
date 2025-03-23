@@ -12,14 +12,12 @@ import java.util.UUID;
 public interface MachineMapper {
 
     //@Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     Machine createDtoToEntity(MachineCreateDTO dto);
 
     //@Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     MachineQueryDTO entityToQueryDto(Machine entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(MachineUpdateDTO dto, @MappingTarget Machine entity);
 
     default UUID stringToUUID(String value) {

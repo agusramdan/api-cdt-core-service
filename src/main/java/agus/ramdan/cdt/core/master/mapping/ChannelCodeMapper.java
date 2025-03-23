@@ -10,12 +10,10 @@ import org.mapstruct.*;
 public interface ChannelCodeMapper {
 
     //@Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     ChannelCode createDtoToEntity(ChannelCodeCreateDTO dto);
 
     ChannelCodeQueryDTO entityToQueryDto(ChannelCode entity);
 
-    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(ChannelCodeUpdateDTO dto, @MappingTarget ChannelCode entity);
 }

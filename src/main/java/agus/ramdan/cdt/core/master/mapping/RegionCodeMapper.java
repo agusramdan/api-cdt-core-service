@@ -9,12 +9,10 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface RegionCodeMapper {
     //    @Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     RegionCode createDtoToEntity(RegionCodeCreateDTO dto);
 
     RegionCodeQueryDTO entityToQueryDto(RegionCode entity);
 
-    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(RegionCodeUpdateDTO dto, @MappingTarget RegionCode entity);
 }

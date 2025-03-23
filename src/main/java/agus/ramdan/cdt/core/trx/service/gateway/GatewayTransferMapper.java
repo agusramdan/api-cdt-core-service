@@ -25,7 +25,6 @@ public interface GatewayTransferMapper {
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "trxDate", target = "transferDate")
     @Mapping(source = "description", target = "description")
-        //@Mapping(source = "amount", target = "checkName")
+    //@Mapping(source = "amount", target = "checkName")
     TransferBalanceRequestDTO mapDTO(TrxTransfer transfer);
-
 }

@@ -10,12 +10,10 @@ import org.mapstruct.*;
 public interface AccountTypeMapper {
 
     //    @Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     AccountType createDtoToEntity(AccountTypeCreateDTO dto);
 
     AccountTypeQueryDTO entityToQueryDto(AccountType entity);
 
-    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(AccountTypeUpdateDTO dto, @MappingTarget AccountType entity);
 }

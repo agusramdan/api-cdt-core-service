@@ -10,11 +10,9 @@ import org.mapstruct.*;
 public interface CustomerTypeMapper {
 
     //    @Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     CustomerType createDtoToEntity(CustomerTypeCreateDTO dto);
 
     CustomerTypeQueryDTO entityToQueryDto(CustomerType entity);
-    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(CustomerTypeUpdateDTO dto, @MappingTarget CustomerType entity);
 }

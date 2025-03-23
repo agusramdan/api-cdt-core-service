@@ -16,6 +16,9 @@ public class XxxException extends RuntimeException {
     private final ErrorValidation[] errorValidations;
     private final String errCode;
 
+    public XxxException(String message, int code) {
+        this(message, code, String.valueOf(code), null);
+    }
     public XxxException(String message, int code, Throwable cause) {
         this(message, code, String.valueOf(code), cause);
     }

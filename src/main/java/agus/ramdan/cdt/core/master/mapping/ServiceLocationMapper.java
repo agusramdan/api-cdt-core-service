@@ -12,14 +12,12 @@ import java.util.UUID;
 public interface ServiceLocationMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     ServiceLocation createDtoToEntity(ServiceLocationCreateDTO dto);
 
     @Mapping(source = "id", target = "id")
     ServiceLocationQueryDTO entityToQueryDto(ServiceLocation entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(ServiceLocationUpdateDTO dto, @MappingTarget ServiceLocation entity);
 
     default UUID stringToUUID(String value) {

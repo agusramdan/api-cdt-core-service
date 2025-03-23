@@ -12,11 +12,12 @@ RUN rm /build/target/*-client.jar
 
 FROM bellsoft/liberica-openjdk-debian:21
 COPY --from=build /build/target/*.jar /app.jar
-COPY --from=download /home/curl_user/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
-ENTRYPOINT ["java", \
-  "-javaagent:/opentelemetry-javaagent.jar", \
-  "-jar", "/app.jar" \
-  ]
+#COPY --from=download /home/curl_user/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
+#ENTRYPOINT ["java", \
+#  "-javaagent:/opentelemetry-javaagent.jar", \
+#  "-jar", "/app.jar" \
+#  ]
 
 #FROM openjdk:21-jdk-slim
 #VOLUME /tmp

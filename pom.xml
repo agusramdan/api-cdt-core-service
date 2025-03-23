@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>21.3.3.8.1.20250320</version>
+	<version>21.3.3.8.1.20250321</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>
@@ -40,12 +40,7 @@
 
 		<dependency>
 			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing-bridge-otel</artifactId>
+			<artifactId>micrometer-tracing-bridge-brave</artifactId>
 		</dependency>
 
 		<dependency>
@@ -107,18 +102,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-starter-webflux</artifactId>-->
-		<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>io.micrometer</groupId>-->
-<!--			<artifactId>micrometer-tracing-bridge-brave</artifactId>-->
-<!--		</dependency>-->
-<!--		<dependency>-->
-<!--			<groupId>io.zipkin.reporter2</groupId>-->
-<!--			<artifactId>zipkin-reporter-brave</artifactId>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
@@ -139,16 +122,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-			<scope>provided</scope>
-			<!--			<scope>runtime</scope>-->
-			<!--			<optional>true</optional>-->
+<!--			<scope>provided</scope>-->
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-docker-compose</artifactId>
-			<scope>provided</scope>
-			<!--			<scope>runtime</scope>-->
-			<!--			<optional>true</optional>-->
+<!--			<scope>provided</scope>-->
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -165,11 +148,6 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<!--		<dependency>-->
-		<!--			<groupId>org.springframework.boot</groupId>-->
-		<!--			<artifactId>spring-boot-configuration-processor</artifactId>-->
-		<!--			<optional>true</optional>-->
-		<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
@@ -219,14 +197,6 @@
 			<version>${org.mapstruct.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- ELK integration -->
-<!--		<dependency>-->
-<!--			<groupId>net.logstash.logback</groupId>-->
-<!--			<artifactId>logstash-logback-encoder</artifactId>-->
-<!--&lt;!&ndash;			<version>7.4</version>&ndash;&gt;-->
-<!--			<version>8.0</version>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -267,7 +237,6 @@
 			<url>https://maven.pkg.github.com/agusramdan/mavenrepo</url>
 		</repository>
 	</distributionManagement>
-
 	<build>
 		<plugins>
 			<plugin>

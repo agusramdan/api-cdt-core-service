@@ -1,7 +1,125 @@
 ---
-#-Dspring.datasource.password
+# JVM memory settings
+jvm:
+  initial-heap-size: 256m
+  max-heap-size: 512m
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+
+---
 spring:
+  application:
+    name: api-cdt-core-service
+  threads:
+    virtual:
+      enabled: true
+  thread-executor: virtual
+
+  config:
+    use-legacy-processing: true
+  jmx:
+    enabled: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  main:
+    lazy-initialization: true
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:postgresql://db:5432/core
+    username: core_user
+    password: core_pwd
+    driver-class-name: org.postgresql.Driver
   jpa:
-    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: core-callback-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "agus.ramdan.*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    admin:
+      auto-create-topics: true
+
+  flyway:
+    enabled: false
+
+  zipkin:
+    enabled: false
+
+  graphql:
+    path: /graphql
+    graphiql:
+      enabled: false
+
+feign:
+  hystrix:
+    enabled: true
+
+security:
+  basic:
+    enable: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+feign-client:
+  api-cdt-gateway-service:
+    base-url: http://api-cdt-gateway-service:8080
+
+logging:
+  pattern:
+    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
+  level:
+    root: WARN
+    #    org.springframework: WARN
+    #    org.hibernate: WARN
+    #    org.apache.http: WARN
+    #    org.apache.http.wire: WARN
+    #    org.apache.http.headers: WARN
+    agus.ramdan.base: DEBUG
+    agus.ramdan.cdt.core: INFO
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://tempo:4317
+  service:
+    name: api-cdt-core-service
+  resource:
+    attributes:
+      compose_service: api-cdt-core-service
+  metrics:
+    exporter: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    tags:
+      application: api-cdt-core-service
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: 'true'
+

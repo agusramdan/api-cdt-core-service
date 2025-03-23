@@ -14,7 +14,6 @@ public interface VendorCrewMapper {
     //@Mapping(source = "id", target = "id", ignore = true)
     @Mapping(source = "vendorId", target = "vendor.id", qualifiedByName = "stringToUUID")
     @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
-    @Mapping(target ="auditMetadata", ignore = true )
     VendorCrew createDtoToEntity(VendorCrewCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
@@ -25,7 +24,6 @@ public interface VendorCrewMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "vendorId", target = "vendor.id", qualifiedByName = "stringToUUID")
     @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
-    @Mapping(target ="auditMetadata", ignore = true )
     void updateEntityFromUpdateDto(VendorCrewUpdateDTO dto, @MappingTarget VendorCrew entity);
 
     @Named("stringToUUID")

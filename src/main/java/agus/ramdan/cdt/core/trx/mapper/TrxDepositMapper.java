@@ -21,14 +21,12 @@ public interface TrxDepositMapper {
     default TrxDepositStatus toTrxDepositStatus(String string) {
         return TrxDepositStatus.valueOf(string);
     }
-    @Mapping(target ="auditMetadata", ignore = true )
     TrxDeposit toEntity(TrxDepositCreateDTO dto);
 
     @Mapping(target = "status", constant = "PREPARE")
     @Mapping(target = "code", expression = "java(qrCode)")
     @Mapping(target = "machine", source = "machine")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "auditMetadata", ignore = true)
     TrxDeposit toEntity(TrxDepositCreateDTO dto, Machine machine, QRCode qrCode);
 
     @Mapping(target = "username", source = "user.username")

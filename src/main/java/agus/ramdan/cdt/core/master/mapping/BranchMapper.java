@@ -12,14 +12,12 @@ import java.util.UUID;
 public interface BranchMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     Branch createDtoToEntity(BranchCreateDTO dto);
 
     //    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     BranchQueryDTO entityToQueryDto(Branch entity);
 
     //    @Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(target ="auditMetadata", ignore = true )
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDto(BranchUpdateDTO dto, @MappingTarget Branch entity);
 
