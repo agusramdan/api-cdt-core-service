@@ -32,6 +32,7 @@ scrape_configs:
     static_configs:
       - targets: ['otel-collector:8889']
       - targets: ['otel-collector:8888']
+      - targets: ["otel-collector:4318"]
 
   - job_name: 'api-cdt-core-service'
 

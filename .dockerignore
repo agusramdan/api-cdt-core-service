@@ -1,0 +1,17 @@
+# Mengabaikan file log dan temporary files
+*.log
+*.tmp
+
+# Mengabaikan direktori Git
+.git
+.gitignore
+.github
+.idea
+.mvn
+doc
+docker
+etc
+src
+
+target/*-base.jar
+target/*-client.jar

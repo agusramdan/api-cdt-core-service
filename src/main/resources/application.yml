@@ -123,4 +123,3 @@ management:
         http:
           server:
             requests: 'true'
-

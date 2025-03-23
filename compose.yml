@@ -83,6 +83,7 @@ services:
   # Infrastructure
   loki:
     image: grafana/loki:3.0.0
+    hostname: loki
     command: -config.file=/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
@@ -99,26 +100,41 @@ services:
     depends_on:
       - loki
     logging: *default-logging
-    networks:
-      - infrastructure
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+#    restart: always
+    volumes:
+      - ./etc/otel-collector/config.yaml:/etc/otel/config.yaml
+    command: [ "--config", "/etc/otel/config.yaml" ]
+    ports:
+      - "4317:4317"   # gRPC
+      - "4318:4318"   # HTTP
+      - "55680:55680" # OpenTelemetry (deprecated)
+    depends_on:
+      - tempo
 
   tempo:
-    image: grafana/tempo:2.4.1
-    hostname: tempo
-    command: [ "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
+    image: grafana/tempo:latest
+    container_name: tempo
+    #restart: always
+    volumes:
+      - ./etc/tempo/config.yaml:/etc/tempo/config.yaml
+    command: [ "-config.file=/etc/tempo/config.yaml" ]
     ports:
-      - "14250:14250"
-      - "4317:4317"
+      - "3200:3200"  # Tempo API
+#      - "4317:4317"  # OTLP gRPC
+#      - "4318:4318"  # OTLP HTTP
+      - "9411:9411"  # zipkin
     depends_on:
       - loki
-    networks:
-      - infrastructure
     logging: *default-logging
 
   grafana:
     image: grafana/grafana:10.4.2
     ports:
-      - "3200:3000"
+      - "3000:3000"
     volumes:
       - ./etc/grafana/:/etc/grafana/provisioning/datasources
       - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
@@ -129,16 +145,6 @@ services:
     networks:
       - infrastructure
     logging: *default-logging
-
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    hostname: otel-collector
-    restart: always
-    command: ["--config=/etc/otel-collector-config.yaml"]
-    volumes:
-      - ./etc/otel-collector/config.yaml:/etc/otel-collector-config.yaml
-    networks:
-      - infrastructure
 
   api-cdt-gateway-service:
     image: agusramdan/api-cdt-gateway-service:dev
@@ -156,23 +162,24 @@ services:
       - backend
 
   api-cdt-core-service:
-    build: .
+    build:
+      context: .
     #image: agusramdan/api-cdt-core-service:dev
     container_name: api-cdt-core-service
     environment:
-      - SPRING_PROFILES_ACTIVE=devdocker,itsjeck
+      - SPRING_PROFILES_ACTIVE=oauth2,devdocker,itsjeck
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # send traces to Tempo
-#      - OTEL_SERVICE_NAME=api-cdt-core-service # service name for Span
-#      - OTEL_RESOURCE_ATTRIBUTES=compose_service=api-cdt-core-service # add custom resource attribute to Span for Grafana Trace to Logs feature
+      #- OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318 # send traces to Tempo
+      #- OTEL_SERVICE_NAME=api-cdt-core-service # service name for Span
+      #- OTEL_RESOURCE_ATTRIBUTES=compose_service=api-cdt-core-service # add custom resource attribute to Span for Grafana Trace to Logs feature
 #      - OTEL_METRICS_EXPORTER=none # disable metrics exporter
     ports:
       - "8082:8080"
     depends_on:
       - db
       - kafka
-      - loki
       - tempo
+      - loki
     networks:
       - infrastructure
       - backend
@@ -191,7 +198,7 @@ services:
 #    env_file:
 #      - ./gateway.env
     environment:
-      - SPRING_PROFILES_ACTIVE=oauth2,devdocker,dev
+      - SPRING_PROFILES_ACTIVE=oauth2,devdocker
     ports:
       - "8091:8080"
     networks:

@@ -27,6 +27,11 @@ jobs:
       - name: Build project with Maven
         run: mvn clean package -DskipTests
 
+      - name: Publish to GitHub Packages
+        run: mvn --batch-mode deploy -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
       - name: Extract Version from pom.xml
         id: extract_version
         run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
@@ -44,13 +49,3 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:${{ env.VERSION }}
           docker push ${{ secrets.DOCKER_USERNAME }}/api-cdt-core-service:dev
 
-      - name: Setup JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'  # Bisa juga 'adopt', 'zulu', dll.
-          java-version: '21'
-
-      - name: Publish to GitHub Packages
-        run: mvn --batch-mode deploy -DskipTests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

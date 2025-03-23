@@ -97,18 +97,6 @@ logging:
     agus.ramdan.base: DEBUG
     agus.ramdan.cdt.core: INFO
 
-otel:
-  exporter:
-    otlp:
-      endpoint: http://tempo:4317
-  service:
-    name: api-cdt-core-service
-  resource:
-    attributes:
-      compose_service: api-cdt-core-service
-  metrics:
-    exporter: none
-
 management:
   endpoints:
     web:
@@ -122,4 +110,3 @@ management:
         http:
           server:
             requests: 'true'
-
