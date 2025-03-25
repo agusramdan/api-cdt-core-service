@@ -3,10 +3,7 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,7 +28,7 @@ public class QRCode extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @Column(name = "code")
-    @JsonProperty(index = 2)
+    @JsonIgnore
     @Schema(description = "QR Code")
     private String code;
 
