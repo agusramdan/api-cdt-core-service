@@ -39,14 +39,14 @@ spring:
 
   kafka:
     bootstrap-servers: kafka:9092
-#    consumer:
-#      group-id: gateway-callback-group
-#      auto-offset-reset: earliest
-#      enable-auto-commit: true
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#      properties:
-#        spring.json.trusted.packages: "*"
+    consumer:
+      group-id: core-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer

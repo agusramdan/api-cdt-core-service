@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
@@ -22,24 +25,23 @@ public class BeneficiaryAccountQueryDTO {
     private String firstname;
     private String lastname;
     @Schema(description = "Bank account number", example = "1234567890")
+    @JsonProperty("account_number")
     private String accountNumber;
-
     @Schema(description = "Account holder name", example = "John Doe")
+    @JsonProperty("account_name")
     private String accountName;
-
+    @JsonProperty("account_type")
     private AccountTypeDTO accountType;
-
     private BankDTO bank;
-
+    @JsonProperty("customer_type")
     private CustomerTypeDTO customerType;
-
+    @JsonProperty("customer_status")
     private CustomerStatusDTO customerStatus;
-
+    @JsonProperty("region_code")
     private RegionCodeDTO regionCode;
-
+    @JsonProperty("country_code")
     private CountryCodeDTO countryCode;
-
     private BranchDTO branch;
-
+    @JsonProperty("qr_code")
     private QRCodeDTO qrCode;
 }

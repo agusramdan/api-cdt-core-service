@@ -36,14 +36,19 @@ public class BeneficiaryAccountCreateDTO {
     @Schema(description = "Account holder name", example = "John Doe")
     @JsonProperty("account_name")
     private String accountName;
+    @JsonProperty("account_type")
     private AccountTypeDTO accountType;
-
     @NotNull(message = "bank can't null.")
     private BankDTO bank;
+    @JsonProperty("customer_type")
     private CustomerTypeDTO customerType;
+    @JsonProperty("customer_status")
     private CustomerStatusDTO customerStatus;
+    @JsonProperty("region_code")
     private RegionCodeDTO regionCode;
+    @JsonProperty("country_code")
     private CountryCodeDTO countryCode;
     private BranchDTO branch;
+    @JsonProperty("qr_code")
     private QRCodeDTO qrCode;
 }
