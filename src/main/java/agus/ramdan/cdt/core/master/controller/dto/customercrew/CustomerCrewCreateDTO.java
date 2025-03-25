@@ -1,13 +1,18 @@
 package agus.ramdan.cdt.core.master.controller.dto.customercrew;
 
 import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 
 @Data
 @Schema(description = "DTO untuk membuat Customer Crew")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CustomerCrewCreateDTO {
     @Schema(description = "Nama Crew")
     private String name;
@@ -18,7 +23,7 @@ public class CustomerCrewCreateDTO {
     @Schema(description = "NPWP Crew")
     private String npwp;
 
-    @Schema(description = "ID Customer")
+    @Schema(description = "ID Customer / deprecated will remove")
     @JsonProperty("customer_id")
     private String customerId;
 

@@ -3,6 +3,8 @@ package agus.ramdan.cdt.core.master.controller.dto.customer;
 import agus.ramdan.base.dto.AddressDTO;
 import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -10,6 +12,7 @@ import lombok.Data;
 
 @Data
 @Schema(name = "CustomerQueryDTO", description = "DTO for querying customer details")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CustomerQueryDTO {
 
     @Schema(description = "Unique Customer ID", example = "550e8400-e29b-41d4-a716-446655440000")

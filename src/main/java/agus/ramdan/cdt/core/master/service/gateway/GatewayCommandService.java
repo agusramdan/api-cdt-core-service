@@ -51,8 +51,12 @@ public class GatewayCommandService extends
     public Gateway convertFromCreateDTO(GatewayCreateDTO dto) {
         val validations = new ArrayList<ErrorValidation>();
         val entity = mapper.createDtoToEntity(dto);
-        vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d))
-                .ifPresent(entity::setPartner);
+//        vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d))
+//                .ifPresent(entity::setPartner);
+        vendorQueryService.relation(dto.getPartner(),validations,"partner").ifPresent(entity::setPartner);
+        if(entity.getPartner()!=null && !entity.getPartner().getGateway()){
+            ErrorValidation.add(validations, "Partner must have gateway provider.", "partner_id", dto.getPartner());
+        }
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
@@ -63,7 +67,11 @@ public class GatewayCommandService extends
                 .orElseThrow(() -> new ResourceNotFoundException("Gateway not found"));
         val validations = new ArrayList<ErrorValidation>();
         mapper.updateEntityFromUpdateDto(dto, entity);
-        vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d)).ifPresent(entity::setPartner);
+        //vendorQueryService.relation(dto.getPartnerId(), d -> ErrorValidation.add(validations, "Vendor not found", "partner_id", d)).ifPresent(entity::setPartner);
+        vendorQueryService.relation(dto.getPartner(),validations,"partner").ifPresent(entity::setPartner);
+        if(entity.getPartner()!=null && !entity.getPartner().getGateway()){
+            ErrorValidation.add(validations, "Partner must have gateway provider.", "partner_id", dto.getPartner());
+        }
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
