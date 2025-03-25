@@ -1,7 +1,6 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.domain.BaseEntity;
-import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
