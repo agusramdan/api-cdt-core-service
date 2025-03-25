@@ -39,6 +39,7 @@ public class TrxTransfer extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private ServiceTransaction transaction;
 
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
