@@ -36,7 +36,7 @@ public class QRCode extends BaseEntity {
     private String code;
 
     @Column(name = "expired_time")
-    @JsonProperty(index = 2)
+    @JsonProperty("expired_time")
     private LocalDateTime expiredTime;
 
     private boolean active = true;
