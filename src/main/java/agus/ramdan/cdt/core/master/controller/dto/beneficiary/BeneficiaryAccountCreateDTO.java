@@ -3,6 +3,8 @@ package agus.ramdan.cdt.core.master.controller.dto.beneficiary;
 import agus.ramdan.cdt.core.master.controller.dto.*;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 @Data
 @Schema(name = "BeneficiaryAccountCreateDTO", description = "DTO for creating a new beneficiary account")
 @Validated
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BeneficiaryAccountCreateDTO {
 
     @Pattern(regexp = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
