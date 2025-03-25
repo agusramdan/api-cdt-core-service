@@ -49,6 +49,7 @@ public class TrxDeposit extends BaseEntity {
     @ManyToOne
     @JsonProperty("service_transaction_id")
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnore
     private ServiceTransaction serviceTransaction;
 
     @ManyToOne
@@ -59,6 +60,7 @@ public class TrxDeposit extends BaseEntity {
     @ManyToOne
     @JsonProperty("qr_code_id")
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnore
     private QRCode code;
 
     @ManyToOne
