@@ -6,6 +6,8 @@ import agus.ramdan.base.embeddable.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
@@ -23,12 +25,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "cdt_bank")
 @SQLDelete(sql = "UPDATE cdt_bank SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@FilterDef(name = "deletedFilter_cdt_bank", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter_cdt_bank", condition = "deleted_at IS NULL") // Pengganti
 @Where(clause = "deleted_at IS NULL")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Bank extends BaseEntity {
 
     @Id
