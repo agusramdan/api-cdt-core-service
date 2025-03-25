@@ -7,6 +7,7 @@ import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
