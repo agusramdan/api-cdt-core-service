@@ -11,18 +11,18 @@ public class CustomerCrewDTO implements TID<String> {
     @Schema(description = "ID Crew dalam format String")
     private String id;
 
-    @Schema(description = "Nama Crew")
+    @Schema(description = "Nama")
     private String name;
 
-    @JsonProperty("customer_id")
-    private String customerId;
+//    @JsonProperty("customer_id")
+//    private String customerId;
 
-    @Schema(description = "Username Crew")
+    @Schema(description = "Username")
     private String username;
 
-    @Schema(description = "Email Crew")
+    @Schema(description = "Email")
     private String email;
 
-    @Schema(description = "MSIDN Crew")
+    @Schema(description = "MSIDN")
     private String msisdn;
 }

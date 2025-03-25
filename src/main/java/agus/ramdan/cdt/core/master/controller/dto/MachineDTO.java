@@ -11,13 +11,13 @@ public class MachineDTO implements CodeOrID<String> {
     private String id;
     private String code;
     private String name;
-    private String description;
-
-    @Schema(description = "Branch ID")
-    @JsonProperty("branch_id")
-    private String branchId;
-
-    @Schema(description = "Service Location ID")
-    @JsonProperty("service_location_id")
-    private String serviceLocationId;
+//    private String description;
+//
+//    @Schema(description = "Branch ID")
+//    @JsonProperty("branch_id")
+//    private String branchId;
+//
+//    @Schema(description = "Service Location ID")
+//    @JsonProperty("service_location_id")
+//    private String serviceLocationId;
 }
