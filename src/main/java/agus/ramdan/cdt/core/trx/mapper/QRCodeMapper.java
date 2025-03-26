@@ -35,7 +35,7 @@ public interface QRCodeMapper {
         try {
             dto.setId(entity.getId().toString());
         } catch (Exception e) {
-            dto.setAccount_number("Unknown");
+            dto.setAccountNumber("Unknown");
         }
     }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
