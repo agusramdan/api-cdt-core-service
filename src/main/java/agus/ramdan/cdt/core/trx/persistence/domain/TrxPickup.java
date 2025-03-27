@@ -1,7 +1,6 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.domain.BaseEntity;
-import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.VendorCrew;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;

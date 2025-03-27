@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class TrxTransferService {
 
     private final TrxTransferRepository repository;
-
     private final GatewayService gatewayService;
     private final KafkaTemplate<String, DataEvent> kafkaTemplate;
     public void publishDataEvent(DataEvent dataEvent) {

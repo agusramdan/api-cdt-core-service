@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.trx.controller.dto;
 import agus.ramdan.base.dto.CodeOrID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

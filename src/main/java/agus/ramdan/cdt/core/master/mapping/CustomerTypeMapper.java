@@ -4,7 +4,10 @@ import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeCreat
 import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customertype.CustomerTypeUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerType;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface CustomerTypeMapper {

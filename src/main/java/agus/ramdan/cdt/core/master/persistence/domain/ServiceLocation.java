@@ -2,7 +2,6 @@ package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.Address;
-import agus.ramdan.base.embeddable.AuditMetadata;
 import agus.ramdan.base.embeddable.Coordinate;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;

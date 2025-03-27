@@ -4,7 +4,10 @@ import agus.ramdan.cdt.core.master.controller.dto.machine.MachineCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.UUID;
 
