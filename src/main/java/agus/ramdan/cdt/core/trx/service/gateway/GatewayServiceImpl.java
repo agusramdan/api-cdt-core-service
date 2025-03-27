@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Log4j2
 @Profile("!pgoffline")
-public class GatewayServiceImpl {
+public class GatewayServiceImpl implements GatewayService {
     private final GatewayQueryService gatewayQueryService;
     private final GatewayTransferMapper gatewayTransferMapper;
     private final TransferBalanceClient transferBalanceClient;
