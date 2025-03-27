@@ -81,7 +81,8 @@ public class TrxDeposit extends BaseEntity {
     private LocalDate cdmTrxDate;
     @Column(name = "cdm_trx_time")
     private LocalTime cdmTrxTime;
-
+    @Column(name = "cdm_trx_type")
+    private String cdmTrxType;
     @PostLoad
     private void combineDateAndTime() {
         if (cdmTrxDate != null && cdmTrxTime != null) {
