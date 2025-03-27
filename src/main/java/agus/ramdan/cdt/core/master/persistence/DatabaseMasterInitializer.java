@@ -18,7 +18,7 @@ public class DatabaseMasterInitializer {
          *         @UniqueConstraint(name = "uc_qrcode_code", columnNames = {"code"})
          * }
          */
-        jdbcTemplate.execute("ALTER TABLE IF EXISTS cdt_trx_pickup DROP COLUMN IF EXISTS cdm_trx_time;");
+        //jdbcTemplate.execute("ALTER TABLE IF EXISTS cdt_trx_pickup DROP COLUMN IF EXISTS cdm_trx_time;");
         jdbcTemplate.execute("DROP INDEX IF EXISTS idx_unique_cdt_branch_ktp;");
         jdbcTemplate.execute("DROP INDEX IF EXISTS idx_cdt_trx_cdm_token_signature;");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_branch_code ON cdt_branch (code) WHERE deleted_at IS NULL;");
