@@ -26,6 +26,7 @@ import java.util.UUID;
 @Schema(description = "Gateway for payment gateway or Transfer Clearings")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Gateway extends BaseEntity {
 
     @Id
@@ -39,5 +40,6 @@ public class Gateway extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("partner_id")
     private Vendor partner;
 }

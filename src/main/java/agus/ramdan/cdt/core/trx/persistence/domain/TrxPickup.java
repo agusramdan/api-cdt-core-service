@@ -3,8 +3,12 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.VendorCrew;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,7 +29,8 @@ import java.util.UUID;
 @Table(name = "cdt_trx_pickup")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TrxPickup extends BaseEntity {
 
     @Id

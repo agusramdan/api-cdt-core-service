@@ -6,6 +6,8 @@ import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,13 +30,16 @@ import java.util.UUID;
 @Schema
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TrxDeposit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
+    @JsonIgnore
     private String token;
+    @JsonIgnore
     private String signature;
 
     @Enumerated(EnumType.STRING)
