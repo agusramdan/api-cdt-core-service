@@ -5,6 +5,7 @@ import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
+import agus.ramdan.cdt.core.trx.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
@@ -23,8 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class TrxPickupCommandService implements
-        BaseCommandEntityService<TrxPickup, UUID, TrxPickupQueryDTO, TrxPickupCreateDTO, TrxPickupUpdateDTO, String> {
+public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UUID, TrxPickupQueryDTO, TrxPickupCreateDTO, TrxPickupUpdateDTO, String> {
 
     private final TrxPickupRepository repository;
     private final TrxPickupMapper mapper;

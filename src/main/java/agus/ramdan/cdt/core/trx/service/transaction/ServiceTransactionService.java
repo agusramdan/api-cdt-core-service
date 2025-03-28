@@ -1,5 +1,7 @@
 package agus.ramdan.cdt.core.trx.service.transaction;
 
+import agus.ramdan.base.dto.DataEvent;
+import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
@@ -7,14 +9,18 @@ import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
 import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Random;
 
 @Service
@@ -25,7 +31,22 @@ public class ServiceTransactionService {
     private static final String CHARACTERS = "0123456789";
     private static final int STRING_LENGTH = 20;
     private static final Random random = new Random();
+    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
+    public void publishDataEvent(DataEvent dataEvent) {
+        try {
+            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
+            TypeReference<HashMap<String,Object>> typeRef
+                    = new TypeReference<HashMap<String,Object>>() {};
+            val data =objectMapper.readValue(object,typeRef);
+            log.info("data : {}",data);
+            dataEvent.setData(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        kafkaTemplate.send("core-trx-event", dataEvent);
+    }
     public String generateRandomString(String input) {
         StringBuilder result = new StringBuilder(STRING_LENGTH);
         result.append(input);
@@ -58,11 +79,17 @@ public class ServiceTransactionService {
 
     @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ServiceTransaction prepare(TrxDeposit deposit) {
-        val trx = prepare(deposit.getAmount());
+        ServiceTransaction trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
         trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
-        return repository.save(trx);
+        trx= repository.save(trx);
+        publishDataEvent(DataEvent.builder()
+                .data(trx)
+                .dataType(ServiceTransaction.class.getCanonicalName())
+                .eventType(EventType.CREATE)
+                .build());
+        return trx;
     }
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
@@ -90,6 +117,12 @@ public class ServiceTransactionService {
             trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
             repository.save(trx);
             throw e;
+        }finally {
+            publishDataEvent(DataEvent.builder()
+                    .data(trx)
+                    .dataType(ServiceTransaction.class.getCanonicalName())
+                    .eventType(EventType.UPDATE)
+                    .build());
         }
         return trx;
     }

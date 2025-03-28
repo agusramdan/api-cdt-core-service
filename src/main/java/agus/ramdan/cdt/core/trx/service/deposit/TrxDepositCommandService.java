@@ -18,6 +18,8 @@ import agus.ramdan.cdt.core.trx.persistence.repository.TrxDepositRepository;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeCommandService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -25,6 +27,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,9 +42,21 @@ public class TrxDepositCommandService {
     private final MachineQueryService machineQueryService;
     private final ServiceTransactionService transactionService;
     private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+    private final ObjectMapper objectMapper;
     public void publishDataEvent(DataEvent dataEvent) {
+        try {
+            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
+            TypeReference<HashMap<String,Object>> typeRef
+                    = new TypeReference<HashMap<String,Object>>() {};
+            val data =objectMapper.readValue(object,typeRef);
+            log.info("data : {}",data);
+            dataEvent.setData(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         kafkaTemplate.send("core-trx-event", dataEvent);
     }
+
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
         val token = dto.getToken();
         val qrCodeDTO = new QRCodeDTO(dto.getToken());

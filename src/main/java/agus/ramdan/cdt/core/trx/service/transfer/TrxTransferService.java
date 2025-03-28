@@ -8,12 +8,16 @@ import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
 import agus.ramdan.cdt.core.trx.service.gateway.GatewayService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +27,19 @@ public class TrxTransferService {
     private final TrxTransferRepository repository;
     private final GatewayService gatewayService;
     private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+    private final ObjectMapper objectMapper;
+
     public void publishDataEvent(DataEvent dataEvent) {
+        try {
+            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
+            TypeReference<HashMap<String,Object>> typeRef
+                    = new TypeReference<HashMap<String,Object>>() {};
+            val data =objectMapper.readValue(object,typeRef);
+            log.info("data : {}",data);
+            dataEvent.setData(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         kafkaTemplate.send("core-trx-event", dataEvent);
     }
     @Transactional(Transactional.TxType.REQUIRES_NEW)

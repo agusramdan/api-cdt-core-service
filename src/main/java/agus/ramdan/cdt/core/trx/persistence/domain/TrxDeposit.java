@@ -103,4 +103,18 @@ public class TrxDeposit extends BaseEntity {
     @JoinColumn(name = "trx_deposit_id")
     @OrderBy("denomination")
     private List<TrxDepositDenom> denominations = new ArrayList<>();
+
+    @PrePersist
+    protected void onCreate() {
+        if (cdmTrxDateTime == null) {
+            cdmTrxDateTime = LocalDateTime.of(cdmTrxDate, cdmTrxTime);
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        if (cdmTrxDateTime == null) {
+            cdmTrxDateTime = LocalDateTime.of(cdmTrxDate, cdmTrxTime);
+        }
+    }
 }
