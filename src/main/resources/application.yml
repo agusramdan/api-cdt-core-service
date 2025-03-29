@@ -87,14 +87,21 @@ logging:
     correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
   level:
     root: WARN
-    agus.ramdan.base: DEBUG
+    agus.ramdan.base.exception: DEBUG
     agus.ramdan.cdt.core: INFO
 
 management:
+  server:
+    port: 7180
   endpoints:
     web:
       exposure:
-        include: health, info, metrics, prometheus
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  security:
+    enabled: false
   metrics:
     tags:
       application: api-cdt-core-service

@@ -1,6 +1,7 @@
 package agus.ramdan.base.exception;
 
 import io.micrometer.tracing.Tracer;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,19 +41,12 @@ public class GlobalExceptionHandler {
         return spanId;
     }
 
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<Errors> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-//        String traceId = getTraceId();
-//        String spanId = getSpanId();
-//        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)), HttpStatus.NOT_FOUND);
-//    }
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.warn("trace_id={},span_id={}:{}", traceId, spanId, "Message Error");
-        val error = new Errors(new Date(), "Message Error", traceId, spanId, request.getDescription(false));
+        log.warn("trace_id={},span_id={},{}:{}", traceId, spanId,request.getDescription(false), "Message Error");
+        val error = new Errors(new Date(), "Message Error: Not Readable", traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -61,7 +55,8 @@ public class GlobalExceptionHandler {
         String traceId = getTraceId();
         String spanId = getSpanId();
         String errorMsg = ErrorMessage.get(ex,null);
-        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, errorMsg), ex);
+        log.error("trace_id={},span_id={},{}:{}", traceId, spanId,request.getDescription(false), errorMsg);
+        log.trace("Trace",ex);
         val error = new Errors(new Date(), errorMsg, traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
@@ -111,12 +106,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
-        val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false));
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request,HttpServletRequest httpRequest) throws Exception {
+        String path = httpRequest.getRequestURI();
+        if (path.startsWith("/api/")) {
+            String traceId = getTraceId();
+            String spanId = getSpanId();
+            log.error("trace_id={},span_id={},{}:{}", traceId, spanId, request.getDescription(false),ex.getMessage());
+            log.trace(ex.getMessage(),ex);
+            val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false));
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        throw ex;
     }
 
 }
