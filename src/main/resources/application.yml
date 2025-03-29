@@ -58,9 +58,6 @@ spring:
   flyway:
     enabled: false
 
-  zipkin:
-    enabled: false
-
   graphql:
     path: /graphql
     graphiql:
@@ -86,8 +83,8 @@ feign-client:
 
 
 logging:
-  pattern:
-    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
+#  pattern:
+#    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
   level:
     root: WARN
 #    org.springframework: WARN
@@ -98,23 +95,11 @@ logging:
     agus.ramdan.base: DEBUG
     agus.ramdan.cdt.core: INFO
 
-otel:
-  exporter:
-    otlp:
-      endpoint: http://tempo:4317
-  service:
-    name: api-cdt-core-service
-  resource:
-    attributes:
-      compose_service: api-cdt-core-service
-  metrics:
-    exporter: none
-
 management:
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: health, info, metrics, prometheus
   metrics:
     tags:
       application: api-cdt-core-service
@@ -123,3 +108,10 @@ management:
         http:
           server:
             requests: 'true'
+  tracing:
+    sampling:
+      probability: 1.0
+
+  observations:
+    key-values:
+      application: api-cdt-core-service

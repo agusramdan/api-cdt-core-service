@@ -89,62 +89,50 @@ services:
       - "3100:3100"
 
   prometheus:
-    image: prom/prometheus:v2.51.2
+    image: prom/prometheus:v2.46.0
+    command:
+      - --enable-feature=exemplar-storage
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
-    volumes:
-      - ./etc/prometheus:/workspace
-    command:
-      - --config.file=/workspace/prometheus.yml
-      - --enable-feature=exemplar-storage
-    depends_on:
-      - loki
-    logging: *default-logging
-
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    container_name: otel-collector
-#    restart: always
-    volumes:
-      - ./etc/otel-collector/config.yaml:/etc/otel/config.yaml
-    command: [ "--config", "/etc/otel/config.yaml" ]
-    ports:
-      - "4317:4317"   # gRPC
-      - "4318:4318"   # HTTP
-      - "55680:55680" # OpenTelemetry (deprecated)
-    depends_on:
-      - tempo
 
   tempo:
-    image: grafana/tempo:latest
-    container_name: tempo
-    #restart: always
+    image: grafana/tempo:2.2.2
+    command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./etc/tempo/config.yaml:/etc/tempo/config.yaml
-    command: [ "-config.file=/etc/tempo/config.yaml" ]
+      - ./etc/tempo/tempo.yml:/etc/tempo.yaml:ro
+      - ./docker/tempo/tempo-data:/tmp/tempo
     ports:
-      - "3200:3200"  # Tempo API
-#      - "4317:4317"  # OTLP gRPC
-#      - "4318:4318"  # OTLP HTTP
-      - "9411:9411"  # zipkin
-    depends_on:
-      - loki
-    logging: *default-logging
-
+      - "3110:3100"  # Tempo
+      - "9411:9411" # zipkin
+#    depends_on:
+#      - loki
+#    logging: *default-logging
   grafana:
-    image: grafana/grafana:10.4.2
-    ports:
-      - "3000:3000"
+    image: grafana/grafana:10.1.0
     volumes:
-      - ./etc/grafana/:/etc/grafana/provisioning/datasources
-      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./etc/dashboards:/etc/grafana/dashboards
-    depends_on:
-      - loki
-      - prometheus
-    networks:
-      - infrastructure
-    logging: *default-logging
+      - ./etc/grafana:/etc/grafana/provisioning/datasources:ro
+#    environment:
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+#      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    ports:
+      - "3400:3000"
+
+#  grafana:
+#    image: grafana/grafana:10.4.2
+#    ports:
+#      - "3400:3000"
+#    volumes:
+#      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+#      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+#      - ./etc/dashboards:/etc/grafana/dashboards
+#    depends_on:
+#      - loki
+#    #  - prometheus
+#    logging: *default-logging
 
   api-cdt-gateway-service:
     image: agusramdan/api-cdt-gateway-service:dev
@@ -181,7 +169,6 @@ services:
       - tempo
       - loki
     networks:
-      - infrastructure
       - backend
       - core
       - frontend
@@ -216,6 +203,4 @@ networks:
   kafka:
     driver: bridge
   keycloak:
-    driver: bridge
-  infrastructure:
     driver: bridge
