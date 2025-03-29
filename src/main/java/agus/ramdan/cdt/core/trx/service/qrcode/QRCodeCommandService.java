@@ -7,7 +7,7 @@ import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQuerySe
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
-import agus.ramdan.cdt.core.trx.TrxDataEventProducer;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;

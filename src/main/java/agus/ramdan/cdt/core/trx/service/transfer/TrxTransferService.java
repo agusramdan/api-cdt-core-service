@@ -31,11 +31,11 @@ public class TrxTransferService {
 
     public void publishDataEvent(DataEvent dataEvent) {
         try {
-            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
+            String object = objectMapper.writeValueAsString(dataEvent.getData());
             TypeReference<HashMap<String,Object>> typeRef
                     = new TypeReference<HashMap<String,Object>>() {};
             val data =objectMapper.readValue(object,typeRef);
-            log.info("data : {}",data);
+            log.info("data : {}",object);
             dataEvent.setData(data);
         } catch (Exception e) {
             throw new RuntimeException(e);

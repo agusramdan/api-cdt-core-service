@@ -15,6 +15,7 @@ import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDepositStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxDepositRepository;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeCommandService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
@@ -41,21 +42,22 @@ public class TrxDepositCommandService {
     private final QRCodeCommandService codeCommandService;
     private final MachineQueryService machineQueryService;
     private final ServiceTransactionService transactionService;
-    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
-    private final ObjectMapper objectMapper;
-    public void publishDataEvent(DataEvent dataEvent) {
-        try {
-            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
-            TypeReference<HashMap<String,Object>> typeRef
-                    = new TypeReference<HashMap<String,Object>>() {};
-            val data =objectMapper.readValue(object,typeRef);
-            log.info("data : {}",data);
-            dataEvent.setData(data);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        kafkaTemplate.send("core-trx-event", dataEvent);
-    }
+    private final TrxDataEventProducerService trxDataEventProducerService;
+//    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
+//    private final ObjectMapper objectMapper;
+//    public void publishDataEvent(DataEvent dataEvent) {
+//        try {
+//            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
+//            TypeReference<HashMap<String,Object>> typeRef
+//                    = new TypeReference<HashMap<String,Object>>() {};
+//            val data =objectMapper.readValue(object,typeRef);
+//            log.info("data : {}",data);
+//            dataEvent.setData(data);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        kafkaTemplate.send("core-trx-event", dataEvent);
+//    }
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
         val token = dto.getToken();
@@ -114,11 +116,7 @@ public class TrxDepositCommandService {
             deposit.setServiceTransaction(trx);
             deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
             deposit = repository.save(deposit);
-            publishDataEvent(DataEvent.builder()
-                    .data(deposit)
-                    .dataType(TrxDeposit.class.getCanonicalName())
-                    .eventType(EventType.CREATE)
-                    .build());
+            trxDataEventProducerService.publishDataEvent(EventType.CREATE,deposit);
         }
         return deposit;
     }
@@ -136,12 +134,7 @@ public class TrxDepositCommandService {
                 deposit.setStatus(TrxDepositStatus.TRANSFER_GATEWAY_TIMEOUT);
             }
             deposit = repository.save(deposit);
-            publishDataEvent(DataEvent.builder()
-                    .data(deposit)
-                    .dataType(TrxDeposit.class.getCanonicalName())
-                    .eventType(EventType.UPDATE)
-                    .build());
-
+            trxDataEventProducerService.publishDataEvent(EventType.UPDATE,deposit);
         }
         return deposit;
     }
