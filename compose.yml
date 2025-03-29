@@ -16,8 +16,7 @@ services:
 
   db:
     image: postgres:16
-    networks:
-      - backend
+    hostname: db
     environment:
       - POSTGRES_DB=core
       - POSTGRES_USER=core_user
@@ -107,9 +106,10 @@ services:
     ports:
       - "3110:3100"  # Tempo
       - "9411:9411" # zipkin
-#    depends_on:
-#      - loki
-#    logging: *default-logging
+    depends_on:
+      - loki
+    logging: *default-logging
+
   grafana:
     image: grafana/grafana:10.1.0
     volumes:
@@ -120,19 +120,11 @@ services:
 #      - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3400:3000"
-
-#  grafana:
-#    image: grafana/grafana:10.4.2
-#    ports:
-#      - "3400:3000"
-#    volumes:
-#      - ./etc/grafana/:/etc/grafana/provisioning/datasources
-#      - ./etc/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-#      - ./etc/dashboards:/etc/grafana/dashboards
-#    depends_on:
-#      - loki
-#    #  - prometheus
-#    logging: *default-logging
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
+    logging: *default-logging
 
   api-cdt-gateway-service:
     image: agusramdan/api-cdt-gateway-service:dev
@@ -150,17 +142,13 @@ services:
       - backend
 
   api-cdt-core-service:
-    build:
-      context: .
-    #image: agusramdan/api-cdt-core-service:dev
+    #build:
+    #  context: .
+    image: agusramdan/api-cdt-core-service:dev
     container_name: api-cdt-core-service
     environment:
-      - SPRING_PROFILES_ACTIVE=oauth2,devdocker,itsjeck
+      - SPRING_PROFILES_ACTIVE=pgofline
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      #- OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4318 # send traces to Tempo
-      #- OTEL_SERVICE_NAME=api-cdt-core-service # service name for Span
-      #- OTEL_RESOURCE_ATTRIBUTES=compose_service=api-cdt-core-service # add custom resource attribute to Span for Grafana Trace to Logs feature
-#      - OTEL_METRICS_EXPORTER=none # disable metrics exporter
     ports:
       - "8082:8080"
     depends_on:
@@ -168,10 +156,6 @@ services:
       - kafka
       - tempo
       - loki
-    networks:
-      - backend
-      - core
-      - frontend
 
   api-cdt-cdm-service:
     image: agusramdan/api-cdt-cdm-service:dev
