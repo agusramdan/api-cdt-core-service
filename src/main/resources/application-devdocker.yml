@@ -97,16 +97,3 @@ logging:
     agus.ramdan.base: DEBUG
     agus.ramdan.cdt.core: INFO
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: prometheus
-  metrics:
-    tags:
-      application: api-cdt-core-service
-    distribution:
-      percentiles-histogram:
-        http:
-          server:
-            requests: 'true'
