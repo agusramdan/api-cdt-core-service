@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>21.3.4.4.0.202503284</version>
+	<version>21.3.4.4.0.20250329</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>
@@ -83,6 +83,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-micrometer -->
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-micrometer</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
