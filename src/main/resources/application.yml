@@ -24,9 +24,9 @@ spring:
     enabled: true
   jackson:
     property-naming-strategy: SNAKE_CASE
-  main:
-    lazy-initialization: true
-    allow-bean-definition-overriding: true
+#  main:
+#    lazy-initialization: true
+#    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://db:5432/core
     username: core_user

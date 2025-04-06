@@ -14,19 +14,9 @@ import java.util.HashMap;
 @Log4j2
 public abstract class MasterDataEventProducer<T, ID, ResultDTO, CreateDTO, UpdateDTO, DTO_ID>  implements BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO, DTO_ID> {
     @Autowired
-    private KafkaTemplate<String, DataEvent> kafkaTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private MasterDataEventProducerService masterDataEventProducerService;
+
     public void publishDataEvent(DataEvent dataEvent) {
-        try {
-            String str = objectMapper.writeValueAsString(dataEvent.getData());
-            TypeReference<HashMap<String,Object>> typeRef
-                    = new TypeReference<HashMap<String,Object>>() {};
-            dataEvent.setData(objectMapper.readValue(str,typeRef));
-            log.info("STR data {} ",str);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        kafkaTemplate.send("core-master-event", dataEvent);
+        masterDataEventProducerService.publishDataEvent(dataEvent);
     }
 }

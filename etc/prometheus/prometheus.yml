@@ -1,16 +1,38 @@
 global:
-  scrape_interval: 2s
-  evaluation_interval: 2s
+  scrape_interval: 60s
+  evaluation_interval: 60s
 
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['prometheus:9090']
+
   - job_name: 'api-cdt-core-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['api-cdt-core-service:7180']
+
   - job_name: 'api-cdt-cdm-service'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['api-cdt-cdm-service:7180']
+
+  - job_name: 'api-cdt-event-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['api-cdt-event-service:7180']
+
+  - job_name: 'app-cdt-event-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['app-cdt-event-service:7180']
+
+  - job_name: 'api-cdt-gateway-itsjeck-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'api-cdt-gateway-itsjeck-service:7180' ]
+
+  - job_name: 'api-cdt-query-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'api-cdt-query-service:7180' ]
