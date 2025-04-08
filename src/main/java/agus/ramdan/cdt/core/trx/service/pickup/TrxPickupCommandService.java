@@ -3,6 +3,7 @@ package agus.ramdan.cdt.core.trx.service.pickup;
 import agus.ramdan.base.dto.DataEvent;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
@@ -15,6 +16,7 @@ import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -56,14 +58,17 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
         val entity = mapper.createDtoToEntity(dto);
         machineQueryService.relation(dto.getMachine(), validates, "machine").ifPresent(entity::setMachine);
         BadRequestException.ThrowWhenError("Invalid Transaction", validates,dto);
-        entity.setStatus(TrxPickupStatus.SUCCESS);
+        val list = repository.findAllByCdmTrxNoAndCdmTrxDate(entity.getCdmTrxNo(), entity.getCdmTrxDate());
+        if (!list.isEmpty()) {
+            throw new BadRequestException("Transaction already exists");
+        }
         return entity;
     }
 
     @Override
     public TrxPickup convertFromUpdateDTO(String id, TrxPickupUpdateDTO dto) {
         TrxPickup trxPickup = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("TrxPickup not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TrxPickup not found"));
         mapper.updateEntityFromUpdateDto(dto, trxPickup);
         return trxPickup;
     }
