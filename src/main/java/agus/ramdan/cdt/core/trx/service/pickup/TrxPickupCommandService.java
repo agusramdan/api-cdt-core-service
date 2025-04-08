@@ -60,7 +60,7 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
         BadRequestException.ThrowWhenError("Invalid Transaction", validates,dto);
         val list = repository.findAllByCdmTrxNoAndCdmTrxDate(entity.getCdmTrxNo(), entity.getCdmTrxDate());
         if (!list.isEmpty()) {
-            throw new BadRequestException("Transaction already exists");
+            throw new BadRequestException("Transaction already exists.");
         }
         return entity;
     }
@@ -68,7 +68,7 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
     @Override
     public TrxPickup convertFromUpdateDTO(String id, TrxPickupUpdateDTO dto) {
         TrxPickup trxPickup = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new ResourceNotFoundException("TrxPickup not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TrxPickup not found."));
         mapper.updateEntityFromUpdateDto(dto, trxPickup);
         return trxPickup;
     }
