@@ -29,10 +29,7 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
     private final TrxPickupMapper mapper;
     private final QRCodeQueryService codeQueryService;
     private final MachineQueryService machineQueryService;
-    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
-    public void publishDataEvent(DataEvent dataEvent) {
-        kafkaTemplate.send("core-trx-event", dataEvent);
-    }
+
     @Override
     public UUID convertId(String id) {
         return UUID.fromString(id);
