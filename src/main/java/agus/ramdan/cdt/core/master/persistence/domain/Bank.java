@@ -37,6 +37,9 @@ public class Bank extends BaseEntity {
     private UUID id;
     private String name;
     private String code;
+    @JsonProperty("bank_payer_id")
+    @Schema(description = "itsjeck Bank Payer ID")
+    private Integer bankPayerId;
     @JsonProperty("online_transfer")
     private Boolean onlineTransfer;
     @JsonProperty("bi_fast_transfer")
@@ -44,7 +47,6 @@ public class Bank extends BaseEntity {
     private Boolean wallet;
     @JsonProperty("virtual_account")
     private Boolean virtualAccount;
-
     // Address
     @Embedded
     private Address address;  // Embedded Address

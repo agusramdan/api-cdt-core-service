@@ -16,6 +16,9 @@ public class BankCreateDTO {
 
     @Schema(description = "Nama Bank")
     private String name;
+    @JsonProperty("bank_payer_id")
+    @Schema(description = "itsjeck Bank Payer ID")
+    private Integer bankPayerId;
     @JsonProperty("online_transfer")
     private Boolean onlineTransfer;
     @JsonProperty("bi_fast_transfer")

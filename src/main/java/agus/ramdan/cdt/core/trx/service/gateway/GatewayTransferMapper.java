@@ -2,6 +2,8 @@ package agus.ramdan.cdt.core.trx.service.gateway;
 
 import agus.ramdan.cdt.core.gateway.controller.dto.transfer.TransferBalanceRequestDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,6 +17,7 @@ public interface GatewayTransferMapper {
     @Mapping(source = "beneficiaryAccount.accountNumber", target = "destinationAccount")
     @Mapping(source = "beneficiaryAccount.accountName", target = "destinationAccountName")
     @Mapping(source = "beneficiaryAccount.bank.code", target = "destinationBankCode")
+    @Mapping(source = "beneficiaryAccount.bank.bankPayerId", target = "bankPayerId")
     @Mapping(source = "beneficiaryAccount.regionCode.id", target = "destinationRegionCode")
     @Mapping(source = "beneficiaryAccount.countryCode.id", target = "destinationCountryCode")
     @Mapping(source = "beneficiaryAccount.customerStatus.id", target = "destinationCustomerStatus")

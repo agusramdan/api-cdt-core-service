@@ -16,7 +16,9 @@ public class BankQueryDTO {
 
     @Schema(description = "Kode Bank")
     private String code;
-
+    @JsonProperty("bank_payer_id")
+    @Schema(description = "itsjeck Bank Payer ID")
+    private Integer bankPayerId;
     @Schema(description = "Nama Bank")
     private String name;
     @JsonProperty("online_transfer")

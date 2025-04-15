@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.gateway.controller.dto.transfer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,9 @@ public class TransferBalanceRequestDTO {
     @JsonProperty("destination_bank_code")
     private String destinationBankCode;
 
+    @JsonProperty("bank_payer_id")
+    @Schema(description = "itsjeck Bank Payer ID")
+    private Integer bankPayerId;
     /**
      * Destination Region Code (Optional)
      */
