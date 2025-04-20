@@ -1,8 +1,6 @@
 package agus.ramdan.cdt.core.trx.persistence.repository;
 
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

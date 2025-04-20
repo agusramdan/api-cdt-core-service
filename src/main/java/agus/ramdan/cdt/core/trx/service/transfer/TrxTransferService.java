@@ -7,6 +7,7 @@ import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.gateway.GatewayService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 public class TrxTransferService {
 
     private final TrxTransferRepository repository;
+    private final TrxDataEventProducerService producerService;
     private final GatewayService gatewayService;
     private final KafkaTemplate<String, DataEvent> kafkaTemplate;
     private final ObjectMapper objectMapper;
@@ -65,13 +67,20 @@ public class TrxTransferService {
             repository.save(transfer);
             throw e;
         }finally {
-            publishDataEvent(DataEvent.builder()
-                    .data(transfer)
-                    .dataType(transfer.getClass().getCanonicalName())
-                    .eventType(isNew ? EventType.CREATE : EventType.UPDATE)
-                    .build());
+            producerService.publishDataEvent(isNew ? EventType.CREATE : EventType.UPDATE, transfer);
         }
         return transfer;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public TrxTransfer transferUpdateStatus(TrxTransfer transfer,String status, String message) {
+        transfer.setStatus(gatewayService.mapGatewayStatus(status));
+        producerService.publishDataEvent(EventType.UPDATE, transfer);
+        return transfer;
+    }
+
+    public TrxTransferStatus mapGatewayStatus(String status) {
+        return gatewayService.mapGatewayStatus(status);
     }
 }
 

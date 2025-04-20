@@ -4,6 +4,7 @@ import agus.ramdan.base.exception.XxxException;
 import agus.ramdan.cdt.core.config.PaymentGatewayConfig;
 import agus.ramdan.cdt.core.master.service.gateway.GatewayQueryService;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -32,4 +33,21 @@ public class GatewayServiceOffline implements GatewayService{
         trx.setStatus(paymentGatewayConfig.getTransferStatus());
         return trx;
     }
+    public TrxTransferStatus mapGatewayStatus(String status) {
+        /**
+         * List of status transaction:
+         * 1 = On Process
+         * 2 = Success
+         * 4 = Failed
+         * 5 = Reverse
+         */
+        return switch (status) {
+            case "1" -> TrxTransferStatus.PREPARE;
+            case "2" -> TrxTransferStatus.SUCCESS;
+            case "4" -> TrxTransferStatus.FAILED;
+            case "5" -> TrxTransferStatus.REVERSAL;
+            default -> TrxTransferStatus.GATEWAY_TIME_OUT;
+        };
+    }
 }
+

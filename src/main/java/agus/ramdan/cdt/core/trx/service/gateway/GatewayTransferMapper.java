@@ -2,8 +2,6 @@ package agus.ramdan.cdt.core.trx.service.gateway;
 
 import agus.ramdan.cdt.core.gateway.controller.dto.transfer.TransferBalanceRequestDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

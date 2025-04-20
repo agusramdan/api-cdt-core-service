@@ -33,6 +33,11 @@ public class GatewayServiceImpl implements GatewayService {
     public TrxTransfer transferFund(TrxTransfer trx) {
         val dto = gatewayTransferMapper.mapDTO(trx);
         val response = transferBalanceClient.transferBalance(dto);
+        trx.setStatus(mapGatewayStatus(response.getStatus()));
+        return trx;
+    }
+
+    public TrxTransferStatus mapGatewayStatus(String status) {
         /**
          * List of status transaction:
          * 1 = On Process
@@ -40,13 +45,12 @@ public class GatewayServiceImpl implements GatewayService {
          * 4 = Failed
          * 5 = Reverse
          */
-        if ("2".equals(response.getStatus())) {
-            trx.setStatus(TrxTransferStatus.SUCCESS);
-        } else if ("4".equals(response.getStatus())) {
-            trx.setStatus(TrxTransferStatus.FAILED);
-        } else if ("5".equals(response.getStatus())) {
-            trx.setStatus(TrxTransferStatus.REVERSAL);
-        }
-        return trx;
+        return switch (status) {
+            case "1" -> TrxTransferStatus.PREPARE;
+            case "2" -> TrxTransferStatus.SUCCESS;
+            case "4" -> TrxTransferStatus.FAILED;
+            case "5" -> TrxTransferStatus.REVERSAL;
+            default -> TrxTransferStatus.GATEWAY_TIME_OUT;
+        };
     }
 }

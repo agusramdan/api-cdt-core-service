@@ -1,23 +1,19 @@
 package agus.ramdan.cdt.core.trx.service.pickup;
 
-import agus.ramdan.base.dto.DataEvent;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
-import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxPickupMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickupStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

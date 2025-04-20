@@ -7,7 +7,6 @@ import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQuerySe
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
-import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
@@ -16,6 +15,7 @@ import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeStatus;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType;
 import agus.ramdan.cdt.core.trx.persistence.repository.QRCodeRepository;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
