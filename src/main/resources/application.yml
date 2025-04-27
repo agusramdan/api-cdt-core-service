@@ -80,7 +80,8 @@ springdoc:
 feign-client:
   api-cdt-gateway-service:
     base-url: http://api-cdt-gateway-service:8080
-
+  api-cdt-pjpur-service:
+    base-url: http://api-cdt-pjpur-service:8080
 
 logging:
   pattern:
