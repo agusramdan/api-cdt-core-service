@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Profile("!pjpur")
+@Profile("pjpur")
 public class PjpurServiceImpl implements PjpurService {
     private final PjpurMapper pjpurMapper;
     private final PjpurCollectClient pjpurCollectClient;
