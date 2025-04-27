@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.hibernate.Hibernate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -162,12 +163,13 @@ public class ServiceTransactionService {
             return;
         }
         ServiceTransaction trx = opt.get();
+        Hibernate.initialize(trx.getTransfer());
         var transfer = trx.getTransfer();
         if (transfer == null) {
             log.error("Transfer not found: {}", transactionNo);
             return;
         }
-
+        Hibernate.initialize(transfer.getGateway());
         if (gatewayCode != null && !gatewayCode.equals(transfer.getGateway().getCode())) {
             log.error("Gateway Info  not found: {}", transactionNo);
         }
