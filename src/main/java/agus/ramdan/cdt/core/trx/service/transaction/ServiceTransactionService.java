@@ -132,6 +132,7 @@ public class ServiceTransactionService {
     }
 
     @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transaction-customer-gateway-callback")
+    @Transactional(value = Transactional.TxType.REQUIRED, dontRollbackOn = Propagation5xxException.class)
     public void consumeGatewayCallbackDTO(GatewayCallbackDTO event) {
         log.info("consumeGatewayCallbackDTO: {}", event);
         String gatewayCode = event.getGatewayCode();
