@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableFeignClients(basePackages = {
-        "agus.ramdan.cdt.core.gateway.controller.client"}
+        "agus.ramdan.cdt.core.gateway.controller.client",
+        "agus.ramdan.cdt.core.pjpur.controller.client",
+}
 )
 public class FeignConfig {
     @Bean
