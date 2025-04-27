@@ -4,10 +4,7 @@ import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.dto.GatewayCallbackDTO;
 import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
+import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
@@ -177,6 +174,15 @@ public class ServiceTransactionService {
         transfer = transferService.transferUpdateStatus(transfer, status, message);
         trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
         trx = repository.save(trx);
+        switch (trx.getStatus()) {
+            case SUCCESS, TRANSFER_SUCCESS:
+                Hibernate.initialize(trx.getDeposit());
+                val deposit = trx.getDeposit();
+                if (deposit != null) {
+                    deposit.setStatus(TrxDepositStatus.SUCCESS);
+                }
+                break;
+        }
         producerService.publishDataEvent(EventType.UPDATE,trx);
     }
 }
