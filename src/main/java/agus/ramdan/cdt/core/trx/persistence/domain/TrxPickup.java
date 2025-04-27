@@ -39,6 +39,10 @@ public class TrxPickup extends BaseEntity {
     private UUID id;
     private String username;
 
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("pjpur_status")
+    private TrxPjpurStatus pjpurStatus;
+
     @ManyToOne
     @JsonProperty("vendor_crew_id")
     @JsonIdentityReference(alwaysAsId = true)

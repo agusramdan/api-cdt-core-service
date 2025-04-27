@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>agus.ramdan.cdt</groupId>
 	<artifactId>api-cdt-core-service</artifactId>
-	<version>21.3.4.4.0.20250408</version>
+	<version>21.3.4.4.0.20250409</version>
 	<name>api-cdt-core-service</name>
 	<description>CDT Core Service</description>
 	<url/>
@@ -352,6 +352,7 @@
 								<include>agus/ramdan/cdt/core/trx/controller/dto/**</include>
 								<include>agus/ramdan/cdt/core/trx/controller/client/**</include>
 								<include>agus/ramdan/cdt/core/gateway/controller/dto/**</include>
+								<include>agus/ramdan/cdt/core/pjpur/controller/dto/**</include>
 							</includes>
 						</configuration>
 					</execution>

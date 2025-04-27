@@ -13,8 +13,10 @@ import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDepositStatus;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxPjpurStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxDepositRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
+import agus.ramdan.cdt.core.trx.service.pjpur.PjpurService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeCommandService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
@@ -38,21 +40,7 @@ public class TrxDepositCommandService {
     private final MachineQueryService machineQueryService;
     private final ServiceTransactionService transactionService;
     private final TrxDataEventProducerService trxDataEventProducerService;
-//    private final KafkaTemplate<String, DataEvent> kafkaTemplate;
-//    private final ObjectMapper objectMapper;
-//    public void publishDataEvent(DataEvent dataEvent) {
-//        try {
-//            byte[] object = objectMapper.writeValueAsBytes(dataEvent.getData());
-//            TypeReference<HashMap<String,Object>> typeRef
-//                    = new TypeReference<HashMap<String,Object>>() {};
-//            val data =objectMapper.readValue(object,typeRef);
-//            log.info("data : {}",data);
-//            dataEvent.setData(data);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//        kafkaTemplate.send("core-trx-event", dataEvent);
-//    }
+    private final PjpurService pjpurService;
 
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
         val token = dto.getToken();
@@ -100,18 +88,37 @@ public class TrxDepositCommandService {
                         .peek(deposit -> codeCommandService.useCode(deposit.getCode()))
                         .findFirst())
                 .map(this::prepareTransaction)
+                .map(this::pjpurNotification)
                 .map(this::executeTransaction)
                 .map(trxDepositMapper::entityToQueryDto)
                 .orElse(null);
     }
-
+    public TrxDepositQueryDTO resend(UUID id) {
+        val option_trx = repository.findById(id);
+        option_trx.orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+        return option_trx
+                .map(this::pjpurNotification)
+                .map(this::executeTransaction)
+                .map(trxDepositMapper::entityToQueryDto)
+                .orElse(null);
+    }
     protected TrxDeposit prepareTransaction(TrxDeposit deposit) {
         if (TrxDepositStatus.DEPOSIT.equals(deposit.getStatus())) {
             var trx = transactionService.prepare(deposit);
             deposit.setServiceTransaction(trx);
             deposit.setStatus(TrxDepositStatus.TRANSFER_IN_PROGRESS);
+            deposit.setPjpurStatus(TrxPjpurStatus.PREPARE);
             deposit = repository.save(deposit);
             trxDataEventProducerService.publishDataEvent(EventType.CREATE,deposit);
+        }
+        return deposit;
+    }
+
+    protected TrxDeposit pjpurNotification(TrxDeposit deposit) {
+        if (!TrxPjpurStatus.SUCCESS.equals(deposit.getPjpurStatus())) {
+            deposit = pjpurService.deposit(deposit);
+            deposit = repository.save(deposit);
+            trxDataEventProducerService.publishDataEvent(EventType.UPDATE,deposit);
         }
         return deposit;
     }

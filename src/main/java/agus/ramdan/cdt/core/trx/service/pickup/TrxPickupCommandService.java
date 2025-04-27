@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.service.pickup;
 
+import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
@@ -9,8 +10,11 @@ import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxPickupMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxPjpurStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
+import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
+import agus.ramdan.cdt.core.trx.service.pjpur.PjpurService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,6 +31,8 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
     private final TrxPickupMapper mapper;
     private final QRCodeQueryService codeQueryService;
     private final MachineQueryService machineQueryService;
+    private final TrxDataEventProducerService trxDataEventProducerService;
+    private final PjpurService pjpurService;
 
     @Override
     public UUID convertId(String id) {
@@ -40,12 +46,21 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
 
     @Override
     public TrxPickup saveCreate(TrxPickup data) {
-        return repository.save(data);
+        return pjpurNotification(repository.save(data));
     }
 
     @Override
     public TrxPickup saveUpdate(TrxPickup data) {
-        return repository.save(data);
+        return pjpurNotification(repository.save(data));
+    }
+
+    protected TrxPickup pjpurNotification(TrxPickup pickup) {
+        if (!TrxPjpurStatus.SUCCESS.equals(pickup.getPjpurStatus())) {
+            pickup = pjpurService.collect(pickup);
+            pickup = repository.save(pickup);
+            trxDataEventProducerService.publishDataEvent(EventType.UPDATE,pickup);
+        }
+        return pickup;
     }
 
     @Override

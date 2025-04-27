@@ -39,13 +39,13 @@ public class TrxDepositCommandController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @ApiResponses(value = {
             @ApiResponse(description = "successful operation", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
-    public ResponseEntity<TrxDepositQueryDTO> update(@RequestBody TrxDepositUpdateDTO dto) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.updateTrxDeposit(dto));
+    public ResponseEntity<TrxDepositQueryDTO> update(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.resend(id));
     }
 
     @DeleteMapping("/{id}")

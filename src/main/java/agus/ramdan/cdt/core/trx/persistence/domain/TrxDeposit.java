@@ -45,6 +45,10 @@ public class TrxDeposit extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TrxDepositStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("pjpur_status")
+    private TrxPjpurStatus pjpurStatus;
+
     @ManyToOne
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("customer_crew_id")
