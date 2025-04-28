@@ -4,10 +4,7 @@ import agus.ramdan.cdt.core.gateway.controller.dto.transfer.TransferBalanceReque
 import agus.ramdan.cdt.core.pjpur.controller.dto.BillDTO;
 import agus.ramdan.cdt.core.pjpur.controller.dto.collect.CollectDTO;
 import agus.ramdan.cdt.core.pjpur.controller.dto.deposit.DepositDTO;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxDepositDenom;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
+import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -26,7 +23,7 @@ public interface PjpurMapper {
     @Mapping(source = "beneficiaryAccount.accountNumber", target = "accinfo.bankacc")
     @Mapping(source = "beneficiaryAccount.bank.code", target = "accinfo.bankcode")
     @Mapping(constant = "1", target = "batch")
-    @Mapping(source = "serviceTransaction.no", target = "trxid")
+   //@Mapping(source = "serviceTransaction.no", target = "trxid")
     @Mapping(source = "denominations", target = "bills")
     DepositDTO mapDepositDTO(TrxDeposit deposit);
 
@@ -34,12 +31,22 @@ public interface PjpurMapper {
     @Mapping(source = "quantity", target = "qty")
     BillDTO mapBillDTO(TrxDepositDenom trxTransfer);
 
+    @Mapping(source = "machine.code", target = "terminalid")
+    @Mapping(source = "cdmTrxDateTime", target = "timestamp")
+    @Mapping(constant = "1", target = "batch")
+    @Mapping(source = "denominations", target = "bills")
     CollectDTO mapCollectDTO(TrxPickup pickup);
+
+    @Mapping(source = "denomination", target = "denom")
+    @Mapping(source = "quantity", target = "qty")
+    BillDTO mapBillDTO(TrxPickupDenom trxTransfer);
 
     default ZonedDateTime mapZonedDateTime(LocalDateTime value){
         return value.atZone(ZoneId.of("Asia/Jakarta"));
     }
     default Long mapLong(String s){
-        return Long.parseLong(s);
+        if (s == null) return null;
+        if (s.length() < 18) return Long.parseLong(s);
+        return Long.parseLong(s.substring(17));
     }
 }

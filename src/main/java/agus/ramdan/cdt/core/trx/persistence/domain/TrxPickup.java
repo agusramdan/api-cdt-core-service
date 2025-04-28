@@ -3,10 +3,7 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.domain.VendorCrew;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,6 +69,12 @@ public class TrxPickup extends BaseEntity {
     @Column(name="cdm_trx_time")
     @JsonProperty("cdm_trx_time")
     private LocalTime cdmTrxTime;
+
+    @JsonIgnore
+    public LocalDateTime getCdmTrxDateTime() {
+        return LocalDateTime.of(cdmTrxDate, cdmTrxTime);
+    }
+
     @JsonProperty("cdm_trx_type")
     private String cdmTrxType;
     private Integer totalPieces;

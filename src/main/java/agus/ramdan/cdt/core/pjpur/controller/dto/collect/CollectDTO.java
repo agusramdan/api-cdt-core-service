@@ -1,8 +1,10 @@
 package agus.ramdan.cdt.core.pjpur.controller.dto.collect;
 
 import agus.ramdan.cdt.core.pjpur.controller.dto.BillDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -20,7 +22,8 @@ import java.util.List;
 @Data
 public class CollectDTO {
     private String terminalid;
-    private String timestamp;
+    @JsonFormat(pattern = "yyyyMMddHHmmssXXXXX")    // @JsonProperty("timestamp")
+    private ZonedDateTime timestamp = ZonedDateTime.now();
     private String oprid;
     private Integer batch;
     private List<BillDTO> bills;
