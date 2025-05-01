@@ -27,7 +27,7 @@ public abstract class CustomerCrewMapper {
     public abstract CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
     @AfterMapping
     public void handleException(@MappingTarget CustomerCrewQueryDTO customerCrewQueryDTO, CustomerCrew entity) {
-        customerCrewQueryDTO.setCustomer(customerMapper.entityToCustomerDTO(EntityFallbackFactory.safeGet(entity::getCustomer)));
+        customerCrewQueryDTO.setCustomer(customerMapper.entityToCustomerDTO(EntityFallbackFactory.safe(entity.getCustomer())));
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")

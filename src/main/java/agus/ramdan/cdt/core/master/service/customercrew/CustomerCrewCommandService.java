@@ -69,7 +69,6 @@ public class CustomerCrewCommandService extends MasterDataEventProducer<Customer
         mapper.updateEntityFromUpdateDto(dto, customerCrew);
         val validations = new ArrayList<ErrorValidation>();
         customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(customerCrew::setCustomer);
-        EntityFallbackFactory.ensureNotLazy(validations, "Invalid Customer", "customer", customerCrew::getCustomer);
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return customerCrew;
     }

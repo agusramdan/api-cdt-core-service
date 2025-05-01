@@ -18,7 +18,7 @@ public abstract class BeneficiaryAccountMapper {
 
     @AfterMapping
     public void handleException(@MappingTarget BeneficiaryAccountQueryDTO dto, BeneficiaryAccount entity) {
-        val customer = EntityFallbackFactory.safeGet(entity::getCustomer);
+        val customer = EntityFallbackFactory.safe(entity.getCustomer());
         if (customer != null && customer.getId() != null) {
             dto.setCustomerId(customer.getId().toString());
         }

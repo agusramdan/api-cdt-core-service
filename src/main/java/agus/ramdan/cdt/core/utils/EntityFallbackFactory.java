@@ -3,6 +3,7 @@ package agus.ramdan.cdt.core.utils;
 import agus.ramdan.base.exception.ErrorValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.Hibernate;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -13,21 +14,22 @@ import java.util.regex.Pattern;
 
 public class EntityFallbackFactory {
 
-    public static <T> T safeGet(Callable<T> ex){
+
+    public static <T> T safe(T t){
         try {
-            return ex.call();
+            Hibernate.initialize(t);
+            return t;
         } catch (Exception e) {
-            if (e.getCause() instanceof EntityNotFoundException) {
-                return createEntityFromException((EntityNotFoundException) e.getCause());
-            }
-            throw new RuntimeException("Failed to get entity", e);
+            return createEntityFromException(e.getMessage());
         }
     }
     public static <T> T ensureNotLazy(@NotNull Collection<ErrorValidation> validations, String message, String key, Callable<T> ex) {
         try {
-            return ex.call();
+            T result = ex.call();
+            Hibernate.initialize(result);
+            return result;
         } catch (Exception e) {
-            if (e.getCause() instanceof EntityNotFoundException) {
+            if (e instanceof EntityNotFoundException) {
                 Pattern pattern = Pattern.compile("Unable to find ([\\w\\.]+) with id ([a-f0-9\\-]+)");
                 Matcher matcher = pattern.matcher(e.getMessage());
                 if (matcher.find()) {
@@ -42,8 +44,7 @@ public class EntityFallbackFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T createEntityFromException(EntityNotFoundException ex) {
-        String message = ex.getMessage();
+    public static <T> T createEntityFromException(String message) {
         Pattern pattern = Pattern.compile("Unable to find ([\\w\\.]+) with id ([a-f0-9\\-]+)");
         Matcher matcher = pattern.matcher(message);
 
