@@ -22,8 +22,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "cdt_customer_crew")
 @SQLDelete(sql = "UPDATE cdt_customer_crew SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@FilterDef(name = "deletedFilter_cdt_customer_crew", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter_cdt_customer_crew", condition = "deleted_at IS NULL") // Pengganti @Where
+//@FilterDef(name = "deletedFilter_cdt_customer_crew", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+//@Filter(name = "deletedFilter_cdt_customer_crew", condition = "deleted_at IS NULL") // Pengganti @Where
 @Where(clause = "deleted_at IS NULL")
 @Schema
 @EntityListeners(AuditingEntityListener.class)

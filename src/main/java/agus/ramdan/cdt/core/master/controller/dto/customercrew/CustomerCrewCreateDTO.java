@@ -23,9 +23,9 @@ public class CustomerCrewCreateDTO {
     @Schema(description = "NPWP Crew")
     private String npwp;
 
-    @Schema(description = "ID Customer / deprecated will remove")
-    @JsonProperty("customer_id")
-    private String customerId;
+//    @Schema(description = "ID Customer / deprecated will remove")
+//    @JsonProperty("customer_id")
+//    private String customerId;
 
     private CustomerDTO customer;
 

@@ -8,6 +8,7 @@ import agus.ramdan.base.exception.ResourceNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +27,11 @@ public interface BaseQueryEntityService<T, ID, DTO, DTO_ID> extends
     }
 
     @Override
+    @Transactional(readOnly = true)
     default List<DTO> getAll(int offset, int limit, String search, String ids) {
         return BaseQueryAllService.super.getAll(offset, limit, search, ids);
     }
-
+    @Transactional(readOnly = true)
     default DTO getByDtoId(DTO_ID dtoId) throws ResourceNotFoundException {
         ID data;
         try {
@@ -41,11 +43,11 @@ public interface BaseQueryEntityService<T, ID, DTO, DTO_ID> extends
         }
         return BaseQueryOneService.super.getById(data);
     }
-
+    @Transactional(readOnly = true)
     DTO convertOne(T entity);
 
     JpaRepository<T, ID> getRepository();
-
+    @Transactional(readOnly = true)
     DTO convert(T entity);
 
     default T getForRelation(final CodeOrID<DTO_ID> dto, @NotNull final List<ErrorValidation> validations, String key) {
