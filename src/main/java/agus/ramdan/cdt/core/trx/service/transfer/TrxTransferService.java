@@ -99,7 +99,7 @@ public class TrxTransferService {
         Optional<TrxTransfer> trxTransfer = repository.findByTrxNo(trx_no)
                 .stream().findFirst();
         if (trxTransfer.isEmpty()) {
-            trxTransfer = repository.findByTransactionNo(transactionNo)
+            trxTransfer = repository.findByTransaction(transactionNo)
                     .stream().findFirst();
         }
         trxTransfer.ifPresentOrElse(transfer -> {
