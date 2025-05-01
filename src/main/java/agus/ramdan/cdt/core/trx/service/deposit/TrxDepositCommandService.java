@@ -55,10 +55,23 @@ public class TrxDepositCommandService {
                 throw new BadRequestException("Duplicate Deposit");
             }
         }, () -> {
-            if (validations.isEmpty() && code != null && !code.isActive()) {
+            if (validations.isEmpty() && !code.isActive()) {
                 validations.add(ErrorValidation.New("QR Code not active!", "qr_code", dto.getToken()));
             }
             if (validations.isEmpty()) {
+                val customer = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",code::getCustomer);
+                if (customer == null) {
+                    validations.add(ErrorValidation.New("Invalid QRCode.Customer ", "qr_code", dto.getToken()));
+                }
+                val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code",code::getUser);
+                if (user == null) {
+                    validations.add(ErrorValidation.New("Invalid QRCode.User", "qr_code", dto.getToken()));
+                }else {
+                    if (!user.getUsername().equals(dto.getUsername())){
+                        validations.add(ErrorValidation.New("Invalid QRCode.Username", "qr_code", dto.getToken()));
+                    }
+                }
+
                 if (machine == null) {
                     validations.add(ErrorValidation.New("Machine/Terminal not register!", "machine", dto.getMachine().getCode()));
                 }
@@ -70,6 +83,10 @@ public class TrxDepositCommandService {
                 if (beneficiaryAccount == null) {
                     validations.add(ErrorValidation.New("Invalid BeneficiaryAccount", "qr_code", dto.getToken()));
                 } else {
+                    val customerBen = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",beneficiaryAccount::getCustomer);
+                    if (customerBen == null) {
+                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
+                    }
                     val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code",beneficiaryAccount::getBranch);
                     if (brance == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", dto.getToken()));
@@ -80,8 +97,12 @@ public class TrxDepositCommandService {
                     if (beneficiaryAccount.getCountryCode() == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode", "qr_code", dto.getToken()));
                     }
+                    if (validations.isEmpty() && !customerBen.getId().equals(customer.getId())) {
+                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer and User.Customer", "qr_code", dto.getToken()));
+                    }
                 }
             }
+
             BadRequestException.ThrowWhenError("Invalid Parameter Transaction", validations,dto);
         });
 
