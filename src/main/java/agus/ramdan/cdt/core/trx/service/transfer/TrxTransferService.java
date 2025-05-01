@@ -70,7 +70,7 @@ public class TrxTransferService {
         return gatewayService.mapGatewayStatus(status);
     }
 
-    @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transaction-customer-gateway-callback")
+    @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transfer-gateway-callback")
     @Transactional()
     public void consumeGatewayCallbackDTO(GatewayCallbackDTO event) {
         log.info("consumeGatewayCallbackDTO: {}", event);
@@ -110,37 +110,6 @@ public class TrxTransferService {
                     trxStatus.setMessage(trx_message);
                     kafkaTemplate.send("core-trx-status-check-event",trxStatus);
                 }, () -> log.error("Transaction not found: {}", trx_no));
-
-//        val opt = repository.findByNo(transactionNo);
-//        if (opt.isEmpty()) {
-//            log.error("Transaction not found: {}", transactionNo);
-//            return;
-//        }
-//        ServiceTransaction trx = opt.get();
-//        Hibernate.initialize(trx.getTransfer());
-//        var transfer = trx.getTransfer();
-//        if (transfer == null) {
-//            log.error("Transfer not found: {}", transactionNo);
-//            return;
-//        }
-//        Hibernate.initialize(transfer.getGateway());
-//        if (gatewayCode != null && !gatewayCode.equals(transfer.getGateway().getCode())) {
-//            log.error("Gateway Info  not found: {}", transactionNo);
-//        }
-//
-//        transfer = transferService.transferUpdateStatus(transfer, status, message);
-//        trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-//        trx = repository.save(trx);
-//        switch (trx.getStatus()) {
-//            case SUCCESS, TRANSFER_SUCCESS:
-//                Hibernate.initialize(trx.getDeposit());
-//                val deposit = trx.getDeposit();
-//                if (deposit != null) {
-//                    deposit.setStatus(TrxDepositStatus.SUCCESS);
-//                }
-//                break;
-//        }
-//        producerService.publishDataEvent(EventType.UPDATE,trx);
     }
 }
 
