@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TrxTransferRepository extends JpaRepository<TrxTransfer, UUID> {
-    @Query("SELECT t FROM TrxTransfer t WHERE t.transaction.no = ?1 limit 1")
+    @Query("SELECT t FROM TrxTransfer t WHERE t.transaction.no = ?1")
     List<TrxTransfer> findByTransactionNo(String transactionNo);
     List<TrxTransfer> findByTrxNo(String transactionNo);
 }
