@@ -23,7 +23,7 @@ import java.util.List;
 @Data
 public class DepositDTO {
     private String terminalid;
-    @JsonFormat(pattern = "yyyyMMddHHmmss+XXXX")    // @JsonProperty("timestamp")
+    @JsonFormat(pattern = "yyyyMMddHHmmssXXX")    // @JsonProperty("timestamp")
     private ZonedDateTime timestamp = ZonedDateTime.now();
     private String oprid;
     private String trxrefno;
