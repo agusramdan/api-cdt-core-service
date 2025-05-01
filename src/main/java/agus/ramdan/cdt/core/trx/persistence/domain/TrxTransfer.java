@@ -34,6 +34,7 @@ public class TrxTransfer extends BaseEntity {
 
     @Column(name = "trx_date")
     private LocalDateTime trxDate;
+
     @Enumerated(EnumType.STRING)
     private TrxTransferStatus status;
 
@@ -43,7 +44,7 @@ public class TrxTransfer extends BaseEntity {
     @JsonProperty("transaction_id")
     private ServiceTransaction transaction;
 
-    @Column(name = "amount", precision = 12, scale = 2, nullable = false)
+    //@Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
