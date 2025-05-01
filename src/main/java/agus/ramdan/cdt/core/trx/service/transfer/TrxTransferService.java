@@ -1,6 +1,5 @@
 package agus.ramdan.cdt.core.trx.service.transfer;
 
-import agus.ramdan.base.dto.DataEvent;
 import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.dto.GatewayCallbackDTO;
 import agus.ramdan.base.exception.Propagation5xxException;
@@ -10,9 +9,7 @@ import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxTransferRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.gateway.GatewayService;
-import agus.ramdan.cdt.core.trx.service.transaction.TransactionCheckStatusDTO;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import agus.ramdan.base.dto.TransactionCheckStatusDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +19,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
