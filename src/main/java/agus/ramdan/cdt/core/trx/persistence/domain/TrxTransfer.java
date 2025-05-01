@@ -35,6 +35,10 @@ public class TrxTransfer extends BaseEntity {
     @Column(name = "trx_date")
     private LocalDateTime trxDate;
 
+    @Column(name = "trx_no")
+    private String trxNo;
+
+
     @Enumerated(EnumType.STRING)
     private TrxTransferStatus status;
 

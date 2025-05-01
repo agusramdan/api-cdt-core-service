@@ -20,6 +20,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -95,15 +96,27 @@ public class TrxTransferService {
         val trx_status = status;
         val trx_message = message;
         log.info("gatewayCode: {} ,transactionNo: {} ,status: {} ,message: {}", gatewayCode,transactionNo,status,message);
-        repository.findByTransactionNo(transactionNo)
-                .ifPresentOrElse(transfer -> {
+        Optional<TrxTransfer> trxTransfer = repository.findByTrxNo(trx_no)
+                .stream().findFirst();
+        if (trxTransfer.isEmpty()) {
+            trxTransfer = repository.findByTransactionNo(transactionNo)
+                    .stream().findFirst();
+        }
+        trxTransfer.ifPresentOrElse(transfer -> {
                     Hibernate.initialize(transfer.getGateway());
                     if (gatewayCode != null && !gatewayCode.equals(transfer.getGateway().getCode())) {
                         log.error("Gateway Info  not found: {}", transfer.getTransaction().getNo());
                         return;
                     }
-                    transferUpdateStatus(transfer, trx_status, trx_message);
                     val trx = transfer.getTransaction();
+                    if (trx == null) {
+                        log.error("Transaction not found: {}", transfer.getTransaction().getNo());
+                        return;
+                    }
+                    if (transfer.getTrxNo()==null) {
+                        transfer.setTrxNo(trx_no);
+                    }
+                    transferUpdateStatus(transfer, trx_status, trx_message);
                     val trxStatus = new TransactionCheckStatusDTO();
                     trxStatus.setId(trx.getId());
                     trxStatus.setSource("transfer");
