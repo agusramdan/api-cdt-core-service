@@ -4,7 +4,6 @@ import agus.ramdan.base.exception.ErrorValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 
-import javax.security.auth.callback.Callback;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.UUID;
@@ -24,9 +23,9 @@ public class EntityFallbackFactory {
             throw new RuntimeException("Failed to get entity", e);
         }
     }
-    public static void ensureNotLazy(@NotNull Collection<ErrorValidation> validations, String message, String key, Runnable ex){
+    public static <T> T ensureNotLazy(@NotNull Collection<ErrorValidation> validations, String message, String key, Callable<T> ex) {
         try {
-            ex.run();
+            return ex.call();
         } catch (Exception e) {
             if (e.getCause() instanceof EntityNotFoundException) {
                 Pattern pattern = Pattern.compile("Unable to find ([\\w\\.]+) with id ([a-f0-9\\-]+)");
@@ -35,9 +34,10 @@ public class EntityFallbackFactory {
                     String idValue = matcher.group(2);
                     ErrorValidation.add(validations, message, key, idValue);
                 }
-            }else {
+            } else {
                 ErrorValidation.add(validations, message, key, e.getMessage());
             }
+            return null;
         }
     }
 
