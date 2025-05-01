@@ -51,6 +51,10 @@ public class ServiceTransaction extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)
+    private TrxDepositPjpur depositPjpur;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
     private TrxTransfer transfer;
 
     @PrePersist

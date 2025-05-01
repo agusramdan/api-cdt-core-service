@@ -4,6 +4,7 @@ import agus.ramdan.cdt.core.pjpur.controller.dto.BillDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -22,13 +23,13 @@ import java.util.List;
 @Data
 public class DepositDTO {
     private String terminalid;
-    @JsonFormat(pattern = "yyyyMMddHHmmssXXXXX")    // @JsonProperty("timestamp")
+    @JsonFormat(pattern = "yyyyMMddHHmmss+XXXX")    // @JsonProperty("timestamp")
     private ZonedDateTime timestamp = ZonedDateTime.now();
     private String oprid;
     private String trxrefno;
     private String srcacc;
     private AccountInfoDTO accinfo;
     private Integer batch;
-    private Long trxid;
+    private BigInteger trxid;
     private List<BillDTO> bills;
 }

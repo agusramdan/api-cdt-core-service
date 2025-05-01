@@ -48,5 +48,7 @@ public class DatabaseMasterInitializer {
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_gateway_code ON cdt_gateway (code) WHERE deleted_at IS NULL;");
         jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_cdt_machine_code ON cdt_machine (code) WHERE deleted_at IS NULL;");
 
+        jdbcTemplate.execute("ALTER TABLE IF EXISTS cdt_trx_cdm DROP CONSTRAINT IF EXISTS cdt_trx_cdm_status_check;");
+
     }
 }

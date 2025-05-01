@@ -28,7 +28,7 @@ spring:
     lazy-initialization: false
 #    allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://db:5432/core
+    url: jdbc:postgresql://db:5432/core?serverTimezone=Asia/Jakarta
     username: core_user
     password: core_pwd
     driver-class-name: org.postgresql.Driver
@@ -36,6 +36,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Jakarta
 
   kafka:
     bootstrap-servers: kafka:9092
