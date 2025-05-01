@@ -55,8 +55,9 @@ public class CustomerCrewCommandService extends MasterDataEventProducer<Customer
         val validations = new ArrayList<ErrorValidation>();
 //        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         // Fetch related Customer entity and set it
-        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
-                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+//        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+//                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
@@ -67,7 +68,8 @@ public class CustomerCrewCommandService extends MasterDataEventProducer<Customer
                 .orElseThrow(() -> new ResourceNotFoundException("Customer Crew not found"));
         mapper.updateEntityFromUpdateDto(dto, customerCrew);
         val validations = new ArrayList<ErrorValidation>();
-        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresentOrElse(customerCrew::setCustomer, () -> EntityFallbackFactory.ensureNotLazy(validations, "Invalid Customer", "customer", customerCrew::getCustomer));
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(customerCrew::setCustomer);
+        EntityFallbackFactory.ensureNotLazy(validations, "Invalid Customer", "customer", customerCrew::getCustomer);
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return customerCrew;
     }
