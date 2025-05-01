@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-
+@Transactional(readOnly = true)
 public interface BaseQueryEntityService<T, ID, DTO, DTO_ID> extends
         BaseQueryService<DTO, DTO_ID>,
         BaseQueryAllService<T, DTO>,

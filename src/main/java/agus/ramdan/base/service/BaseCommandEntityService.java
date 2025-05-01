@@ -7,7 +7,10 @@ import agus.ramdan.base.exception.ErrorMessage;
 import agus.ramdan.base.exception.Errors;
 import lombok.val;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
+
+@Transactional
 public interface BaseCommandEntityService<T, ID, ResultDTO, CreateDTO, UpdateDTO, DTO_ID> extends
         BaseCommandService<ResultDTO, CreateDTO, UpdateDTO, DTO_ID> {
     default T getById(ID id) {
