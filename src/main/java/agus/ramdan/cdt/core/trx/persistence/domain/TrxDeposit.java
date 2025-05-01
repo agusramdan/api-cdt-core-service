@@ -100,6 +100,7 @@ public class TrxDeposit extends BaseEntity {
     }
 
     //@Column(name = "amount", precision = 12, scale = 2, nullable = false)
+    @Column(name = "amount")
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 

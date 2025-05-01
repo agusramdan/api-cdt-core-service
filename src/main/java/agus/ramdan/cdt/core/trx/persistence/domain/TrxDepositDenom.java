@@ -27,12 +27,14 @@ public class TrxDepositDenom {
     @JsonIgnore
     private TrxDeposit trxDepositMachine;
 
-    @Column(name = "denomination", precision = 12, scale = 2, nullable = false)
+    //@Column(name = "denomination", precision = 12, scale = 2, nullable = false)
+    @Column(name = "denomination")
     private BigDecimal denomination;
 
     private Integer quantity;
 
-    @Column(name = "amount", precision = 12, scale = 2, nullable = false)
+    //@Column(name = "amount", precision = 12, scale = 2, nullable = false)
+    @Column(name = "amount")
     @Schema(example = "10000.00", required = true)
     @JsonProperty(index = 5)
     protected BigDecimal amount;
