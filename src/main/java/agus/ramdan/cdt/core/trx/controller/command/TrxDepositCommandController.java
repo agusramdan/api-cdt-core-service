@@ -2,7 +2,6 @@ package agus.ramdan.cdt.core.trx.controller.command;
 
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
-import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositUpdateDTO;
 import agus.ramdan.cdt.core.trx.service.deposit.TrxDepositCommandService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +32,7 @@ public class TrxDepositCommandController {
     })
     public ResponseEntity<TrxDepositQueryDTO> create(@RequestBody TrxDepositCreateDTO dto) {
         val result = service.createTrxDeposit(dto);
-        if ("TRANSFER_GATEWAY_TIMEOUT".equals(result.getStatus())) {
+        if (!"SUCCESS".equals(result.getStatus())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
@@ -45,7 +44,11 @@ public class TrxDepositCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public ResponseEntity<TrxDepositQueryDTO> update(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.resend(id));
+        val result = service.resend(id);
+        if (!"SUCCESS".equals(result.getStatus())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @DeleteMapping("/{id}")

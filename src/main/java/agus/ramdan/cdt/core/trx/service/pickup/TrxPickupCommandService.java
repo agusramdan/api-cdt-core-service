@@ -9,8 +9,8 @@ import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupUpdateDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxPickupMapper;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxDepositPjpurStatus;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxPjpurStatus;
 import agus.ramdan.cdt.core.trx.persistence.repository.TrxPickupRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducer;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
@@ -55,7 +55,7 @@ public class TrxPickupCommandService extends TrxDataEventProducer <TrxPickup, UU
     }
 
     protected TrxPickup pjpurNotification(TrxPickup pickup) {
-        if (!TrxPjpurStatus.SUCCESS.equals(pickup.getPjpurStatus())) {
+        if (!TrxDepositPjpurStatus.SUCCESS.equals(pickup.getPjpurStatus())) {
             pickup = pjpurService.collect(pickup);
             pickup = repository.save(pickup);
             trxDataEventProducerService.publishDataEvent(EventType.UPDATE,pickup);

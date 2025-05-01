@@ -3,10 +3,20 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 public enum TrxDepositStatus {
     PREPARE,
     DEPOSIT,
+    PJPUR,
+    PJPUR_IN_PROGRESS,
+    PJPUR_FAILED,
+    PJPUR_TIMEOUT,
+    PJPUR_SUCCESS,
+    TRANSFER,
     TRANSFER_IN_PROGRESS,
+    TRANSFER_FAILED,
     TRANSFER_GATEWAY_TIMEOUT,
     TRANSFER_IN_DONE,
     SUCCESS,
+    FAILED,
     REVERSAL_FROM_CDM,
-    REVERSAL_FROM_GATEWAY
+    REVERSAL_FROM_PJPUR,
+    REVERSAL_FROM_GATEWAY,
+    CANCELLED,
 }

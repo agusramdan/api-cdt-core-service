@@ -4,35 +4,43 @@ import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreat
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
+import agus.ramdan.cdt.core.utils.EntityFallbackFactory;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public interface CustomerCrewMapper {
+public abstract class CustomerCrewMapper {
+    @Autowired
+    private CustomerMapper customerMapper;
 
     //    @Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
+    //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
-    CustomerCrew createDtoToEntity(CustomerCrewCreateDTO dto);
+    public abstract CustomerCrew createDtoToEntity(CustomerCrewCreateDTO dto);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    @Mapping(source = "customer.id", target = "customerId", qualifiedByName = "uuidToString")
+    //@Mapping(source = "customer.id", target = "customerId", qualifiedByName = "uuidToString")
         //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
-    CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
-
+    @Mapping(source = "customer", target = "customer", ignore = true)
+    public abstract CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
+    @AfterMapping
+    public void handleException(@MappingTarget CustomerCrewQueryDTO customerCrewQueryDTO, CustomerCrew entity) {
+        customerCrewQueryDTO.setCustomer(customerMapper.entityToCustomerDTO(EntityFallbackFactory.safeGet(entity::getCustomer)));
+    }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
-        //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
-    void updateEntityFromUpdateDto(CustomerCrewUpdateDTO dto, @MappingTarget CustomerCrew entity);
+    //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
+    //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
+    public abstract  void updateEntityFromUpdateDto(CustomerCrewUpdateDTO dto, @MappingTarget CustomerCrew entity);
 
     @Named("stringToUUID")
-    default UUID stringToUUID(String value) {
+    public UUID stringToUUID(String value) {
         return value != null ? UUID.fromString(value) : null;
     }
 
     @Named("uuidToString")
-    default String uuidToString(UUID value) {
+    public String uuidToString(UUID value) {
         return value != null ? value.toString() : null;
     }
 }

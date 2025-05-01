@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -53,41 +55,48 @@ public class BeneficiaryAccount extends BaseEntity {
     @JoinColumn(name = "account_type")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("account_type")
+    @NotFound(action = NotFoundAction.IGNORE)
     private AccountType accountType;
 
     @ManyToOne
     @JoinColumn(name = "bank_id")
     @JsonIdentityReference(alwaysAsId = true)
+    @NotFound(action = NotFoundAction.IGNORE)
     private Bank bank;
 
     @ManyToOne
     @JoinColumn(name = "customer_type")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("customer_type")
+    @NotFound(action = NotFoundAction.IGNORE)
     private CustomerType customerType;
 
     @ManyToOne
     @JoinColumn(name = "customer_status")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("customer_status")
+    @NotFound(action = NotFoundAction.IGNORE)
     private CustomerStatus customerStatus;
 
     @ManyToOne
     @JoinColumn(name = "region_code")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("region_code")
+    @NotFound(action = NotFoundAction.IGNORE)
     private RegionCode regionCode;
 
     @ManyToOne
     @JoinColumn(name = "country_code")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("country_code")
+    @NotFound(action = NotFoundAction.IGNORE)
     private CountryCode countryCode;
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("branch_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private Branch branch;
 
     // static qe
@@ -95,6 +104,7 @@ public class BeneficiaryAccount extends BaseEntity {
     @JoinColumn(name = "cr_code_id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty("qr_code_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private QRCode qrCode;
 
 }

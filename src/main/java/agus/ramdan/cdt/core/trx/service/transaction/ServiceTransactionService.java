@@ -79,6 +79,7 @@ public class ServiceTransactionService {
     }
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
+    @Deprecated
     public ServiceTransaction executeTransaction(ServiceTransaction trx) {
         log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         var transfer = trx.getTransfer();
@@ -104,6 +105,33 @@ public class ServiceTransactionService {
         }
         return trx;
     }
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
+    public ServiceTransaction transfer(ServiceTransaction trx) {
+        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+        var transfer = trx.getTransfer();
+        if (transfer == null) {
+            transfer = transferService.prepare(trx);
+            trx.setTransfer(transfer);
+            trx.setStatus(TrxStatus.TRANSFER);
+            repository.save(trx);
+        }
+        trx.setStatus(TrxStatus.TRANSFER);
+        repository.save(trx);
+        try {
+            transfer = transferService.transferFund(transfer);
+            // Usage
+            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
+            trx = repository.save(trx);
+        } catch (Propagation5xxException e) {
+            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
+            repository.save(trx);
+            throw e;
+        }finally {
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+        }
+        return trx;
+    }
+
 
     public ServiceTransaction retryTransfer(String trxNo) {
         ServiceTransaction trx = repository.findByNo(trxNo)

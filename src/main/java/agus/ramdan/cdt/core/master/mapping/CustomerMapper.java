@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.mapping;
 
+import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerType;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerQueryDTO;
@@ -17,7 +18,7 @@ public interface CustomerMapper {
         if (source == null) return null;
         return CustomerType.valueOf(source);
     }
-
+    CustomerDTO entityToCustomerDTO(Customer entity);
     // Convert Entity to Query DTO
     CustomerQueryDTO entityToQueryDto(Customer customer);
 

@@ -38,7 +38,7 @@ public class TrxPickup extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @JsonProperty("pjpur_status")
-    private TrxPjpurStatus pjpurStatus;
+    private TrxDepositPjpurStatus pjpurStatus;
 
     @ManyToOne
     @JsonProperty("vendor_crew_id")

@@ -1,11 +1,10 @@
 package agus.ramdan.cdt.core.trx.service.pjpur;
 
-import agus.ramdan.base.exception.XxxException;
 import agus.ramdan.cdt.core.pjpur.controller.client.collect.PjpurCollectClient;
 import agus.ramdan.cdt.core.pjpur.controller.client.deposit.PjpurDepositClient;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxDeposit;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxPickup;
-import agus.ramdan.cdt.core.trx.persistence.domain.TrxPjpurStatus;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxDepositPjpurStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -25,9 +24,9 @@ public class PjpurServiceImpl implements PjpurService {
     public TrxDeposit deposit(TrxDeposit trx) {
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
-            trx.setPjpurStatus(TrxPjpurStatus.SUCCESS);
+            trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
         } catch (Exception e) {
-            trx.setPjpurStatus(TrxPjpurStatus.FAIL);
+            trx.setPjpurStatus(TrxDepositPjpurStatus.FAIL);
             log.error("Error deposit: {}", e.getMessage());
         }
         return trx;
@@ -37,9 +36,9 @@ public class PjpurServiceImpl implements PjpurService {
     public TrxPickup collect(TrxPickup trx) {
         try{
             val result = pjpurCollectClient.collect(pjpurMapper.mapCollectDTO(trx));
-            trx.setPjpurStatus(TrxPjpurStatus.SUCCESS);
+            trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
         } catch (Exception e) {
-            trx.setPjpurStatus(TrxPjpurStatus.FAIL);
+            trx.setPjpurStatus(TrxDepositPjpurStatus.FAIL);
             log.error("Error collect: {}", e.getMessage());
         }
         return trx;

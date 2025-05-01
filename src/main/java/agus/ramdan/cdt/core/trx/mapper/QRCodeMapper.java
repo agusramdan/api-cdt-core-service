@@ -18,79 +18,81 @@ import org.mapstruct.*;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public interface QRCodeMapper {
-    @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    ServiceProduct map(ServiceProductDTO source);
-
-    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    ServiceProductDTO map(ServiceProduct source);
+public abstract class QRCodeMapper {
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    BeneficiaryAccount mapBeneficiaryAccount(BeneficiaryAccountDTO source);
+    public abstract ServiceProduct map(ServiceProductDTO source);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    BeneficiaryAccountDTO map(BeneficiaryAccount source);
-    @AfterMapping
-    default void handleException(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity) {
+    public abstract ServiceProductDTO map(ServiceProduct source);
+
+    @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
+    public abstract BeneficiaryAccount mapBeneficiaryAccount(BeneficiaryAccountDTO source);
+
+    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
+    public abstract BeneficiaryAccountDTO map(BeneficiaryAccount source);
+    @BeforeMapping
+    public void handleException(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity) {
         try {
             dto.setId(entity.getId().toString());
         } catch (Exception e) {
             dto.setAccountNumber("Unknown");
         }
     }
+
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    ServiceTransaction map(ServiceTransactionDTO source);
+    public abstract ServiceTransaction map(ServiceTransactionDTO source);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    ServiceTransactionDTO map(ServiceTransaction source);
+    public abstract ServiceTransactionDTO map(ServiceTransaction source);
 
     @Mapping(source = "customer_crew_id", target = "id", qualifiedByName = "stringToUUID")
-    CustomerCrew map(TrxUserDTO source);
+    public abstract CustomerCrew map(TrxUserDTO source);
 
     @Mapping(source = "id", target = "customer_crew_id", qualifiedByName = "uuidToString")
-    TrxUserDTO map(CustomerCrew source);
+    public abstract TrxUserDTO map(CustomerCrew source);
 
-    String map(QRCodeType source);
+    public abstract String map(QRCodeType source);
 
-    default QRCodeType mapQRCodeType(String source) {
+    public QRCodeType mapQRCodeType(String source) {
         if (source == null) return null;
         return QRCodeType.valueOf(source);
     }
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    Branch map(BranchDTO source);
+    public abstract Branch map(BranchDTO source);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    BranchDTO map(Branch source);
+    public abstract BranchDTO map(Branch source);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    Bank map(BankDTO source);
+    public abstract Bank map(BankDTO source);
 
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    BankDTO map(Bank source);
+    public abstract BankDTO map(Bank source);
 
     //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "stringToUUID")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
-    QRCode createDtoToEntity(QRCodeCreateDTO dto);
+    public abstract QRCode createDtoToEntity(QRCodeCreateDTO dto);
 
     //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "uuidToString")
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "uuidToString")
     //@Mapping(source = "serviceTransaction.id", target = "serviceTransaction.id", qualifiedByName = "uuidToString")
     //@Mapping(source = "serviceProduct.id", target = "serviceProduct.id", qualifiedByName = "uuidToString")
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    QRCodeQueryDTO entityToQueryDto(QRCode entity);
+    public abstract QRCodeQueryDTO entityToQueryDto(QRCode entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
+    public abstract void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
 
     @Named("uuidToString")
-    default String uuidToString(UUID source) {
+    public String uuidToString(UUID source) {
         if (source == null) return null;
         return source.toString();
     }
 
     @Named("stringToUUID")
-    default UUID stringToUUID(String source) {
+    public UUID stringToUUID(String source) {
         if (source == null) return null;
         return UUID.fromString(source);
     }

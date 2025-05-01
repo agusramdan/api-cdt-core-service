@@ -1,7 +1,8 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
-public enum TrxPjpurStatus {
+public enum TrxDepositPjpurStatus {
     PREPARE,
     SUCCESS,
+    TIMEOUT,
     FAIL,
 }
