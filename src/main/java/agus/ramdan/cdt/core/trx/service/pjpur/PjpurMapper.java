@@ -23,7 +23,7 @@ public interface PjpurMapper {
     @Mapping(source = "beneficiaryAccount.accountNumber", target = "accinfo.bankacc")
     @Mapping(source = "beneficiaryAccount.bank.code", target = "accinfo.bankcode")
     @Mapping(constant = "1", target = "batch")
-   //@Mapping(source = "serviceTransaction.no", target = "trxid")
+    @Mapping(source = "serviceTransaction.no", target = "trxid")
     @Mapping(source = "denominations", target = "bills")
     DepositDTO mapDepositDTO(TrxDeposit deposit);
     @Mapping(source = "denomination", target = "denom")
