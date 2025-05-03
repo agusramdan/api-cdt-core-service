@@ -39,29 +39,29 @@ public class ServiceProductQueryService implements
         return mapper.entityToQueryDto(entity);
     }
 
-    public ServiceProductQueryDTO getByCode(String code) {
-        return repository.findByCode(code)
-                .map(mapper::entityToQueryDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
-    }
-
-    public ServiceProduct getForRelation(final ServiceProductDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
-        final String keyField = key == null ? "product" : key;
-        ServiceProduct data = null;
-        if (dto != null) {
-            if (dto.getId() != null) {
-                data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getId()));
-                    return null;
-                });
-            } else {
-                data = repository.findByCode(dto.getCode()).orElseGet(() -> {
-                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getCode()));
-                    return null;
-                });
-            }
-        }
-        return data;
-    }
+//    public ServiceProductQueryDTO getByCode(String code) {
+//        return repository.findByCode(code)
+//                .map(mapper::entityToQueryDto)
+//                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
+//    }
+//
+//    public ServiceProduct getForRelation(final ServiceProductDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
+//        final String keyField = key == null ? "product" : key;
+//        ServiceProduct data = null;
+//        if (dto != null) {
+//            if (dto.getId() != null) {
+//                data = repository.findById(convertId(dto.getId())).orElseGet(() -> {
+//                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getId()));
+//                    return null;
+//                });
+//            } else {
+//                data = repository.findByCode(dto.getCode()).orElseGet(() -> {
+//                    validations.add(ErrorValidation.New("Product not found", keyField, dto.getCode()));
+//                    return null;
+//                });
+//            }
+//        }
+//        return data;
+//    }
 
 }
