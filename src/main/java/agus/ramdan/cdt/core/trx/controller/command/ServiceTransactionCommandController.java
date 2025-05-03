@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.trx.controller.command;
 
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
+import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +44,7 @@ public class ServiceTransactionCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public void retryAll() {
-        queryService.getRepository().findAllByNotSuccess(Pageable.ofSize(1000))
+        queryService.getRepository().findByStatusNot(TrxStatus.SUCCESS,Pageable.ofSize(1000))
                 .stream().map((t)->t.getId()).forEach(transactionService::transactionReTray);
     }
 }
