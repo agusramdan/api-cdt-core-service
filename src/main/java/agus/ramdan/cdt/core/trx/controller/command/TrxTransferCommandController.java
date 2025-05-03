@@ -27,16 +27,16 @@ public class TrxTransferCommandController {
     private final ServiceTransactionService transactionService;
     private final TrxDepositMapper trxDepositMapper;
 
-    @PostMapping("/{trxNo}/retry")
-    @ApiResponses(value = {
-            @ApiResponse(description = "successful operation", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
-    })
-    public ResponseEntity<TrxDepositQueryDTO> retry(@PathVariable String trxNo) {
-        val result = trxDepositMapper.entityToQueryDto(transactionService.retryTransfer(trxNo).getDeposit());
-        if ("TRANSFER_GATEWAY_TIMEOUT".equals(result.getStatus())) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
-        }
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
-    }
+//    @PostMapping("/{trxNo}/retry")
+//    @ApiResponses(value = {
+//            @ApiResponse(description = "successful operation", content = {
+//                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
+//    })
+//    public ResponseEntity<TrxDepositQueryDTO> retry(@PathVariable String trxNo) {
+//        val result = trxDepositMapper.entityToQueryDto(transactionService.retryTransfer(trxNo).getDeposit());
+//        if ("TRANSFER_GATEWAY_TIMEOUT".equals(result.getStatus())) {
+//            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+//        }
+//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+//    }
 }
