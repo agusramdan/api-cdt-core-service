@@ -40,7 +40,7 @@ public class PjpurService  {
         }else {
             pjpur.setStatus(TrxDepositPjpurStatus.SUCCESS);
         }
-        repository.save(pjpur);
+        repository.saveAndFlush(pjpur);
         producerService.publishDataEvent(EventType.CREATE, pjpur);
         return pjpur;
     }
@@ -50,7 +50,7 @@ public class PjpurService  {
         }
         if (!pjpurConfig.isOnline()) {
             trx.setStatus(TrxDepositPjpurStatus.SUCCESS);
-            return repository.save(trx);
+            return repository.saveAndFlush(trx);
         }
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
@@ -60,23 +60,23 @@ public class PjpurService  {
             trx.setStatus(TrxDepositPjpurStatus.FAIL);
             log.error("Error deposit: {}", e.getMessage());
         }finally {
-            repository.save(trx);
+            repository.saveAndFlush(trx);
         }
         return trx;
     }
 
-    @Deprecated
-    public TrxDeposit deposit(TrxDeposit trx) {
-        try{
-            val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
-            log.info("Deposit result: {}", result);
-            trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
-        } catch (Exception e) {
-            trx.setPjpurStatus(TrxDepositPjpurStatus.FAIL);
-            log.error("Error deposit: {}", e.getMessage());
-        }
-        return trx;
-    }
+//    @Deprecated
+//    public TrxDeposit deposit(TrxDeposit trx) {
+//        try{
+//            val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
+//            log.info("Deposit result: {}", result);
+//            trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
+//        } catch (Exception e) {
+//            trx.setPjpurStatus(TrxDepositPjpurStatus.FAIL);
+//            log.error("Error deposit: {}", e.getMessage());
+//        }
+//        return trx;
+//    }
     public TrxPickup collect(TrxPickup trx) {
         if (!pjpurConfig.isOnline()) {
             trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);

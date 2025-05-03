@@ -40,22 +40,20 @@ public class TrxTransferService {
         transfer.setStatus(TrxTransferStatus.PREPARE);
         transfer.setTransaction(transaction);
         transfer.setAmount(transaction.getAmount());
-        return repository.save(transfer);
+        return repository.saveAndFlush(transfer);
     }
 
     public TrxTransfer transferFund(TrxTransfer transfer) {
-        boolean isNew = TrxTransferStatus.PREPARE.equals(transfer.getStatus());
         transfer = gatewayService.setupGateway(transfer);
-        transfer = repository.save(transfer);
+        transfer = repository.saveAndFlush(transfer);
         try {
             transfer = gatewayService.transferFund(transfer);
-            transfer = repository.save(transfer);
         } catch (Propagation5xxException e) {
             transfer.setStatus(TrxTransferStatus.GATEWAY_TIME_OUT);
-            repository.save(transfer);
             throw e;
         }finally {
-            producerService.publishDataEvent(isNew ? EventType.CREATE : EventType.UPDATE, transfer);
+            transfer = repository.saveAndFlush(transfer);
+            producerService.publishDataEvent(EventType.UPDATE, transfer);
         }
         return transfer;
     }

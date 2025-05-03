@@ -123,7 +123,7 @@ public class ServiceTransactionService {
             if (depositPjpur == null) {
                 depositPjpur = pjpurService.prepare(trx.getDeposit());
                 trx.setDepositPjpur(depositPjpur);
-                repository.save(trx);
+                repository.saveAndFlush(trx);
             }
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(trx.getDepositPjpur());
@@ -139,8 +139,9 @@ public class ServiceTransactionService {
             if (transfer == null) {
                 transfer = transferService.prepare(trx);
                 trx.setTransfer(transfer);
-                repository.save(trx);
+                repository.saveAndFlush(trx);
             }
+            transferService.transferFund(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
@@ -150,15 +151,13 @@ public class ServiceTransactionService {
         if (transfer != null && depositPjpur != null) {
             if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus()) && TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 trx.setStatus(TrxStatus.SUCCESS);
-                repository.save(trx);
             }
         }else if (transfer != null) {
             if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 trx.setStatus(TrxStatus.SUCCESS);
-                repository.save(trx);
             }
         }
-        return trx;
+        return repository.saveAndFlush(trx);
     }
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
