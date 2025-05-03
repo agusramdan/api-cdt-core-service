@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.command;
 
+import agus.ramdan.base.dto.TransactionCheckStatusDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
 import agus.ramdan.cdt.core.trx.mapper.TrxDepositMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,17 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Log4j2
 public class ServiceTransactionCommandController {
-    private final ServiceTransactionService transactionService;
     private final ServiceTransactionQueryService queryService;
-//    @PostMapping("/all/prepare")
-//    @ApiResponses(value = {
-//            @ApiResponse(description = "successful operation", content = {
-//                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
-//    })
-//    public void prepareAll() {
-//        queryService.getRepository().findAllByServiceProductIsNull(Pageable.ofSize(1000))
-//                .forEach(transactionService::prepare);
-//    }
+    private final KafkaTemplate<String, TransactionCheckStatusDTO> kafkaTemplate;
+
     @PostMapping("/all/retry")
     @ApiResponses(value = {
             @ApiResponse(description = "successful operation", content = {
@@ -57,8 +51,11 @@ public class ServiceTransactionCommandController {
             count +=transactions.size();
             transactions.forEach((t) ->
             {
-                log.info("Retry Transaction ; id={}; no={} amount={}", t.getId(), t.getNo(),t.getAmount());
-                transactionService.transactionReTray(t.getId());
+                TransactionCheckStatusDTO.builder()
+                        .id(t.getId())
+                        .source("ServiceTransactionCommandController")
+                        .message("Retry Transaction : "+t.getStatus())
+                        .build();
             });
             page = page.next();
         }
@@ -81,8 +78,11 @@ public class ServiceTransactionCommandController {
             count +=transactions.size();
             transactions.forEach((t) ->
             {
-                log.info("Retry Transaction ; id={}; no={} amount={}", t.getId(), t.getNo(),t.getAmount());
-                transactionService.transactionReTray(t.getId());
+                TransactionCheckStatusDTO.builder()
+                        .id(t.getId())
+                        .source("ServiceTransactionCommandController")
+                        .message("Retry Transaction :"+status)
+                        .build();
             });
             page = page.next();
         }
