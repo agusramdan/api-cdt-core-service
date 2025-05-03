@@ -1,10 +1,7 @@
 package agus.ramdan.cdt.core.trx.controller.query;
 
 import agus.ramdan.base.controller.BaseQueryController;
-import agus.ramdan.cdt.core.trx.controller.dto.pickup.TrxPickupQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.transaction.ServiceTransactionQueryDTO;
-import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
-import agus.ramdan.cdt.core.trx.service.pickup.TrxPickupQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionQueryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;

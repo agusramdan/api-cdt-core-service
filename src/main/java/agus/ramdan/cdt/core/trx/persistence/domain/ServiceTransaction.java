@@ -42,7 +42,7 @@ public class ServiceTransaction extends BaseEntity {
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonProperty("service_product_id")
     @JsonIdentityReference(alwaysAsId = true)
     private ServiceProduct serviceProduct;

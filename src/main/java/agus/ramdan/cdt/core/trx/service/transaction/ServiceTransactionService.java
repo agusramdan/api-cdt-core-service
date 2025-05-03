@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.trx.service.transaction;
 import agus.ramdan.base.dto.DepositCheckStatusDTO;
 import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.dto.TransactionCheckStatusDTO;
-import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.PropagationXxxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
@@ -17,9 +16,9 @@ import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.hibernate.Hibernate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,6 +90,9 @@ public class ServiceTransactionService {
     }
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction prepare(ServiceTransaction trx) {
+        Hibernate.initialize(trx);
+        Hibernate.initialize(trx.getServiceProduct());
+        Hibernate.initialize(trx.getDeposit());
         if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
             log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
             trx.setServiceProduct(trx.getDeposit().getServiceProduct());
