@@ -206,9 +206,16 @@ public class ServiceTransactionService {
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public void transactionCallback(TransactionCheckStatusDTO trxNo) {
         val trx = repository.findById(trxNo.getId());
+        ServiceTransaction sc = null;
         if (trx.isPresent()) {
             log.info("Transaction Callback; id={}; amount={}; trx={};", trx.get().getId(), trx.get().getAmount(), trx.get().getNo());
-            val result = transaction(trx.get());
+            try {
+                sc = prepare(trx.get());
+            } catch (Exception e) {
+                log.error("Transaction Exception", e);
+                return;
+            }
+            val result = transaction(sc);
             if (result.getDeposit()!= null) {
                 val deposit = new DepositCheckStatusDTO();
                 deposit.setId(result.getDeposit().getId());
@@ -216,6 +223,7 @@ public class ServiceTransactionService {
                 deposit.setMessage(trxNo.getMessage());
                 kafkaTemplate.send("core-trx-status-check-event",deposit);
             }
+
         } else {
             log.error("Transaction not found; id={}", trxNo.getId());
         }
