@@ -18,6 +18,6 @@ public class TrxDepositPjpurDTO {
     @JsonProperty("trx_no")
     private String trxNo;
     private String status;
-    private MachineDTO machine;
+    private BigDecimal amount;
 }
 

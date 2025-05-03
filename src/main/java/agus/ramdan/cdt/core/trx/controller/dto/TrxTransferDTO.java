@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,5 +16,6 @@ public class TrxTransferDTO {
     @JsonProperty("trx_no")
     private String trxNo;
     private String status;
+    private BigDecimal amount;
 }
 

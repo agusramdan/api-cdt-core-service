@@ -16,26 +16,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ServiceTransactionMapper {
 
-//    default TrxDepositStatus toTrxDepositStatus(String string) {
-//        return TrxDepositStatus.valueOf(string);
-//    }
-//    TrxDeposit toEntity(TrxDepositCreateDTO dto);
-//
-//    @Mapping(target = "status", constant = "PREPARE")
-//    @Mapping(target = "code", expression = "java(qrCode)")
-//    @Mapping(target = "machine", source = "machine")
-//    @Mapping(target = "id", ignore = true)
-//    TrxDeposit toEntity(TrxDepositCreateDTO dto, Machine machine, QRCode qrCode);
-
     //@Mapping(target = "username", source = "user.username")
     //@Mapping(target = "denominations", source = "denominations", qualifiedByName = "mapListToTrxDepositDenQueryDTO")
     ServiceTransactionQueryDTO entityToQueryDto(ServiceTransaction entity);
 
-//    @Named("mapToTrxDepositDenQueryDTO")
-//    TrxDepositDenQueryDTO mapToTrxDepositDenQueryDTO(TrxDepositDenom entity);
-//
-//    @IterableMapping(qualifiedByName = "mapToTrxDepositDenQueryDTO")
-//    @Named("mapListToTrxDepositDenQueryDTO")
-//    List<TrxDepositDenQueryDTO> mapListToTrxDepositDenQueryDTO(List<TrxDepositDenom> entities);
+
 }
 

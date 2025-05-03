@@ -15,19 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class TrxDepositDTO {
     private String id;
-    private String token;
     private String status;
-    @JsonProperty("service_transaction")
-    private ServiceTransactionDTO serviceTransaction;
-    @JsonProperty("service_product")
-    private ServiceProductDTO serviceProduct;
-    private MachineDTO machine;
     @JsonProperty("cdm_trx_no")
     private String cdmTrxNo;
-    @JsonProperty("cdm_trx_date")
-    private LocalDateTime cdmTrxDate;
-    @JsonProperty("cdm_trx_no")
-    private LocalDateTime cdmTrxTime;
     private BigDecimal amount;
 
 }
