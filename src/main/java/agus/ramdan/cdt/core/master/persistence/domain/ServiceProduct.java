@@ -51,12 +51,15 @@ public class ServiceProduct extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @JsonProperty("service_rule_config")
     private ServiceRuleConfig serviceRuleConfig;
+
     @Enumerated(EnumType.STRING)
     @JsonProperty("qr_rule_config")
     private QRRuleConfig qrRuleConfig;
+
     @Enumerated(EnumType.STRING)
     @JsonProperty("pjpur_rule_config")
     private PjpurRuleConfig pjpurRuleConfig;
+
     @Enumerated(EnumType.STRING)
     @JsonProperty("transfer_rule_config")
     private TransferRuleConfig transferRuleConfig;

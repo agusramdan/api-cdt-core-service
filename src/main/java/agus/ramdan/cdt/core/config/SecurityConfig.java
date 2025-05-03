@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_cdm.write")
                         .requestMatchers(HttpMethod.DELETE,"/api/cdt/core/trx/deposit/**").hasAuthority("SCOPE_admin.internal.delete")
 
+                        .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/service-transaction/**").hasAnyAuthority("SCOPE_web.internal.read","SCOPE_admin.internal.read")
+                        .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/service-transaction/**").hasAnyAuthority("SCOPE_web.internal.update","SCOPE_admin.internal.update")
+
                         .requestMatchers(HttpMethod.GET,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.read")
                         .requestMatchers(HttpMethod.POST,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.write")
                         .requestMatchers(HttpMethod.PUT,"/api/cdt/core/trx/pickup/**").hasAuthority("SCOPE_cdm.write")
