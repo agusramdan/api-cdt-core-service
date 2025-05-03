@@ -91,18 +91,23 @@ public class ServiceTransactionService {
         }else{
             throw new ResourceNotFoundException("Service Product not found");
         }
-        val product = trx.getServiceProduct();
-        if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() == null) {
-            trx.setDepositPjpur(pjpurService.prepare(trx.getDeposit()));
+        try {
+            val product = trx.getServiceProduct();
+            if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() == null) {
+                trx.setDepositPjpur(pjpurService.prepare(trx.getDeposit()));
+            }
+            if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() == null){
+                trx.setTransfer(transferService.prepare(trx));
+            }
+            trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
+            trx= repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() == null){
-            trx.setTransfer(transferService.prepare(trx));
-        }
-        trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
-        trx= repository.saveAndFlush(trx);
-        producerService.publishDataEvent(EventType.UPDATE,trx);
         return trx;
     }
+
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction transaction(ServiceTransaction trx) {
         if(TrxStatus.SUCCESS.equals(trx.getStatus())){
@@ -132,6 +137,7 @@ public class ServiceTransactionService {
         }
         return trx;
     }
+
     protected ServiceTransaction serviceProductStoreTransfer(ServiceTransaction trx) {
         val product = trx.getServiceProduct();
         log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());

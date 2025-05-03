@@ -33,6 +33,7 @@ public class PjpurService  {
     public TrxDepositPjpur findById(UUID id) {
         return repository.findById(id).orElse(null);
     }
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public TrxDepositPjpur prepare(TrxDeposit trx) {
         log.info("Prepare Trx Deposit PJPUR ; id={}; amount={}", trx.getId(), trx.getAmount());
         val pjpur = pjpurMapper.mapDepositPjpur(trx);
