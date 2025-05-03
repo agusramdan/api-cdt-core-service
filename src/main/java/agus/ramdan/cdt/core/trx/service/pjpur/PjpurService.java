@@ -18,6 +18,7 @@ import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -62,6 +63,12 @@ public class PjpurService  {
             return trx;
         }
         try{
+            if (trx.getTrxDateTime() == null) {
+                trx.setTrxDateTime(trx.getServiceTransaction().getTrxDate());
+            }
+            if (trx.getTrxDateTime() == null) {
+                trx.setTrxDateTime(LocalDateTime.now());
+            }
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
             log.info("TrxDeposit Pjpur result: {}", result);
             trx.setStatus(TrxDepositPjpurStatus.SUCCESS);
