@@ -74,5 +74,4 @@ public class TrxDepositPjpur extends BaseEntity {
     @JoinColumn(name = "trx_deposit_id")
     @OrderBy("denomination")
     private List<TrxDepositPjpurDenom> denominations = new ArrayList<>();
-
 }

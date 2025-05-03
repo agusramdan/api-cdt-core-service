@@ -4,6 +4,7 @@ import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
+import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.TransferRuleConfig;
 import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
@@ -23,6 +24,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class ServiceTransactionService {
 
     private final ServiceTransactionRepository repository;
@@ -90,7 +92,6 @@ public class ServiceTransactionService {
         }
         return trx;
     }
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ServiceTransaction transaction(ServiceTransaction trx) {
         if(TrxStatus.SUCCESS.equals(trx.getStatus())){
             log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
@@ -102,18 +103,16 @@ public class ServiceTransactionService {
             throw new ResourceNotFoundException("Service Product code not found");
         }
         try{
-            if ("MUL-ST-TR".equals(productCode)) {
+            if (ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())) {
                 trx = serviceProductStoreTransfer(trx);
             }else {
-                throw new ResourceNotFoundException("Service Product "+productCode+" support transaction not found");
+                throw new ResourceNotFoundException("Service Product "+productCode+" support transaction");
             }
         }finally {
             producerService.publishDataEvent(EventType.UPDATE,trx);
         }
-
         return trx;
     }
-
     protected ServiceTransaction serviceProductStoreTransfer(ServiceTransaction trx) {
         val product = trx.getServiceProduct();
         log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
@@ -124,11 +123,10 @@ public class ServiceTransactionService {
             if (depositPjpur == null) {
                 depositPjpur = pjpurService.prepare(trx.getDeposit());
                 trx.setDepositPjpur(depositPjpur);
+                repository.save(trx);
             }
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(trx.getDepositPjpur());
-                trx.setDepositPjpur(depositPjpur);
-                repository.save(trx);
             }
             if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());

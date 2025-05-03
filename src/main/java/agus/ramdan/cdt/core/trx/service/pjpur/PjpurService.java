@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Transactional(Transactional.TxType.REQUIRES_NEW)
 public class PjpurService  {
     private final PjpurConfig pjpurConfig;
     private final PjpurMapper pjpurMapper;
@@ -28,25 +27,24 @@ public class PjpurService  {
     private final PjpurDepositClient pjpurDepositClient;
     private final TrxDataEventProducerService producerService;
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDepositPjpur prepare(TrxDeposit trx) {
+        log.info("Prepare Trx Deposit PJPUR ; id={}; amount={}; trx={};", trx.getId(), trx.getAmount());
         val pjpur = pjpurMapper.mapDepositPjpur(trx);
-        pjpur.setBeneficiaryAccount(trx.getBeneficiaryAccount());
         if (pjpurConfig.isOnline()){
-            pjpur.setStatus(TrxDepositPjpurStatus.PREPARE);
+            if(trx.getPjpurStatus()!=null) {
+                pjpur.setStatus(trx.getPjpurStatus());
+            }else {
+                pjpur.setStatus(TrxDepositPjpurStatus.PREPARE);
+            }
         }else {
             pjpur.setStatus(TrxDepositPjpurStatus.SUCCESS);
         }
-        if(trx.getPjpurStatus()!=null) {
-            pjpur.setStatus(trx.getPjpurStatus());
-        }
-        pjpur.setStatus(TrxDepositPjpurStatus.PREPARE);
-        pjpur.setServiceTransaction(trx.getServiceTransaction());
-        pjpur.setAmount(trx.getAmount());
         repository.save(pjpur);
         producerService.publishDataEvent(EventType.CREATE, pjpur);
         return pjpur;
     }
-
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDepositPjpur deposit(TrxDepositPjpur trx) {
         if (TrxDepositPjpurStatus.SUCCESS.equals(trx.getStatus())) {
             return trx;
@@ -69,6 +67,7 @@ public class PjpurService  {
     }
 
     @Deprecated
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDeposit deposit(TrxDeposit trx) {
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
@@ -80,7 +79,7 @@ public class PjpurService  {
         }
         return trx;
     }
-    @Transactional(Transactional.TxType.SUPPORTS)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxPickup collect(TrxPickup trx) {
         if (!pjpurConfig.isOnline()) {
             trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
