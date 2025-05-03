@@ -43,14 +43,14 @@ public class ServiceTransactionService {
         }
         return result.toString();
     }
-    private TrxStatus determineTransactionStatus(TrxTransferStatus transferStatus, TrxStatus defaultStatus) {
-        return switch (transferStatus) {
-            case SUCCESS -> TrxStatus.TRANSFER_SUCCESS;
-            case REVERSAL -> TrxStatus.TRANSFER_REVERSAL;
-            case FAILED -> TrxStatus.TRANSFER_FAILED;
-            default -> defaultStatus;
-        };
-    }
+//    private TrxStatus determineTransactionStatus(TrxTransferStatus transferStatus, TrxStatus defaultStatus) {
+//        return switch (transferStatus) {
+//            case SUCCESS -> TrxStatus.TRANSFER_SUCCESS;
+//            case REVERSAL -> TrxStatus.TRANSFER_REVERSAL;
+//            case FAILED -> TrxStatus.TRANSFER_FAILED;
+//            default -> defaultStatus;
+//        };
+//    }
     @Transactional
     public ServiceTransaction prepare(BigDecimal amount) {
         val trx = new ServiceTransaction();
@@ -134,6 +134,7 @@ public class ServiceTransactionService {
                 trx.setDepositPjpur(depositPjpur);
             }
             if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
+                trx.setStatus(TrxStatus.PJPUR_FAILED);
                 log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
             }
@@ -148,6 +149,7 @@ public class ServiceTransactionService {
             transfer = transferService.transferFund(transfer);
             trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
+                trx.setStatus(TrxStatus.TRANSFER_FAILED);
                 log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
             }

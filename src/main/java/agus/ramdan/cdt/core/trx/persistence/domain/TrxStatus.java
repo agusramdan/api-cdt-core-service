@@ -3,7 +3,7 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 public enum TrxStatus {
     PREPARE,
     CDM_DEPOSIT,
-    PJPUR_IN_PROGRESS,
+    PJPUR_FAILED,
     // TRANSFER
     TRANSFER,
     TRANSFER_IN_PROGRESS,
