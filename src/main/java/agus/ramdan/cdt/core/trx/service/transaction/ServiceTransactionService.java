@@ -204,7 +204,12 @@ public class ServiceTransactionService {
     }
     @KafkaListener(topics = "core-trx-status-check-event", groupId = "cdt-core-transaction-callback")
     @Transactional(noRollbackFor = PropagationXxxException.class)
-    public void transactionCallback(TransactionCheckStatusDTO trxNo) {
+    public void transactionCallback(Object obj) {
+        if (!(obj instanceof TransactionCheckStatusDTO)) {
+            log.error("Transaction Callback; invalid object type: {}", obj.getClass());
+            return;
+        }
+        TransactionCheckStatusDTO trxNo = (TransactionCheckStatusDTO) obj;
         val trx = repository.findById(trxNo.getId());
         ServiceTransaction sc = null;
         if (trx.isPresent()) {
@@ -221,7 +226,7 @@ public class ServiceTransactionService {
                 deposit.setId(result.getDeposit().getId());
                 deposit.setSource("ServiceTransaction");
                 deposit.setMessage(trxNo.getMessage());
-                kafkaTemplate.send("core-trx-status-check-event",deposit);
+                kafkaTemplate.send("core-deposit-status-check-event",deposit);
             }
 
         } else {
