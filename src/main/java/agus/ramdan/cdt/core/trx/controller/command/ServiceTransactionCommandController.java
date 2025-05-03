@@ -13,7 +13,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +46,20 @@ public class ServiceTransactionCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public void retryAll() {
-        queryService.getRepository().findByStatusNot(TrxStatus.SUCCESS,Pageable.ofSize(1000))
-                .forEach((t)->transactionService.transactionReTray(t.getId()));
+        int offset = 0;
+        Pageable page = PageRequest.of(0,10, Sort.Direction.ASC,"no");
+        while (true) {
+            val transactions = queryService.getRepository().findByStatusNot(TrxStatus.SUCCESS, page);
+            if (transactions.isEmpty()) {
+                break;
+            }
+            transactions.forEach((t) ->
+            {
+                log.info("Retry Transaction ; id={}; no={} amount={}", t.getId(), t.getNo(),t.getAmount());
+                transactionService.transactionReTray(t.getId());
+            });
+            page = page.next();
+        }
+
     }
 }
