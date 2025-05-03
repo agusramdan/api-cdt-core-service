@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional(dontRollbackOn = Exception.class)
 public class PjpurService  {
     private final PjpurConfig pjpurConfig;
     private final PjpurMapper pjpurMapper;
@@ -27,7 +28,6 @@ public class PjpurService  {
     private final PjpurDepositClient pjpurDepositClient;
     private final TrxDataEventProducerService producerService;
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDepositPjpur prepare(TrxDeposit trx) {
         log.info("Prepare Trx Deposit PJPUR ; id={}; amount={}; trx={};", trx.getId(), trx.getAmount());
         val pjpur = pjpurMapper.mapDepositPjpur(trx);
@@ -44,7 +44,6 @@ public class PjpurService  {
         producerService.publishDataEvent(EventType.CREATE, pjpur);
         return pjpur;
     }
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDepositPjpur deposit(TrxDepositPjpur trx) {
         if (TrxDepositPjpurStatus.SUCCESS.equals(trx.getStatus())) {
             return trx;
@@ -67,7 +66,6 @@ public class PjpurService  {
     }
 
     @Deprecated
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxDeposit deposit(TrxDeposit trx) {
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
@@ -79,7 +77,6 @@ public class PjpurService  {
         }
         return trx;
     }
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public TrxPickup collect(TrxPickup trx) {
         if (!pjpurConfig.isOnline()) {
             trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);

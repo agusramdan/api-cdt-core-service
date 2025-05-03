@@ -25,7 +25,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Transactional(value = Transactional.TxType.REQUIRES_NEW , dontRollbackOn = Exception.class)
+@Transactional( dontRollbackOn = Exception.class)
 public class TrxTransferService {
 
     private final TrxTransferRepository repository;
@@ -71,7 +71,6 @@ public class TrxTransferService {
     }
 
     @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transfer-gateway-callback")
-    @Transactional()
     public void consumeGatewayCallbackDTO(GatewayCallbackDTO event) {
         log.info("consumeGatewayCallbackDTO: {}", event);
         String gatewayCode = event.getGatewayCode();
