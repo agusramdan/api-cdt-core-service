@@ -50,7 +50,8 @@ public class PjpurService  {
         }
         if (!pjpurConfig.isOnline()) {
             trx.setStatus(TrxDepositPjpurStatus.SUCCESS);
-            return repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.UPDATE, trx=repository.saveAndFlush(trx));
+            return trx;
         }
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
@@ -60,7 +61,7 @@ public class PjpurService  {
             trx.setStatus(TrxDepositPjpurStatus.FAIL);
             log.error("Error deposit: {}", e.getMessage());
         }finally {
-            repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.UPDATE, trx=repository.saveAndFlush(trx));
         }
         return trx;
     }

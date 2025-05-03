@@ -100,12 +100,13 @@ public class ServiceTransactionService {
         if (product == null) {
             throw new ResourceNotFoundException("Service Product code not found");
         }
-        try{
-            if (ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())) {
-                trx = serviceProductStoreTransfer(trx);
-            }else {
-                throw new ResourceNotFoundException("Service Product "+product.getCode()+" support transaction");
-            }
+        if (!ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())){
+            throw new ResourceNotFoundException("Service Product "+product.getCode()+" support transaction");
+        }
+        try {
+            trx = serviceProductStoreTransfer(trx);
+        }catch (Exception ex) {
+                log.error("Error transaction:", ex);
         }finally {
             try {
                 trx = repository.saveAndFlush(trx);
