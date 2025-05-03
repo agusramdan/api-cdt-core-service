@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DepositCheckStatusDTO {
+public class DepositCheckStatusDTO extends TransactionCheckStatusDTO {
     @JsonProperty(index = 1)
     private UUID id;
     private String source;
