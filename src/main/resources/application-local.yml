@@ -7,11 +7,13 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://merahputih-id.tech:9000
-  datasource:
-    url: jdbc:postgresql://db:5433/core
+#  datasource:
+#    url: jdbc:postgresql://db:5432/core
   jpa:
-    show-sql: false
-
+#    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: update
 feign-client:
   api-cdt-gateway-service:
     base-url:  http://merahputih-id.tech:8097

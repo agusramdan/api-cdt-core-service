@@ -70,7 +70,7 @@ public interface BaseGetAllController<T, DTO> {
                     .collect(Collectors.toList());
             sort = Sort.by(orders);
         }else {
-            sort = Sort.by(Sort.Direction.ASC, "createdOn");
+            sort = Sort.by(Sort.Direction.DESC, "createdOn");
         }
         val pageable = new OffsetBasedPageRequest(offset, limit, sort);
         val page = getRepository().findAll(spec, pageable);
