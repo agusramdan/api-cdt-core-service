@@ -206,10 +206,6 @@ public class ServiceTransactionService {
     @KafkaListener(topics = "core-trx-status-check-event", groupId = "cdt-core-transaction-callback")
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public void transactionCallback(TransactionCheckStatusDTO trxNo) {
-        if (trxNo instanceof DepositCheckStatusDTO ){
-            kafkaTemplate.send("core-deposit-status-check-event", (DepositCheckStatusDTO) trxNo);
-            return;
-        }
         val trx = repository.findById(trxNo.getId());
         ServiceTransaction sc = null;
         if (trx.isPresent()) {
