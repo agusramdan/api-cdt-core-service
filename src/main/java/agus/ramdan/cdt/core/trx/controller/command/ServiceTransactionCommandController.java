@@ -50,13 +50,12 @@ public class ServiceTransactionCommandController {
             }
             count +=transactions.size();
             transactions.forEach((t) ->
-            {
-                TransactionCheckStatusDTO.builder()
+                kafkaTemplate.send("core-trx-status-check-event",TransactionCheckStatusDTO.builder()
                         .id(t.getId())
                         .source("ServiceTransactionCommandController")
                         .message("Retry Transaction : "+t.getStatus())
-                        .build();
-            });
+                        .build())
+            );
             page = page.next();
         }
 
@@ -77,13 +76,13 @@ public class ServiceTransactionCommandController {
             }
             count +=transactions.size();
             transactions.forEach((t) ->
-            {
-                TransactionCheckStatusDTO.builder()
-                        .id(t.getId())
-                        .source("ServiceTransactionCommandController")
-                        .message("Retry Transaction :"+status)
-                        .build();
-            });
+                kafkaTemplate.send("core-trx-status-check-event",
+                        TransactionCheckStatusDTO.builder()
+                                .id(t.getId())
+                                .source("ServiceTransactionCommandController")
+                                .message("Retry Transaction :"+status)
+                                .build())
+            );
             page = page.next();
         }
 
