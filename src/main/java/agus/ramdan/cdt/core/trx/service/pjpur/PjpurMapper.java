@@ -16,8 +16,11 @@ import java.time.ZonedDateTime;
 public interface PjpurMapper {
     @Mapping(source = "status", target = "status",ignore = true)
     @Mapping(source = "serviceTransaction.no", target = "trxNo")
+    @Mapping(source = "id", target = "id",ignore = true)
     TrxDepositPjpur mapDepositPjpur(TrxDeposit deposit);
+    @Mapping(source = "id", target = "id",ignore = true)
     TrxDepositPjpurDenom mapDepositPjpur(TrxDepositDenom depositDenom);
+
     @Mapping(source = "machine.code", target = "terminalid")
     @Mapping(source = "cdmTrxDateTime", target = "timestamp")
     @Mapping(source = "serviceTransaction.no", target = "trxrefno")
