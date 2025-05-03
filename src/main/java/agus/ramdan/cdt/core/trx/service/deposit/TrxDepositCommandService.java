@@ -57,7 +57,7 @@ public class TrxDepositCommandService {
             if (validations.isEmpty()) {
                 val customer = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",code::getCustomer);
                 if (customer == null) {
-                    validations.add(ErrorValidation.New("Invalid QRCode.Customer ", "qr_code", dto.getToken()));
+                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
                 }
                 val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code",code::getUser);
                 if (user == null) {
