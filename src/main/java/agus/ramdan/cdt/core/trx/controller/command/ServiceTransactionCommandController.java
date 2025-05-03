@@ -45,6 +45,6 @@ public class ServiceTransactionCommandController {
     })
     public void retryAll() {
         queryService.getRepository().findByStatusNot(TrxStatus.SUCCESS,Pageable.ofSize(1000))
-                .stream().map((t)->t.getId()).forEach(transactionService::transactionReTray);
+                .forEach((t)->transactionService.transactionReTray(t.getId()));
     }
 }
