@@ -1,9 +1,6 @@
 package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
-import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
-import agus.ramdan.cdt.core.master.controller.dto.CustomerCrewDTO;
-import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
+import agus.ramdan.cdt.core.master.controller.dto.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -32,6 +29,7 @@ public class QRCodeQueryDTO {
     @JsonProperty("expired_time")
     private LocalDateTime expiredTime;
 
+    private CustomerDTO customer;
     @Schema(description = "Informasi pengguna transaksi deprecated gunakan customer_crew")
     private CustomerCrewDTO user;
 
@@ -50,13 +48,11 @@ public class QRCodeQueryDTO {
     @JsonProperty("beneficiary_account")
     private BeneficiaryAccountDTO beneficiaryAccount;
 
-//    @Schema(description = "Informasi transaksi terkait")
-//    @JsonProperty("service_transaction")
-//    private ServiceTransactionDTO serviceTransaction;
 
     @Schema(description = "Informasi produk layanan terkait")
     @JsonProperty("service_product")
     private ServiceProductDTO serviceProduct;
+
 
 //    private VendorDTO vendor;
 //

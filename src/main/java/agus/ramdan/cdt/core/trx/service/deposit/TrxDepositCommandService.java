@@ -55,11 +55,11 @@ public class TrxDepositCommandService {
                 validations.add(ErrorValidation.New("QR Code not active!", "qr_code", dto.getToken()));
             }
             if (validations.isEmpty()) {
-                val customer = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",code::getCustomer);
+                val customer = EntityFallbackFactory.ensureNotLazy(validations, "Invalid QR Code.Customer", "qr_code",()->code.getCustomer());
                 if (customer == null) {
-                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
+                    validations.add(ErrorValidation.New("Invalid QR Code.Customer ", "qr_code", dto.getToken()));
                 }
-                val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code",code::getUser);
+                val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code",()->code.getUser());
                 if (user == null) {
                     validations.add(ErrorValidation.New("Invalid QRCode.User", "qr_code", dto.getToken()));
                 }else {
@@ -71,19 +71,19 @@ public class TrxDepositCommandService {
                 if (machine == null) {
                     validations.add(ErrorValidation.New("Machine/Terminal not register!", "machine", dto.getMachine().getCode()));
                 }
-                val product = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Product", "qr_code",code::getServiceProduct);
+                val product = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Product", "qr_code",()->code.getServiceProduct());
                 if (product == null || !"MUL-ST-TR".equals(product.getCode())) {
                     validations.add(ErrorValidation.New("Invalid qr code Product", "qr_code", dto.getToken()));
                 }
-                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code",code::getBeneficiaryAccount);
+                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code",()->code.getBeneficiaryAccount());
                 if (beneficiaryAccount == null) {
                     validations.add(ErrorValidation.New("Invalid BeneficiaryAccount", "qr_code", dto.getToken()));
                 } else {
-                    val customerBen = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",beneficiaryAccount::getCustomer);
+                    val customerBen = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",()->beneficiaryAccount.getCustomer());
                     if (customerBen == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
                     }
-                    val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code",beneficiaryAccount::getBranch);
+                    val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code",()->beneficiaryAccount.getBranch());
                     if (brance == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", dto.getToken()));
                     }

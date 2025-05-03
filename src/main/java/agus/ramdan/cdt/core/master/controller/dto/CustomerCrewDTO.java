@@ -19,7 +19,7 @@ public class CustomerCrewDTO implements TID<String> {
     private String name;
 
 //    @JsonProperty("customer_id")
-//    private String customerId;
+    private CustomerDTO customer;
 
     @Schema(description = "Username")
     private String username;
