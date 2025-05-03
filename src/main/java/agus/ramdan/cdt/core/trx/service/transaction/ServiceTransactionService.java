@@ -209,9 +209,9 @@ public class ServiceTransactionService {
         val trx = repository.findById(trxNo.getId());
         ServiceTransaction sc = null;
         if (trx.isPresent()) {
-            log.info("Transaction Callback; id={}; amount={}; trx={};", trx.get().getId(), trx.get().getAmount(), trx.get().getNo());
+            sc = trx.get();
             try {
-                sc = prepare(trx.get());
+                sc = prepare(sc);
             } catch (Exception e) {
                 log.error("Transaction Exception", e);
                 return;
