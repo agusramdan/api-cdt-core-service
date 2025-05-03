@@ -78,13 +78,8 @@ public class ServiceTransactionService {
         producerService.publishDataEvent(EventType.CREATE,trx);
         return trx;
     }
-
     @Transactional(Transactional.TxType.REQUIRES_NEW)
-    public ServiceTransaction transaction(ServiceTransaction trx) {
-        if(TrxStatus.SUCCESS.equals(trx.getStatus())){
-            log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
-            return trx;
-        }
+    public ServiceTransaction prepare(ServiceTransaction trx) {
         log.info("Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
             trx.setServiceProduct(trx.getDeposit().getServiceProduct());
@@ -92,6 +87,14 @@ public class ServiceTransactionService {
             producerService.publishDataEvent(EventType.UPDATE,trx);
         }else{
             throw new ResourceNotFoundException("Service Product not found");
+        }
+        return trx;
+    }
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ServiceTransaction transaction(ServiceTransaction trx) {
+        if(TrxStatus.SUCCESS.equals(trx.getStatus())){
+            log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
+            return trx;
         }
         val product = trx.getServiceProduct();
         val productCode = product.getCode();

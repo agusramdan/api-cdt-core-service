@@ -170,6 +170,8 @@ public class TrxDepositCommandService {
             if (trx == null) {
                 trx = transactionService.prepare(deposit);
                 deposit.setServiceTransaction(trx);
+            }else if (trx.getServiceProduct() == null) {
+                trx = transactionService.prepare(trx);
             }
             trx = transactionService.transaction(trx);
             deposit.setStatus(
