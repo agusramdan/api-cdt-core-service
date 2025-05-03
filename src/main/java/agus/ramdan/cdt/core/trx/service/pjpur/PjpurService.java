@@ -16,6 +16,8 @@ import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -27,7 +29,9 @@ public class PjpurService  {
     private final PjpurCollectClient pjpurCollectClient;
     private final PjpurDepositClient pjpurDepositClient;
     private final TrxDataEventProducerService producerService;
-
+    public TrxDepositPjpur findById(UUID id) {
+        return repository.findById(id).orElse(null);
+    }
     public TrxDepositPjpur prepare(TrxDeposit trx) {
         log.info("Prepare Trx Deposit PJPUR ; id={}; amount={}; trx={};", trx.getId(), trx.getAmount());
         val pjpur = pjpurMapper.mapDepositPjpur(trx);

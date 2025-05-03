@@ -4,6 +4,7 @@ import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.dto.GatewayCallbackDTO;
 import agus.ramdan.base.dto.TransactionCheckStatusDTO;
 import agus.ramdan.base.exception.Propagation5xxException;
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransfer;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxTransferStatus;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +34,10 @@ public class TrxTransferService {
     private final TrxDataEventProducerService producerService;
     private final GatewayService gatewayService;
     private final KafkaTemplate<String, TransactionCheckStatusDTO> kafkaTemplate;
-
+    public TrxTransfer findById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+    }
     public TrxTransfer prepare(ServiceTransaction transaction) {
         val transfer = new TrxTransfer();
         transfer.setBeneficiaryAccount(transaction.getBeneficiaryAccount());

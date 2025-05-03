@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,10 @@ public class ServiceTransactionService {
     private static final int STRING_LENGTH = 20;
     private static final Random random = new Random();
 
+    public ServiceTransaction findById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+    }
     public String generateRandomString(String input) {
         StringBuilder result = new StringBuilder(STRING_LENGTH);
         result.append(input);
@@ -125,33 +130,49 @@ public class ServiceTransactionService {
         TrxDepositPjpur depositPjpur = null;
         if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig())) {
             depositPjpur =trx.getDepositPjpur();
+            boolean newDeposit = false;
             if (depositPjpur == null) {
                 depositPjpur = pjpurService.prepare(trx.getDeposit());
                 trx.setDepositPjpur(depositPjpur);
-            }
+                newDeposit = true;
+
+            }else
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
-                depositPjpur = pjpurService.deposit(trx.getDepositPjpur());
-                trx.setDepositPjpur(depositPjpur);
+                depositPjpur = pjpurService.deposit(depositPjpur);
             }
             if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 trx.setStatus(TrxStatus.PJPUR_FAILED);
-                log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
+                if (newDeposit) {
+                    trx.setDepositPjpur(pjpurService.findById(depositPjpur.getId()));
+                }
+                log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
+            }
+            if (newDeposit) {
+                trx.setDepositPjpur(pjpurService.findById(depositPjpur.getId()));
             }
         }
         TrxTransfer transfer = null;
         if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig())){
             transfer = trx.getTransfer();
+            boolean newDeposit = false;
             if (transfer == null) {
                 transfer = transferService.prepare(trx);
                 trx.setTransfer(transfer);
+                newDeposit = true;
             }
             transfer = transferService.transferFund(transfer);
             trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 trx.setStatus(TrxStatus.TRANSFER_FAILED);
+                if (newDeposit) {
+                    trx.setTransfer(transferService.findById(transfer.getId()));
+                }
                 log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
+            }
+            if (newDeposit) {
+                trx.setTransfer(transferService.findById(transfer.getId()));
             }
         }
 
@@ -225,6 +246,7 @@ public class ServiceTransactionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
         return transaction(trx);
+    }
 //
 //        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
 //        var transfer = trx.getTransfer();
@@ -247,7 +269,7 @@ public class ServiceTransactionService {
 //            producerService.publishDataEvent(EventType.UPDATE,trx);
 //        }
 //        return trx;
-    }
+//    }
 
 //    @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transaction-customer-gateway-callback")
 //    @Transactional()
