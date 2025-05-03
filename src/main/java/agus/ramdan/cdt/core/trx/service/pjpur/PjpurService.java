@@ -57,6 +57,7 @@ public class PjpurService  {
         }
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
+            log.info("Deposit result: {}", result);
             trx.setStatus(TrxDepositPjpurStatus.SUCCESS);
         } catch (Exception e) {
             trx.setStatus(TrxDepositPjpurStatus.FAIL);
@@ -71,6 +72,7 @@ public class PjpurService  {
     public TrxDeposit deposit(TrxDeposit trx) {
         try{
             val result = pjpurDepositClient.deposit(pjpurMapper.mapDepositDTO(trx));
+            log.info("Deposit result: {}", result);
             trx.setPjpurStatus(TrxDepositPjpurStatus.SUCCESS);
         } catch (Exception e) {
             trx.setPjpurStatus(TrxDepositPjpurStatus.FAIL);
