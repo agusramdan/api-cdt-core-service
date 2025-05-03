@@ -1,6 +1,8 @@
 package agus.ramdan.cdt.core.trx.service.transaction;
 
+import agus.ramdan.base.dto.DepositCheckStatusDTO;
 import agus.ramdan.base.dto.EventType;
+import agus.ramdan.base.dto.TransactionCheckStatusDTO;
 import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.PropagationXxxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
@@ -15,6 +17,8 @@ import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,7 @@ public class ServiceTransactionService {
     private final TrxTransferService transferService;
     private final TrxDataEventProducerService producerService;
     private final PjpurService pjpurService;
+    private final KafkaTemplate<String, DepositCheckStatusDTO> kafkaTemplate;
     private static final String CHARACTERS = "0123456789";
     private static final int STRING_LENGTH = 20;
     private static final Random random = new Random();
@@ -188,59 +193,7 @@ public class ServiceTransactionService {
         }
         return trx;
     }
-
-//    @Deprecated
-//    public ServiceTransaction executeTransaction(ServiceTransaction trx) {
-//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-//        var transfer = trx.getTransfer();
-//        if (transfer == null) {
-//            transfer = transferService.prepare(trx);
-//            trx.setTransfer(transfer);
-//            trx.setStatus(TrxStatus.TRANSFER);
-//            repository.save(trx);
-//        }
-//        trx.setStatus(TrxStatus.TRANSFER);
-//        repository.save(trx);
-//        try {
-//            transfer = transferService.transferFund(transfer);
-//            // Usage
-//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-//            trx = repository.save(trx);
-//        } catch (Propagation5xxException e) {
-//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-//            repository.save(trx);
-//            throw e;
-//        }finally {
-//            producerService.publishDataEvent(EventType.UPDATE,trx);
-//        }
-//        return trx;
-//    }
-//    public ServiceTransaction transfer(ServiceTransaction trx) {
-//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-//        var transfer = trx.getTransfer();
-//        if (transfer == null) {
-//            transfer = transferService.prepare(trx);
-//            trx.setTransfer(transfer);
-//            trx.setStatus(TrxStatus.TRANSFER);
-//            repository.save(trx);
-//        }
-//        trx.setStatus(TrxStatus.TRANSFER);
-//        repository.save(trx);
-//        try {
-//            transfer = transferService.transferFund(transfer);
-//            // Usage
-//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-//            trx = repository.save(trx);
-//        } catch (Propagation5xxException e) {
-//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-//            repository.save(trx);
-//            throw e;
-//        }finally {
-//            producerService.publishDataEvent(EventType.UPDATE,trx);
-//        }
-//        return trx;
-//    }
-    //@Async("taskExecutor")
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public void transactionReTray(UUID trxNo) {
         try {
             repository.findById(trxNo).map(this::prepare).map(this::transaction);
@@ -249,84 +202,22 @@ public class ServiceTransactionService {
         }
 
     }
-
-//
-//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-//        var transfer = trx.getTransfer();
-//        if (transfer == null) {
-//            transfer = transferService.prepare(trx);
-//            trx.setTransfer(transfer);
-//            trx.setStatus(TrxStatus.TRANSFER);
-//            repository.save(trx);
-//        }
-//        try {
-//            transfer = transferService.transferFund(transfer);
-//            // Usage
-//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-//            trx = repository.save(trx);
-//        } catch (Propagation5xxException e) {
-//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-//            repository.save(trx);
-//            throw e;
-//        }finally {
-//            producerService.publishDataEvent(EventType.UPDATE,trx);
-//        }
-//        return trx;
-//    }
-
-//    @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transaction-customer-gateway-callback")
-//    @Transactional()
-//    public void consumeGatewayCallbackDTO(GatewayCallbackDTO event) {
-//        log.info("consumeGatewayCallbackDTO: {}", event);
-//        String gatewayCode = event.getGatewayCode();
-//        String transactionNo = event.getTransactionNo();
-//        String status = event.getStatus();
-//        String message = event.getMessage();
-//        Map<String, Object> dataMap=null;
-//        if (event.getData() instanceof Map) {
-//            dataMap = (Map<String, Object>) event.getData();
-//            if (transactionNo == null) {
-//                transactionNo = (String) dataMap.get("transaction_no");
-//            }
-//            if(status== null){
-//                status = (String) dataMap.get("status");
-//            }
-//            if (message==null){
-//                message = (String) dataMap.get("message");
-//            }
-//        }
-//
-//        log.info("gatewayCode: {} ,transactionNo: {} ,status: {} ,message: {}", gatewayCode,transactionNo,status,message);
-//
-//        val opt = repository.findByNo(transactionNo);
-//        if (opt.isEmpty()) {
-//            log.error("Transaction not found: {}", transactionNo);
-//            return;
-//        }
-//        ServiceTransaction trx = opt.get();
-//        Hibernate.initialize(trx.getTransfer());
-//        var transfer = trx.getTransfer();
-//        if (transfer == null) {
-//            log.error("Transfer not found: {}", transactionNo);
-//            return;
-//        }
-//        Hibernate.initialize(transfer.getGateway());
-//        if (gatewayCode != null && !gatewayCode.equals(transfer.getGateway().getCode())) {
-//            log.error("Gateway Info  not found: {}", transactionNo);
-//        }
-//
-//        transfer = transferService.transferUpdateStatus(transfer, status, message);
-//        trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-//        trx = repository.save(trx);
-//        switch (trx.getStatus()) {
-//            case SUCCESS, TRANSFER_SUCCESS:
-//                Hibernate.initialize(trx.getDeposit());
-//                val deposit = trx.getDeposit();
-//                if (deposit != null) {
-//                    deposit.setStatus(TrxDepositStatus.SUCCESS);
-//                }
-//                break;
-//        }
-//        producerService.publishDataEvent(EventType.UPDATE,trx);
-//    }
+    @KafkaListener(topics = "core-trx-status-check-event", groupId = "cdt-core-transaction-callback")
+    @Transactional(noRollbackFor = PropagationXxxException.class)
+    public void transactionCallback(TransactionCheckStatusDTO trxNo) {
+        val trx = repository.findById(trxNo.getId());
+        if (trx.isPresent()) {
+            log.info("Transaction Callback; id={}; amount={}; trx={};", trx.get().getId(), trx.get().getAmount(), trx.get().getNo());
+            val result = transaction(trx.get());
+            if (result.getDeposit()!= null) {
+                val deposit = new DepositCheckStatusDTO();
+                deposit.setId(result.getDeposit().getId());
+                deposit.setSource("ServiceTransaction");
+                deposit.setMessage(trxNo.getMessage());
+                kafkaTemplate.send("core-trx-status-check-event",deposit);
+            }
+        } else {
+            log.error("Transaction not found; id={}", trxNo.getId());
+        }
+    }
 }
