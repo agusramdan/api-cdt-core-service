@@ -53,7 +53,6 @@ public class ServiceTransactionService {
         };
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ServiceTransaction prepare(BigDecimal amount) {
         val trx = new ServiceTransaction();
         trx.setAmount(amount);
@@ -69,7 +68,6 @@ public class ServiceTransactionService {
         }
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ServiceTransaction prepare(TrxDeposit deposit) {
         ServiceTransaction trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
@@ -80,7 +78,6 @@ public class ServiceTransactionService {
         producerService.publishDataEvent(EventType.CREATE,trx);
         return trx;
     }
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public ServiceTransaction prepare(ServiceTransaction trx) {
         log.info("Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
@@ -141,9 +138,9 @@ public class ServiceTransactionService {
                 trx.setTransfer(transfer);
                 repository.saveAndFlush(trx);
             }
-            transferService.transferFund(transfer);
-            if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
-                log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
+            transfer = transferService.transferFund(transfer);
+            if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
+                log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
             }
         }
@@ -157,87 +154,91 @@ public class ServiceTransactionService {
                 trx.setStatus(TrxStatus.SUCCESS);
             }
         }
-        return repository.saveAndFlush(trx);
+        trx = repository.saveAndFlush(trx);
+        producerService.publishDataEvent(EventType.UPDATE,trx);
+        return trx;
     }
 
-    @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
-    @Deprecated
-    public ServiceTransaction executeTransaction(ServiceTransaction trx) {
-        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-        var transfer = trx.getTransfer();
-        if (transfer == null) {
-            transfer = transferService.prepare(trx);
-            trx.setTransfer(transfer);
-            trx.setStatus(TrxStatus.TRANSFER);
-            repository.save(trx);
-        }
-        trx.setStatus(TrxStatus.TRANSFER);
-        repository.save(trx);
-        try {
-            transfer = transferService.transferFund(transfer);
-            // Usage
-            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-            trx = repository.save(trx);
-        } catch (Propagation5xxException e) {
-            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-            repository.save(trx);
-            throw e;
-        }finally {
-            producerService.publishDataEvent(EventType.UPDATE,trx);
-        }
-        return trx;
-    }
-    @Transactional(value = Transactional.TxType.REQUIRES_NEW, dontRollbackOn = Propagation5xxException.class)
-    public ServiceTransaction transfer(ServiceTransaction trx) {
-        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-        var transfer = trx.getTransfer();
-        if (transfer == null) {
-            transfer = transferService.prepare(trx);
-            trx.setTransfer(transfer);
-            trx.setStatus(TrxStatus.TRANSFER);
-            repository.save(trx);
-        }
-        trx.setStatus(TrxStatus.TRANSFER);
-        repository.save(trx);
-        try {
-            transfer = transferService.transferFund(transfer);
-            // Usage
-            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-            trx = repository.save(trx);
-        } catch (Propagation5xxException e) {
-            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-            repository.save(trx);
-            throw e;
-        }finally {
-            producerService.publishDataEvent(EventType.UPDATE,trx);
-        }
-        return trx;
-    }
+//    @Deprecated
+//    public ServiceTransaction executeTransaction(ServiceTransaction trx) {
+//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+//        var transfer = trx.getTransfer();
+//        if (transfer == null) {
+//            transfer = transferService.prepare(trx);
+//            trx.setTransfer(transfer);
+//            trx.setStatus(TrxStatus.TRANSFER);
+//            repository.save(trx);
+//        }
+//        trx.setStatus(TrxStatus.TRANSFER);
+//        repository.save(trx);
+//        try {
+//            transfer = transferService.transferFund(transfer);
+//            // Usage
+//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
+//            trx = repository.save(trx);
+//        } catch (Propagation5xxException e) {
+//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
+//            repository.save(trx);
+//            throw e;
+//        }finally {
+//            producerService.publishDataEvent(EventType.UPDATE,trx);
+//        }
+//        return trx;
+//    }
+//    public ServiceTransaction transfer(ServiceTransaction trx) {
+//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+//        var transfer = trx.getTransfer();
+//        if (transfer == null) {
+//            transfer = transferService.prepare(trx);
+//            trx.setTransfer(transfer);
+//            trx.setStatus(TrxStatus.TRANSFER);
+//            repository.save(trx);
+//        }
+//        trx.setStatus(TrxStatus.TRANSFER);
+//        repository.save(trx);
+//        try {
+//            transfer = transferService.transferFund(transfer);
+//            // Usage
+//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
+//            trx = repository.save(trx);
+//        } catch (Propagation5xxException e) {
+//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
+//            repository.save(trx);
+//            throw e;
+//        }finally {
+//            producerService.publishDataEvent(EventType.UPDATE,trx);
+//        }
+//        return trx;
+//    }
 
     public ServiceTransaction retryTransfer(String trxNo) {
+
         ServiceTransaction trx = repository.findByNo(trxNo)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
-        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-        var transfer = trx.getTransfer();
-        if (transfer == null) {
-            transfer = transferService.prepare(trx);
-            trx.setTransfer(transfer);
-            trx.setStatus(TrxStatus.TRANSFER);
-            repository.save(trx);
-        }
-        try {
-            transfer = transferService.transferFund(transfer);
-            // Usage
-            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
-            trx = repository.save(trx);
-        } catch (Propagation5xxException e) {
-            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
-            repository.save(trx);
-            throw e;
-        }finally {
-            producerService.publishDataEvent(EventType.UPDATE,trx);
-        }
-        return trx;
+
+        return transaction(trx);
+//
+//        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+//        var transfer = trx.getTransfer();
+//        if (transfer == null) {
+//            transfer = transferService.prepare(trx);
+//            trx.setTransfer(transfer);
+//            trx.setStatus(TrxStatus.TRANSFER);
+//            repository.save(trx);
+//        }
+//        try {
+//            transfer = transferService.transferFund(transfer);
+//            // Usage
+//            trx.setStatus(determineTransactionStatus(transfer.getStatus(),trx.getStatus()));
+//            trx = repository.save(trx);
+//        } catch (Propagation5xxException e) {
+//            trx.setStatus(TrxStatus.TRANSFER_TIME_OUT);
+//            repository.save(trx);
+//            throw e;
+//        }finally {
+//            producerService.publishDataEvent(EventType.UPDATE,trx);
+//        }
+//        return trx;
     }
 
 //    @KafkaListener(topics = "gateway-callback-topic", groupId = "cdt-core-transaction-customer-gateway-callback")

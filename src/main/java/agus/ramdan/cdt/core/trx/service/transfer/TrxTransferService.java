@@ -120,5 +120,6 @@ public class TrxTransferService {
                     kafkaTemplate.send("core-trx-status-check-event",trxStatus);
                 }, () -> log.error("Transaction not found: {}", trx_no));
     }
+
 }
 

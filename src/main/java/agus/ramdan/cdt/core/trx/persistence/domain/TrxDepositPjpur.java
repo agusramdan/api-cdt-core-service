@@ -35,6 +35,8 @@ public class TrxDepositPjpur extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
+    @Version
+    private int version;
 
     @Enumerated(EnumType.STRING)
     private TrxDepositPjpurStatus status;
