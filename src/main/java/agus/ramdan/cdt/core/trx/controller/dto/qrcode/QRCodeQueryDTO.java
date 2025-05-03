@@ -53,9 +53,7 @@ public class QRCodeQueryDTO {
     @JsonProperty("service_product")
     private ServiceProductDTO serviceProduct;
 
-
 //    private VendorDTO vendor;
-//
 //    private VendorCrewDTO vendorCrew;
 //
 //    private MachineDTO machine;

@@ -5,6 +5,7 @@ import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.service.beneficiary.BeneficiaryAccountQueryService;
 import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
+import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
@@ -38,7 +39,7 @@ public class QRCodeCommandService extends TrxDataEventProducer<QRCode, UUID, QRC
     private final ServiceProductQueryService serviceProductQueryService;
     private final BeneficiaryAccountQueryService beneficiaryAccountQueryService;
     private final CustomerCrewQueryService customerCrewQueryService;
-
+    private final CustomerQueryService customerQueryService;
     public void validateActiveStatus(QRCode entity, List<ErrorValidation> validations) {
         // TODO Tambahkan validasi bila konsisi status entity aktif
     }
@@ -90,6 +91,7 @@ public class QRCodeCommandService extends TrxDataEventProducer<QRCode, UUID, QRC
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
         customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(entity::setCustomer);
         if (QRCodeStatus.ACTIVE.equals(entity.getStatus())) {
             validateActiveStatus(entity, validations);
         }
