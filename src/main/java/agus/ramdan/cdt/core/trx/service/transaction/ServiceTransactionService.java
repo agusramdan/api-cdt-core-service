@@ -105,10 +105,10 @@ public class ServiceTransactionService {
         }
         try {
             val product = trx.getServiceProduct();
-            if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() == null) {
+            if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() != null) {
                 trx.setDepositPjpur(pjpurService.prepare(trx.getDeposit()));
             }
-            if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() == null){
+            if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() != null){
                 trx.setTransfer(transferService.prepare(trx));
             }
             trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
@@ -162,7 +162,7 @@ public class ServiceTransactionService {
         log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
         TrxDepositPjpur depositPjpur = null;
-        if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig())) {
+        if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() != null) {
             depositPjpur =trx.getDepositPjpur();
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(depositPjpur);
@@ -174,7 +174,7 @@ public class ServiceTransactionService {
             }
         }
         TrxTransfer transfer = null;
-        if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig())){
+        if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() != null){
             transfer = transferService.transferFund(trx.getTransfer());
             trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
