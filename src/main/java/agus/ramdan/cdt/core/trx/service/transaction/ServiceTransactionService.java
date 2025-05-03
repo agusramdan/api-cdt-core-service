@@ -24,7 +24,6 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-@Transactional
 public class ServiceTransactionService {
 
     private final ServiceTransactionRepository repository;
@@ -52,7 +51,7 @@ public class ServiceTransactionService {
             default -> defaultStatus;
         };
     }
-
+    @Transactional
     public ServiceTransaction prepare(BigDecimal amount) {
         val trx = new ServiceTransaction();
         trx.setAmount(amount);
@@ -67,46 +66,54 @@ public class ServiceTransactionService {
             }
         }
     }
-
+    @Transactional
     public ServiceTransaction prepare(TrxDeposit deposit) {
         ServiceTransaction trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
         trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
         trx.setServiceProduct(deposit.getServiceProduct());
-        trx= repository.save(trx);
+        trx= repository.saveAndFlush(trx);
         producerService.publishDataEvent(EventType.CREATE,trx);
         return trx;
     }
+    @Transactional
     public ServiceTransaction prepare(ServiceTransaction trx) {
-        log.info("Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
+            log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
             trx.setServiceProduct(trx.getDeposit().getServiceProduct());
-            trx= repository.save(trx);
+            trx= repository.saveAndFlush(trx);
             producerService.publishDataEvent(EventType.UPDATE,trx);
         }else{
             throw new ResourceNotFoundException("Service Product not found");
         }
         return trx;
     }
+    @Transactional
     public ServiceTransaction transaction(ServiceTransaction trx) {
         if(TrxStatus.SUCCESS.equals(trx.getStatus())){
             log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
             return trx;
         }
+        log.info("Start Transaction; id={}; amount={}; trx={}; finish", trx.getId(), trx.getAmount(), trx.getNo());
         val product = trx.getServiceProduct();
-        val productCode = product.getCode();
-        if (productCode == null) {
+        if (product == null) {
             throw new ResourceNotFoundException("Service Product code not found");
         }
         try{
             if (ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())) {
                 trx = serviceProductStoreTransfer(trx);
             }else {
-                throw new ResourceNotFoundException("Service Product "+productCode+" support transaction");
+                throw new ResourceNotFoundException("Service Product "+product.getCode()+" support transaction");
             }
         }finally {
-            producerService.publishDataEvent(EventType.UPDATE,trx);
+            try {
+                trx = repository.saveAndFlush(trx);
+                producerService.publishDataEvent(EventType.UPDATE,trx);
+                log.info("Finish Transaction; id={}; amount={}; trx={}", trx.getId(), trx.getAmount(), trx.getNo());
+            } catch (Exception e) {
+                log.error("Error transaction:", e);
+            }
         }
         return trx;
     }
@@ -120,10 +127,10 @@ public class ServiceTransactionService {
             if (depositPjpur == null) {
                 depositPjpur = pjpurService.prepare(trx.getDeposit());
                 trx.setDepositPjpur(depositPjpur);
-                repository.saveAndFlush(trx);
             }
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(trx.getDepositPjpur());
+                trx.setDepositPjpur(depositPjpur);
             }
             if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
@@ -136,9 +143,9 @@ public class ServiceTransactionService {
             if (transfer == null) {
                 transfer = transferService.prepare(trx);
                 trx.setTransfer(transfer);
-                repository.saveAndFlush(trx);
             }
             transfer = transferService.transferFund(transfer);
+            trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
@@ -154,8 +161,6 @@ public class ServiceTransactionService {
                 trx.setStatus(TrxStatus.SUCCESS);
             }
         }
-        trx = repository.saveAndFlush(trx);
-        producerService.publishDataEvent(EventType.UPDATE,trx);
         return trx;
     }
 
