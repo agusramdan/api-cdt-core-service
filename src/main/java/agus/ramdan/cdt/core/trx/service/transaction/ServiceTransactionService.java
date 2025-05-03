@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.trx.service.transaction;
 
 import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.Propagation5xxException;
+import agus.ramdan.base.exception.PropagationXxxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
@@ -11,11 +12,11 @@ import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionReposit
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.pjpur.PjpurService;
 import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -71,7 +72,7 @@ public class ServiceTransactionService {
             }
         }
     }
-    @Transactional
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction prepare(TrxDeposit deposit) {
         ServiceTransaction trx = prepare(deposit.getAmount());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
@@ -82,19 +83,27 @@ public class ServiceTransactionService {
         producerService.publishDataEvent(EventType.CREATE,trx);
         return trx;
     }
-    @Transactional
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction prepare(ServiceTransaction trx) {
         if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
             log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
             trx.setServiceProduct(trx.getDeposit().getServiceProduct());
-            trx= repository.saveAndFlush(trx);
-            producerService.publishDataEvent(EventType.UPDATE,trx);
         }else{
             throw new ResourceNotFoundException("Service Product not found");
         }
+        val product = trx.getServiceProduct();
+        if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig()) && trx.getDepositPjpur() == null) {
+            trx.setDepositPjpur(pjpurService.prepare(trx.getDeposit()));
+        }
+        if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig()) && trx.getTransfer() == null){
+            trx.setTransfer(transferService.prepare(trx));
+        }
+        trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
+        trx= repository.saveAndFlush(trx);
+        producerService.publishDataEvent(EventType.UPDATE,trx);
         return trx;
     }
-    @Transactional
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction transaction(ServiceTransaction trx) {
         if(TrxStatus.SUCCESS.equals(trx.getStatus())){
             log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
@@ -130,49 +139,23 @@ public class ServiceTransactionService {
         TrxDepositPjpur depositPjpur = null;
         if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig())) {
             depositPjpur =trx.getDepositPjpur();
-            boolean newDeposit = false;
-            if (depositPjpur == null) {
-                depositPjpur = pjpurService.prepare(trx.getDeposit());
-                trx.setDepositPjpur(depositPjpur);
-                newDeposit = true;
-
-            }else
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(depositPjpur);
             }
             if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 trx.setStatus(TrxStatus.PJPUR_FAILED);
-                if (newDeposit) {
-                    trx.setDepositPjpur(pjpurService.findById(depositPjpur.getId()));
-                }
                 log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
-            }
-            if (newDeposit) {
-                trx.setDepositPjpur(pjpurService.findById(depositPjpur.getId()));
             }
         }
         TrxTransfer transfer = null;
         if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig())){
-            transfer = trx.getTransfer();
-            boolean newDeposit = false;
-            if (transfer == null) {
-                transfer = transferService.prepare(trx);
-                trx.setTransfer(transfer);
-                newDeposit = true;
-            }
-            transfer = transferService.transferFund(transfer);
+            transfer = transferService.transferFund(trx.getTransfer());
             trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 trx.setStatus(TrxStatus.TRANSFER_FAILED);
-                if (newDeposit) {
-                    trx.setTransfer(transferService.findById(transfer.getId()));
-                }
                 log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
                 return trx;
-            }
-            if (newDeposit) {
-                trx.setTransfer(transferService.findById(transfer.getId()));
             }
         }
 
