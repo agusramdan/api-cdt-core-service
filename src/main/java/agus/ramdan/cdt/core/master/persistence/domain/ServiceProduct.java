@@ -1,6 +1,9 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
 import agus.ramdan.base.domain.BaseEntity;
+import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
+import agus.ramdan.cdt.core.master.controller.dto.QRRuleConfig;
+import agus.ramdan.cdt.core.master.controller.dto.TransferRuleConfig;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -43,5 +46,14 @@ public class ServiceProduct extends BaseEntity {
     private String code;
     private String name;
     private String description;
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("qr_rule_config")
+    private QRRuleConfig qrRuleConfig;
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("pjpur_rule_config")
+    private PjpurRuleConfig pjpurRuleConfig;
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("transfer_rule_config")
+    private TransferRuleConfig transferRuleConfig;
 
 }

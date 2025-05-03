@@ -14,7 +14,9 @@ import java.time.ZonedDateTime;
 
 @Mapper(componentModel = "spring")
 public interface PjpurMapper {
-
+    @Mapping(source = "pjpurStatus", target = "status", defaultValue = "PREPARE")
+    TrxDepositPjpur mapDepositPjpur(TrxDeposit deposit);
+    TrxDepositPjpurDenom mapDepositPjpur(TrxDepositDenom depositDenom);
     @Mapping(source = "machine.code", target = "terminalid")
     @Mapping(source = "cdmTrxDateTime", target = "timestamp")
     @Mapping(source = "serviceTransaction.no", target = "trxrefno")

@@ -2,6 +2,7 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 
 import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
+import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,6 +41,11 @@ public class ServiceTransaction extends BaseEntity {
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
     @Schema(example = "10000.00", required = true)
     private BigDecimal amount;
+
+    @ManyToOne
+    @JsonProperty("service_product_id")
+    @JsonIdentityReference(alwaysAsId = true)
+    private ServiceProduct serviceProduct;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIdentityReference(alwaysAsId = true)

@@ -1,24 +1,23 @@
 package agus.ramdan.cdt.core.trx.service.transaction;
 
 import agus.ramdan.base.dto.EventType;
-import agus.ramdan.base.dto.GatewayCallbackDTO;
 import agus.ramdan.base.exception.Propagation5xxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
+import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
+import agus.ramdan.cdt.core.master.controller.dto.TransferRuleConfig;
 import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
+import agus.ramdan.cdt.core.trx.service.pjpur.PjpurService;
 import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
-import org.hibernate.Hibernate;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -29,6 +28,7 @@ public class ServiceTransactionService {
     private final ServiceTransactionRepository repository;
     private final TrxTransferService transferService;
     private final TrxDataEventProducerService producerService;
+    private final PjpurService pjpurService;
     private static final String CHARACTERS = "0123456789";
     private static final int STRING_LENGTH = 20;
     private static final Random random = new Random();
@@ -73,8 +73,90 @@ public class ServiceTransactionService {
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
         trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
+        trx.setServiceProduct(deposit.getServiceProduct());
         trx= repository.save(trx);
         producerService.publishDataEvent(EventType.CREATE,trx);
+        return trx;
+    }
+
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    public ServiceTransaction transaction(ServiceTransaction trx) {
+        if(TrxStatus.SUCCESS.equals(trx.getStatus())){
+            log.info("Transaction; id={}; amount={}; trx={}; Success", trx.getId(), trx.getAmount(), trx.getNo());
+            return trx;
+        }
+        log.info("Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+        if (trx.getServiceProduct()==null && trx.getDeposit()!=null && trx.getDeposit().getServiceProduct()!=null) {
+            trx.setServiceProduct(trx.getDeposit().getServiceProduct());
+            trx= repository.save(trx);
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+        }else{
+            throw new ResourceNotFoundException("Service Product not found");
+        }
+        val product = trx.getServiceProduct();
+        val productCode = product.getCode();
+        if (productCode == null) {
+            throw new ResourceNotFoundException("Service Product code not found");
+        }
+        try{
+            if ("MUL-ST-TR".equals(productCode)) {
+                trx = serviceProductStoreTransfer(trx);
+            }else {
+                throw new ResourceNotFoundException("Service Product "+productCode+" support transaction not found");
+            }
+        }finally {
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+        }
+
+        return trx;
+    }
+
+    protected ServiceTransaction serviceProductStoreTransfer(ServiceTransaction trx) {
+        val product = trx.getServiceProduct();
+        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+        trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
+        TrxDepositPjpur depositPjpur = null;
+        if (!PjpurRuleConfig.NONE.equals(product.getPjpurRuleConfig())) {
+            depositPjpur =trx.getDepositPjpur();
+            if (depositPjpur == null) {
+                depositPjpur = pjpurService.prepare(trx.getDeposit());
+                trx.setDepositPjpur(depositPjpur);
+            }
+            if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
+                depositPjpur = pjpurService.deposit(trx.getDepositPjpur());
+                trx.setDepositPjpur(depositPjpur);
+                repository.save(trx);
+            }
+            if (PjpurRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
+                log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
+                return trx;
+            }
+        }
+        TrxTransfer transfer = null;
+        if(!TransferRuleConfig.NONE.equals(product.getTransferRuleConfig())){
+            transfer = trx.getTransfer();
+            if (transfer == null) {
+                transfer = transferService.prepare(trx);
+                trx.setTransfer(transfer);
+                repository.save(trx);
+            }
+            if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getPjpurRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
+                log.info("Transaction; id={}; amount={}; trx={}; Pjpur mandatory success. Pjpur Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
+                return trx;
+            }
+        }
+
+        if (transfer != null && depositPjpur != null) {
+            if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus()) && TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
+                trx.setStatus(TrxStatus.SUCCESS);
+                repository.save(trx);
+            }
+        }else if (transfer != null) {
+            if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
+                trx.setStatus(TrxStatus.SUCCESS);
+                repository.save(trx);
+            }
+        }
         return trx;
     }
 
@@ -131,7 +213,6 @@ public class ServiceTransactionService {
         }
         return trx;
     }
-
 
     public ServiceTransaction retryTransfer(String trxNo) {
         ServiceTransaction trx = repository.findByNo(trxNo)

@@ -11,7 +11,6 @@ import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerCrewRepository;
 import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
-import agus.ramdan.cdt.core.utils.EntityFallbackFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;

@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class PjpurConfig {
     // Blocking where the transaction is not allowed to be processed without status PJPUR_SUCCESS
     private boolean trxBlocking;
+    private boolean online;
 }
