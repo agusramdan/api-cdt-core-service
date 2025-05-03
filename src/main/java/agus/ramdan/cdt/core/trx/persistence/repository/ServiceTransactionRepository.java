@@ -14,6 +14,7 @@ import java.util.UUID;
 
 public interface ServiceTransactionRepository extends JpaRepository<ServiceTransaction, UUID>, JpaSpecificationExecutor<ServiceTransaction> {
     Optional<ServiceTransaction> findByNo(String no);
-    @Query("SELECT st FROM ServiceTransaction st WHERE st.status !=  'SUCCESS'")
+
+    @Query("SELECT st FROM ServiceTransaction st WHERE st.status != agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus.SUCCESS'")
     List<ServiceTransaction> findAllByNotSuccess(Pageable pageable);
 }
