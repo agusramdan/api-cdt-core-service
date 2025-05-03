@@ -92,7 +92,7 @@ public class ServiceTransactionService {
         }else{
             trx.setStatus(TrxStatus.REJECT);
             trx= repository.saveAndFlush(trx);
-            producerService.publishDataEvent(EventType.CREATE,trx);
+            producerService.publishDataEvent(EventType.UPDATE,trx);
             log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
             throw new ResourceNotFoundException("Service Product not found");
         }
@@ -122,10 +122,17 @@ public class ServiceTransactionService {
         log.info("Start Transaction; id={}; amount={}; trx={}; finish", trx.getId(), trx.getAmount(), trx.getNo());
         val product = trx.getServiceProduct();
         if (product == null) {
+            trx.setStatus(TrxStatus.REJECT);
+            trx= repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+            log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
             throw new ResourceNotFoundException("Service Product code not found");
         }
         if (!ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())){
-            throw new ResourceNotFoundException("Service Product "+product.getCode()+" support transaction");
+            trx.setStatus(TrxStatus.REJECT);
+            trx= repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.UPDATE,trx);
+            throw new ResourceNotFoundException("Service Product "+product.getCode()+" not support transaction");
         }
         try {
             trx = serviceProductStoreTransfer(trx);
@@ -233,9 +240,14 @@ public class ServiceTransactionService {
 //        }
 //        return trx;
 //    }
-    @Async("taskExecutor")
+    //@Async("taskExecutor")
     public void transactionReTray(UUID trxNo) {
-        repository.findById(trxNo).map(this::prepare).map(this::transaction);
+        try {
+            repository.findById(trxNo).map(this::prepare).map(this::transaction);
+        }catch (Exception e) {
+            log.error("Error transactionReTray: {}",trxNo);
+        }
+
     }
 
 //

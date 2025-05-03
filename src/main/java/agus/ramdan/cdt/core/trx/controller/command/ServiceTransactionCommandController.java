@@ -46,13 +46,39 @@ public class ServiceTransactionCommandController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
     public void retryAll() {
-        int offset = 0;
-        Pageable page = PageRequest.of(0,10, Sort.Direction.ASC,"no");
+        int count = 0;
+        Pageable page = PageRequest.of(0,100, Sort.Direction.ASC,"no");
         while (true) {
             val transactions = queryService.getRepository().findByStatusNot(TrxStatus.SUCCESS, page);
             if (transactions.isEmpty()) {
+                log.info("Execute {}",count);
                 break;
             }
+            count +=transactions.size();
+            transactions.forEach((t) ->
+            {
+                log.info("Retry Transaction ; id={}; no={} amount={}", t.getId(), t.getNo(),t.getAmount());
+                transactionService.transactionReTray(t.getId());
+            });
+            page = page.next();
+        }
+
+    }
+    @PostMapping("/all/retry/{status}")
+    @ApiResponses(value = {
+            @ApiResponse(description = "successful operation", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
+    })
+    public void retryAllStatus(@PathVariable String status) {
+        int count = 0;
+        Pageable page = PageRequest.of(0,100, Sort.Direction.ASC,"no");
+        while (true) {
+            val transactions = queryService.getRepository().findByStatus(TrxStatus.valueOf(status), page);
+            if (transactions.isEmpty()) {
+                log.info("Execute {}",count);
+                break;
+            }
+            count +=transactions.size();
             transactions.forEach((t) ->
             {
                 log.info("Retry Transaction ; id={}; no={} amount={}", t.getId(), t.getNo(),t.getAmount());

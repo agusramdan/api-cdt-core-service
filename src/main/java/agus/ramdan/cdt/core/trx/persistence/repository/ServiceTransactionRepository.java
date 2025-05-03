@@ -17,4 +17,5 @@ public interface ServiceTransactionRepository extends JpaRepository<ServiceTrans
     Optional<ServiceTransaction> findByNo(String no);
 
     List<ServiceTransaction> findByStatusNot(TrxStatus status, Pageable pageable);
+    List<ServiceTransaction> findByStatus(TrxStatus status, Pageable pageable);
 }
