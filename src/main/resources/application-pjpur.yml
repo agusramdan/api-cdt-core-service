@@ -3,4 +3,4 @@ feign-client:
     base-url: http://api-cdt-pjpur-service:8080
 
 pjpur:
-  online : true
+  online: true
