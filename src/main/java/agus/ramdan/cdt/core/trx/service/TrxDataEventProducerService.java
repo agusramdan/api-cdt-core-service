@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class TrxDataEventProducerService{
     private final KafkaTemplate<String, DataEvent> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    @Async("taskExecutor")
     public void publishDataEvent(DataEvent dataEvent) {
         try {
             String object = objectMapper.writeValueAsString(dataEvent.getData());
@@ -31,6 +33,7 @@ public class TrxDataEventProducerService{
         }
         kafkaTemplate.send("core-trx-event", dataEvent);
     }
+    @Async("taskExecutor")
     public void publishDataEvent(EventType type , Object object) {
         publishDataEvent(DataEvent.builder().data(object).eventType(type).dataType(object.getClass().getCanonicalName()).build());
     }

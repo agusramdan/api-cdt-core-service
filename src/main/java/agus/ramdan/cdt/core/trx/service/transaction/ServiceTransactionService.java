@@ -15,6 +15,7 @@ import agus.ramdan.cdt.core.trx.service.transfer.TrxTransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -228,14 +229,11 @@ public class ServiceTransactionService {
 //        }
 //        return trx;
 //    }
-
-    public ServiceTransaction retryTransfer(String trxNo) {
-
-        ServiceTransaction trx = repository.findByNo(trxNo)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
-
-        return transaction(trx);
+    @Async("taskExecutor")
+    public void transactionReTray(UUID trxNo) {
+        repository.findById(trxNo).map(this::prepare).map(this::transaction);
     }
+
 //
 //        log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
 //        var transfer = trx.getTransfer();

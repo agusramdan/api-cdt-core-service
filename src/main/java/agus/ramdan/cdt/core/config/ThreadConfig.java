@@ -8,6 +8,7 @@ import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @EnableAsync
@@ -27,5 +28,10 @@ public class ThreadConfig {
         return protocolHandler -> {
             protocolHandler.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
         };
+    }
+
+    @Bean(name = "taskExecutor")
+    public Executor virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

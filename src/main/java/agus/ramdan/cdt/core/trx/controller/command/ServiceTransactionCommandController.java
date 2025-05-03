@@ -28,16 +28,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServiceTransactionCommandController {
     private final ServiceTransactionService transactionService;
     private final ServiceTransactionQueryService queryService;
-    @PostMapping("/all/prepare")
+//    @PostMapping("/all/prepare")
+//    @ApiResponses(value = {
+//            @ApiResponse(description = "successful operation", content = {
+//                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
+//    })
+//    public void prepareAll() {
+//        queryService.getRepository().findAllByServiceProductIsNull(Pageable.ofSize(1000))
+//                .forEach(transactionService::prepare);
+//    }
+    @PostMapping("/all/retry")
     @ApiResponses(value = {
             @ApiResponse(description = "successful operation", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
     })
-    public void prepareAll() {
-        queryService.getRepository().findAllByServiceProductIsNull(Pageable.ofSize(100)).forEach(
-                trx -> {
-                    transactionService.prepare(trx);
-                }
-        );
+    public void retryAll() {
+        queryService.getRepository().findAllByNotSuccess(Pageable.ofSize(1000))
+                .stream().map((t)->t.getId()).forEach(transactionService::transactionReTray);
     }
 }

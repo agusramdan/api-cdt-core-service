@@ -14,6 +14,6 @@ import java.util.UUID;
 
 public interface ServiceTransactionRepository extends JpaRepository<ServiceTransaction, UUID>, JpaSpecificationExecutor<ServiceTransaction> {
     Optional<ServiceTransaction> findByNo(String no);
-    @Query("SELECT st FROM ServiceTransaction st WHERE st.serviceProduct IS NULL")
-    List<ServiceTransaction> findAllByServiceProductIsNull(Pageable pageable);
+    @Query("SELECT st FROM ServiceTransaction st WHERE st.status !=  'SUCCESS'")
+    List<ServiceTransaction> findAllByNotSuccess(Pageable pageable);
 }
