@@ -4,7 +4,6 @@ public enum TrxStatus {
     PREPARE,
     CDM_DEPOSIT,
     PJPUR_FAILED,
-    // TRANSFER
     TRANSFER,
     TRANSFER_IN_PROGRESS,
     TRANSFER_SUCCESS,

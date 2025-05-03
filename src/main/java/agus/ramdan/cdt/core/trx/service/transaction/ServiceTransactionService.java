@@ -90,6 +90,10 @@ public class ServiceTransactionService {
             log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
             trx.setServiceProduct(trx.getDeposit().getServiceProduct());
         }else{
+            trx.setStatus(TrxStatus.REJECT);
+            trx= repository.saveAndFlush(trx);
+            producerService.publishDataEvent(EventType.CREATE,trx);
+            log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
             throw new ResourceNotFoundException("Service Product not found");
         }
         try {
