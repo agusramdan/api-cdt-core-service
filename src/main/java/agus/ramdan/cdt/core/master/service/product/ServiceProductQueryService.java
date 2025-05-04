@@ -1,19 +1,15 @@
 package agus.ramdan.cdt.core.master.service.product;
 
-import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.base.service.BaseQueryEntityService;
-import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
 import agus.ramdan.cdt.core.master.controller.dto.product.ServiceProductQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.ServiceProductMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import agus.ramdan.cdt.core.master.persistence.repository.ServiceProductRepository;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service

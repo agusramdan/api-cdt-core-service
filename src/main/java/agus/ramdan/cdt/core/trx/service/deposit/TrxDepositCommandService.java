@@ -4,6 +4,7 @@ import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
+import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositCreateDTO;
@@ -47,7 +48,7 @@ public class TrxDepositCommandService {
         val machine = machineQueryService.getForRelation(dto.getMachine(), validations, "machine");
         val option_trx = repository.findByTokenAndCdmTrxNoAndCdmTrxDateAndMachine(token, dto.getCdmTrxNo(), dto.getCdmTrxDate(), machine);
         option_trx.ifPresentOrElse(depo -> {
-            if (TrxDepositStatus.TRANSFER_GATEWAY_TIMEOUT != depo.getStatus()) {
+            if(!TrxDepositStatus.CANCELLED.equals(depo.getStatus())) {
                 throw new BadRequestException("Duplicate Deposit");
             }
         }, () -> {
@@ -70,11 +71,15 @@ public class TrxDepositCommandService {
                 if (machine == null) {
                     validations.add(ErrorValidation.New("Machine/Terminal not register!", "machine", dto.getMachine().getCode()));
                 }
-                val product = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Product", "qr_code",()->code.getServiceProduct());
-                if (product == null || !"MUL-ST-TR".equals(product.getCode())) {
+                val product = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Product", "qr_code", code::getServiceProduct);
+                if (product == null) {
                     validations.add(ErrorValidation.New("Invalid qr code Product", "qr_code", dto.getToken()));
+                }else {
+                    if(!ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())) {
+                        validations.add(ErrorValidation.New("Invalid qr code Product Service", "qr_code", dto.getToken()));
+                    }
                 }
-                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code",()->code.getBeneficiaryAccount());
+                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code", code::getBeneficiaryAccount);
                 if (beneficiaryAccount == null) {
                     validations.add(ErrorValidation.New("Invalid BeneficiaryAccount", "qr_code", dto.getToken()));
                 } else {
@@ -82,7 +87,7 @@ public class TrxDepositCommandService {
                     if (customerBen == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
                     }
-                    val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code",()->beneficiaryAccount.getBranch());
+                    val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code", beneficiaryAccount::getBranch);
                     if (brance == null) {
                         validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", dto.getToken()));
                     }
@@ -169,9 +174,8 @@ public class TrxDepositCommandService {
             if (trx == null) {
                 trx = transactionService.prepare(deposit);
                 deposit.setServiceTransaction(trx);
-            }else if (trx.getServiceProduct() == null) {
-                trx = transactionService.prepare(trx);
             }
+            trx = transactionService.prepare(trx);
             trx = transactionService.transaction(trx);
             deposit.setStatus(
                     switch (trx.getStatus()) {
