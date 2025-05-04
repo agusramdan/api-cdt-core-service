@@ -1,6 +1,10 @@
 package agus.ramdan.cdt.core.trx.mapper;
 
+import agus.ramdan.base.service.QueryDTOMapper;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.*;
+import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
+import agus.ramdan.cdt.core.master.mapping.BeneficiaryAccountMapper;
 import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
 import agus.ramdan.cdt.core.master.mapping.CustomerMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
@@ -18,11 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class QRCodeMapper {
+public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCode, String > {
     @Autowired
     private CustomerCrewMapper customerCrewMapper;
     @Autowired
     private CustomerMapper customerMapper;
+    @Autowired
+    private BeneficiaryAccountMapper beneficiaryAccountMapper;
     @Named("mapCustomerCrewDTO")
     public CustomerCrewDTO mapCustomerCrewDTO(CustomerCrew source){
         return customerCrewMapper.entityToDto(source);
@@ -30,6 +36,10 @@ public abstract class QRCodeMapper {
     @Named("mapCustomerDTO")
     public CustomerDTO mapCustomerDTO(Customer source){
         return customerMapper.entityToDto(source);
+    }
+    @Named("mapBeneficiaryAccountDTO")
+    public BeneficiaryAccountDTO mapBeneficiaryAccountDTO(BeneficiaryAccount source){
+        return beneficiaryAccountMapper.entityToDto(source);
     }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract ServiceProduct map(ServiceProductDTO source);
@@ -39,17 +49,6 @@ public abstract class QRCodeMapper {
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract BeneficiaryAccount mapBeneficiaryAccount(BeneficiaryAccountDTO source);
-
-    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    public abstract BeneficiaryAccountDTO map(BeneficiaryAccount source);
-    @BeforeMapping
-    public void handleException(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity) {
-        try {
-            dto.setId(entity.getId().toString());
-        } catch (Exception e) {
-            dto.setAccountNumber("Unknown");
-        }
-    }
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract ServiceTransaction map(ServiceTransactionDTO source);
@@ -86,13 +85,21 @@ public abstract class QRCodeMapper {
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
     public abstract QRCode createDtoToEntity(QRCodeCreateDTO dto);
 
+    public QRCodeQueryDTO entityToQueryDto(QRCode entity){
+        entity = EntityFallbackFactory.safe(entity);
+        if (entity == null) {
+            return null;
+        }
+        return updateEntityToDto(new QRCodeQueryDTO(), entity);
+    }
     @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
     @Mapping(source = "user", target = "user", qualifiedByName = "mapCustomerCrewDTO")
     //@Mapping(source = "serviceTransaction.id", target = "serviceTransaction.id", qualifiedByName = "uuidToString")
     //@Mapping(source = "serviceProduct.id", target = "serviceProduct.id", qualifiedByName = "uuidToString")
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
-    public abstract QRCodeQueryDTO entityToQueryDto(QRCode entity);
-
+    @Mapping(source = "beneficiaryAccount", target = "beneficiaryAccount", qualifiedByName = "mapBeneficiaryAccountDTO")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract QRCodeQueryDTO updateEntityToDto(@MappingTarget QRCodeQueryDTO dto,  QRCode entity);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
 

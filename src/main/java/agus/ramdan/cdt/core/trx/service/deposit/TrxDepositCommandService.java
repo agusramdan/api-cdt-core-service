@@ -19,7 +19,7 @@ import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeCommandService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
-import agus.ramdan.cdt.core.utils.EntityFallbackFactory;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;

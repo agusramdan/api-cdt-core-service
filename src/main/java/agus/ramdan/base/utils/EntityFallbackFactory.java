@@ -1,9 +1,8 @@
-package agus.ramdan.cdt.core.utils;
+package agus.ramdan.base.utils;
 
 import agus.ramdan.base.exception.ErrorValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 
@@ -19,10 +18,13 @@ public class EntityFallbackFactory {
     public static <T> T safe(T t){
         try {
             Hibernate.initialize(t);
-            return t;
         } catch (Exception e) {
-            return createEntityFromException(e);
+            t = createEntityFromException(e);
+            if (t== null) {
+                log.error("EntityFallbackFactory safe", e);
+            }
         }
+        return t;
     }
     public static <T> T ensureNotLazy(@NotNull Collection<ErrorValidation> validations, String message, String key, Callable<T> ex) {
         try {

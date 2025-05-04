@@ -7,7 +7,7 @@ import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQuery
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
-import agus.ramdan.cdt.core.utils.EntityFallbackFactory;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

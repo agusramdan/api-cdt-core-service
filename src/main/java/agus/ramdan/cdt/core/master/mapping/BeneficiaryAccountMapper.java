@@ -8,7 +8,7 @@ import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccount
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
-import agus.ramdan.cdt.core.utils.EntityFallbackFactory;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import lombok.val;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;

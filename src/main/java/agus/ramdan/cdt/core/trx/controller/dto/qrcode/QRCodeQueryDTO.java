@@ -48,7 +48,6 @@ public class QRCodeQueryDTO {
     @JsonProperty("beneficiary_account")
     private BeneficiaryAccountDTO beneficiaryAccount;
 
-
     @Schema(description = "Informasi produk layanan terkait")
     @JsonProperty("service_product")
     private ServiceProductDTO serviceProduct;
