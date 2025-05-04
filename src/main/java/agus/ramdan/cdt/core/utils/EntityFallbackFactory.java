@@ -58,6 +58,7 @@ public class EntityFallbackFactory {
 
                 Field idField = null;
                 Field nameField = null;
+                Field codeField = null;
 
                 for (Field field : clazz.getDeclaredFields()) {
                     if (field.getName().equalsIgnoreCase("id")) {
@@ -65,6 +66,9 @@ public class EntityFallbackFactory {
                     }
                     if (field.getName().equalsIgnoreCase("name")) {
                         nameField= field;
+                    }
+                    if (field.getName().equalsIgnoreCase("code")) {
+                        codeField= field;
                     }
                 }
                 if (idField != null) {
@@ -81,9 +85,16 @@ public class EntityFallbackFactory {
                 }
                 if (nameField != null) {
                     nameField.setAccessible(true);
-                    Class<?> idType = idField.getType();
+                    Class<?> idType = nameField.getType();
                     if (idType.equals(String.class)) {
                         nameField.set(instance, "DELETED");
+                    }
+                }
+                if (codeField != null) {
+                    codeField.setAccessible(true);
+                    Class<?> idType = codeField.getType();
+                    if (idType.equals(String.class)) {
+                        codeField.set(instance, "DELETED");
                     }
                 }
 
