@@ -86,7 +86,6 @@ public class EntityFallbackFactory {
                 if (idField != null) {
                     idField.setAccessible(true);
                     Class<?> idType = idField.getType();
-
                     if (idType.equals(UUID.class)) {
                         idField.set(instance, UUID.fromString(idValue));
                     } else if (idType.equals(String.class)) {
