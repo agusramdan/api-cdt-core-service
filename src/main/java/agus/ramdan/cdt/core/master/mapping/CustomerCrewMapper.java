@@ -38,7 +38,7 @@ public abstract class CustomerCrewMapper implements QueryDTOMapper<CustomerCrewQ
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
     public abstract CustomerCrewQueryDTO updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewQueryDTO target);
-    public CustomerCrewQueryDTO entityTQueryDto(CustomerCrew entity){
+    public CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity){
         entity = EntityFallbackFactory.safe(entity);
         if (entity == null) {
             return null;
@@ -51,14 +51,14 @@ public abstract class CustomerCrewMapper implements QueryDTOMapper<CustomerCrewQ
 //    @Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
     public abstract CustomerCrew createDtoToEntity(CustomerCrewCreateDTO dto);
 
-    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
+//    @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     //@Mapping(source = "customer.id", target = "customerId", qualifiedByName = "uuidToString")
         //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
-    @Mapping(source = "customer", target = "customer", ignore = true)
-    public abstract CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
+//    @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
+//    public abstract CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
 
-    //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
-    //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
+//    @Mapping(source = "customer", target = "customer", qualifiedByName = "stringToUUID")
+//    @Mapping(source = "user_id", target = "user_id", qualifiedByName = "stringToUUID")
     public abstract  void updateEntityFromUpdateDto(CustomerCrewUpdateDTO dto, @MappingTarget CustomerCrew entity);
 
     @Named("stringToUUID")

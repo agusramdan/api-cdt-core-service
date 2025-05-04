@@ -48,6 +48,7 @@ public class EntityFallbackFactory {
     public static <T> T createEntityFromException(Throwable e){
         while (e!=null){
             try {
+                log.warn(e.getMessage());
                 return createEntityFromException(e.getMessage());
             }catch (Exception ex){
                 e= e.getCause();
