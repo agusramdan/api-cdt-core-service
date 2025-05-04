@@ -3,6 +3,8 @@ package agus.ramdan.cdt.core.utils;
 import agus.ramdan.base.exception.ErrorValidation;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 
 import java.lang.reflect.Field;
@@ -12,15 +14,14 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Log4j2
 public class EntityFallbackFactory {
-
-
     public static <T> T safe(T t){
         try {
             Hibernate.initialize(t);
             return t;
         } catch (Exception e) {
-            return createEntityFromException(e.getMessage());
+            return createEntityFromException(e);
         }
     }
     public static <T> T ensureNotLazy(@NotNull Collection<ErrorValidation> validations, String message, String key, Callable<T> ex) {
@@ -41,6 +42,16 @@ public class EntityFallbackFactory {
             }
             return null;
         }
+    }
+    public static <T> T createEntityFromException(Throwable e){
+        while (e!=null){
+            try {
+                return createEntityFromException(e.getMessage());
+            }catch (Exception ex){
+                e= e.getCause();
+            }
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")

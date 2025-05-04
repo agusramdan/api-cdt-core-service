@@ -32,18 +32,17 @@ public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<Benefic
         return customerMapper.entityToDto(source);
     }
     public BeneficiaryAccountDTO entityToDto(BeneficiaryAccount beneficiaryAccount){
+        beneficiaryAccount = EntityFallbackFactory.safe(beneficiaryAccount);
         if (beneficiaryAccount == null) {
             return null;
         }
-        beneficiaryAccount = EntityFallbackFactory.safe(beneficiaryAccount);
-        BeneficiaryAccountDTO dto = new BeneficiaryAccountDTO();
-        updateEntityToDto(dto, beneficiaryAccount);
-        return dto;
+        return updateEntityToDto( new BeneficiaryAccountDTO(), beneficiaryAccount);
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updateEntityToDto(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity);
+    public abstract BeneficiaryAccountDTO updateEntityToDto(@MappingTarget BeneficiaryAccountDTO dto, BeneficiaryAccount entity);
     public BeneficiaryAccountQueryDTO entityToQueryDto(BeneficiaryAccount entity){
-        return  entity != null ? updateEntityToDto( new BeneficiaryAccountQueryDTO(), EntityFallbackFactory.safe(entity)):null;
+        entity=EntityFallbackFactory.safe(entity);
+        return  entity != null ? updateEntityToDto( new BeneficiaryAccountQueryDTO(), entity):null;
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract BeneficiaryAccountQueryDTO updateEntityToDto(@MappingTarget BeneficiaryAccountQueryDTO dto, BeneficiaryAccount entity);

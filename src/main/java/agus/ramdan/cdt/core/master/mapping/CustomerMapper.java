@@ -20,29 +20,19 @@ public abstract class CustomerMapper {
         return CustomerType.valueOf(source);
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updateEntityToDto(@MappingTarget CustomerDTO dto, Customer entity);
+    public abstract CustomerDTO updateEntityToDto(@MappingTarget CustomerDTO dto, Customer entity);
 
     public  CustomerDTO entityToDto(Customer entity){
-        if (entity == null) {
-            return null;
-        }
         entity = EntityFallbackFactory.safe(entity);
-        CustomerDTO customerDTO = new CustomerDTO();
-        updateEntityToDto(customerDTO, entity);
-        return customerDTO;
+        return  entity == null ? null: updateEntityToDto(new CustomerDTO(), entity);
     }
     // Convert Entity to Query DTO
 //    @Mapping(source = "customerType", target = "customerType", qualifiedByName = "mapCustomerType")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updateEntityToDto(@MappingTarget CustomerQueryDTO customerUpdateDTO, Customer entity);
+    public abstract CustomerQueryDTO updateEntityToDto(@MappingTarget CustomerQueryDTO customerUpdateDTO, Customer entity);
     public CustomerQueryDTO entityToQueryDto(Customer entity){
-        if (entity == null) {
-            return null;
-        }
         entity = EntityFallbackFactory.safe(entity);
-        CustomerQueryDTO customerDTO = new CustomerQueryDTO();
-        updateEntityToDto(customerDTO, entity);
-        return customerDTO;
+        return (entity == null) ? null: updateEntityToDto(new CustomerQueryDTO(), entity);
     }
 
     // Convert Create DTO to Entity
