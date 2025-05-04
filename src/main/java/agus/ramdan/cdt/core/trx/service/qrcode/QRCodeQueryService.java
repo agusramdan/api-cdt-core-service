@@ -82,7 +82,7 @@ public class QRCodeQueryService implements
                 }else {
                     validations.add(ErrorValidation.New("QRCode product QR Rule Invalid", key + "service_product.qr_rule_config", qr.getCode()));
                 }
-                if (product.getServiceRuleConfig() == null) {
+                if (product.getServiceRuleConfig() != null) {
                     switch (product.getServiceRuleConfig()) {
                         case DEPOSIT -> {
                             UUID customerId = null;
