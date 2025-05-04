@@ -96,13 +96,13 @@ public class QRCode extends BaseEntity {
     @PrePersist
     protected void onCreate() {
         if (type == null) {
-            type = QRCodeType.SINGEL_TRX_USE;
+            type = QRCodeType.SINGLE_TRX_USE;
         }
         if (status == null) {
             status = QRCodeStatus.PENDING;
         }
         if (expiredTime == null) {
-            if (type == QRCodeType.SINGEL_TRX_USE)
+            if (type == QRCodeType.SINGLE_TRX_USE)
                 expiredTime = LocalDateTime.now().plusDays(1);
             else
                 expiredTime = LocalDateTime.now().plusYears(1);
@@ -116,7 +116,7 @@ public class QRCode extends BaseEntity {
     @PreUpdate
     protected void onUpdate() {
         if (expiredTime == null) {
-            if (type == QRCodeType.SINGEL_TRX_USE)
+            if (type == QRCodeType.SINGLE_TRX_USE)
                 expiredTime = LocalDateTime.now().plusDays(1);
             else
                 expiredTime = LocalDateTime.now().plusYears(1);

@@ -55,6 +55,11 @@ public class TrxDepositCommandService {
                 throw new BadRequestException("Duplicate Deposit");
             }
         }, () -> {
+            if (code == null) {
+                validations.add(ErrorValidation.New("QR Code not found!", "qr_code", dto.getToken()));
+            } else {
+                codeQueryService.chekValidateQRCode(code, validations, "qr_code");
+            }
             if (validations.isEmpty() && !code.isActive()) {
                 validations.add(ErrorValidation.New("QR Code not active!", "qr_code", dto.getToken()));
             }
