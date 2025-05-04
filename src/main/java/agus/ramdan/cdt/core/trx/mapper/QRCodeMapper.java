@@ -3,7 +3,6 @@ package agus.ramdan.cdt.core.trx.mapper;
 import agus.ramdan.base.service.QueryDTOMapper;
 import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.*;
-import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.BeneficiaryAccountMapper;
 import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
 import agus.ramdan.cdt.core.master.mapping.CustomerMapper;
@@ -18,8 +17,6 @@ import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCode > {

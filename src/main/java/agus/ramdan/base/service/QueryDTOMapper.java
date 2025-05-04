@@ -1,6 +1,5 @@
 package agus.ramdan.base.service;
 
-import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.util.UUID;

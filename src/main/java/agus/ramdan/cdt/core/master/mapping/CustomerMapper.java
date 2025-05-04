@@ -1,12 +1,12 @@
 package agus.ramdan.cdt.core.master.mapping;
 
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerType;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customer.CustomerUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
-import agus.ramdan.base.utils.EntityFallbackFactory;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

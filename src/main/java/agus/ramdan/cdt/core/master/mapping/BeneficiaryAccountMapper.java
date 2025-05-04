@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.master.mapping;
 
 import agus.ramdan.base.service.QueryDTOMapper;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountCreateDTO;
@@ -8,12 +9,8 @@ import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccount
 import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
-import agus.ramdan.base.utils.EntityFallbackFactory;
-import lombok.val;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<BeneficiaryAccountQueryDTO,BeneficiaryAccount > {

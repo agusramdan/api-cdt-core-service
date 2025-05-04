@@ -9,7 +9,6 @@ import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
 import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import agus.ramdan.cdt.core.master.service.customercrew.CustomerCrewQueryService;
 import agus.ramdan.cdt.core.master.service.product.ServiceProductQueryService;
-import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeCreateDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeQueryDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.qrcode.QRCodeUpdateDTO;
@@ -30,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType.*;
+import static agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType.MULTIPLE_TRX_USE;
+import static agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType.SINGLE_TRX_USE;
 
 @Service
 @RequiredArgsConstructor

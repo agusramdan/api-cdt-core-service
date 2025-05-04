@@ -80,7 +80,7 @@ public class QRCodeQueryService implements
                         }
                     }
                 }else {
-                    validations.add(ErrorValidation.New("QRCode product QR Rule Invalid", key + "service_product.qr_rule_config", qr.getCode()));
+                    validations.add(ErrorValidation.New("QRCode product QR Rule Null", key + "service_product.qr_rule_config", qr.getCode()));
                 }
                 if (product.getServiceRuleConfig() != null) {
                     switch (product.getServiceRuleConfig()) {
@@ -114,6 +114,18 @@ public class QRCodeQueryService implements
                             } else {
                                 validations.add(ErrorValidation.New("Customer Crew not found", key + "user", qr.getCode()));
                             }
+                            val branch = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code", beneficiaryAccount::getBranch);
+                            if (branch == null) {
+                                validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", beneficiaryAccount.getId()));
+                            }
+                            val bank = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Bank", "qr_code", beneficiaryAccount::getBank);
+                            if (bank == null) {
+                                validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Bank", "qr_code", beneficiaryAccount.getId()));
+                            }
+                            val country= EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Country", "qr_code", beneficiaryAccount::getCountryCode);
+                            if (country == null) {
+                                validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode", "qr_code", beneficiaryAccount.getId()));
+                            }
                         }
                         case COLLECTION -> {
                             Vendor vendor = EntityFallbackFactory.ensureNotLazy(validations, "QR Code User not found", key + "vendor", qr::getVendor);
@@ -131,7 +143,7 @@ public class QRCodeQueryService implements
                         }
                     }
                 }else {
-                    validations.add(ErrorValidation.New("QRCode product Service Rule Invalid", key + "service_product.service_rule_config", qr.getCode()));
+                    validations.add(ErrorValidation.New("QRCode product Service Rule Null", key + "service_product.service_rule_config", qr.getCode()));
                 }
             }
         return qr;

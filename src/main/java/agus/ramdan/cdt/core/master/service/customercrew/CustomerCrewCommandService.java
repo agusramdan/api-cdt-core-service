@@ -3,10 +3,12 @@ package agus.ramdan.cdt.core.master.service.customercrew;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
+import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerCrewRepository;
 import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
@@ -57,6 +59,10 @@ public class CustomerCrewCommandService extends MasterDataEventProducer<Customer
 //        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
 //                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
         customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+        Customer customer=EntityFallbackFactory.ensureNotLazy(validations,"Deleted Customer","customer", entity::getCustomer);
+        if(customer == null){
+            ErrorValidation.add(validations, "Customer can't not null", "customer", null);
+        }
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
@@ -68,6 +74,10 @@ public class CustomerCrewCommandService extends MasterDataEventProducer<Customer
         mapper.updateEntityFromUpdateDto(dto, customerCrew);
         val validations = new ArrayList<ErrorValidation>();
         customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(customerCrew::setCustomer);
+        Customer customer=EntityFallbackFactory.ensureNotLazy(validations,"Deleted Customer","customer", customerCrew::getCustomer);
+        if(customer == null){
+            ErrorValidation.add(validations, "Customer can't not null", "customer", null);
+        }
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return customerCrew;
     }

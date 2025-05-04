@@ -5,7 +5,9 @@ import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.PropagationXxxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
+import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
 import agus.ramdan.cdt.core.trx.controller.dto.QRCodeDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositCreateDTO;
@@ -19,7 +21,6 @@ import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeCommandService;
 import agus.ramdan.cdt.core.trx.service.qrcode.QRCodeQueryService;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
-import agus.ramdan.base.utils.EntityFallbackFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -68,7 +69,7 @@ public class TrxDepositCommandService {
 //                if (customer == null) {
 //                    validations.add(ErrorValidation.New("Invalid QR Code.Customer ", "qr_code", dto.getToken()));
 //                }
-                val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code",()->code.getUser());
+                val user = EntityFallbackFactory.ensureNotLazy(validations, "Invalid User", "qr_code", code::getUser);
                 if (user == null) {
                     validations.add(ErrorValidation.New("Invalid QRCode.User", "qr_code", dto.getToken()));
                 }else {
@@ -78,6 +79,11 @@ public class TrxDepositCommandService {
                 }
                 if (machine == null) {
                     validations.add(ErrorValidation.New("Machine/Terminal not register!", "machine", dto.getMachine().getCode()));
+                }else {
+                    Machine machineCode = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Machine", "qr_code", code::getMachine);
+                    if (machineCode != null && !machine.getCode().equals(machineCode.getCode())){
+                        validations.add(ErrorValidation.New("Invalid QRCode.Machine cannot use in this machine", "qr_code", machine.getCode()));
+                    }
                 }
                 val product = EntityFallbackFactory.ensureNotLazy(validations, "Invalid Product", "qr_code", code::getServiceProduct);
                 if (product == null) {
@@ -87,28 +93,30 @@ public class TrxDepositCommandService {
                         validations.add(ErrorValidation.New("Invalid qr code Product Service", "qr_code", dto.getToken()));
                     }
                 }
-                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code", code::getBeneficiaryAccount);
-                if (beneficiaryAccount == null) {
-                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount", "qr_code", dto.getToken()));
-                } else {
-                    val customerBen = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",()->beneficiaryAccount.getCustomer());
-                    if (customerBen == null) {
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
-                    }
-                    val brance = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code", beneficiaryAccount::getBranch);
-                    if (brance == null) {
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", dto.getToken()));
-                    }
-                    if (beneficiaryAccount.getBank() == null) {
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Bank", "qr_code", dto.getToken()));
-                    }
-                    if (beneficiaryAccount.getCountryCode() == null) {
-                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode", "qr_code", dto.getToken()));
-                    }
+//                val beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount", "qr_code", code::getBeneficiaryAccount);
+//                if (beneficiaryAccount == null) {
+//                    validations.add(ErrorValidation.New("Invalid BeneficiaryAccount", "qr_code", dto.getToken()));
+//                } else {
+//                    val customerBen = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Customer", "qr_code",()->beneficiaryAccount.getCustomer());
+//                    if (customerBen == null) {
+//                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer ", "qr_code", dto.getToken()));
+//                    }
+//                    val branch = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Branch", "qr_code", beneficiaryAccount::getBranch);
+//                    if (branch == null) {
+//                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Branch ", "qr_code", dto.getToken()));
+//                    }
+//                    val bank = EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Bank", "qr_code", beneficiaryAccount::getBank);
+//                    if (bank == null) {
+//                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Bank", "qr_code", dto.getToken()));
+//                    }
+//                    val country= EntityFallbackFactory.ensureNotLazy(validations, "Invalid BeneficiaryAccount.Country", "qr_code", beneficiaryAccount::getCountryCode);
+//                    if (country == null) {
+//                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.CountryCode", "qr_code", dto.getToken()));
+//                    }
 //                    if (validations.isEmpty() && !customerBen.getId().equals(customer.getId())) {
 //                        validations.add(ErrorValidation.New("Invalid BeneficiaryAccount.Customer and User.Customer", "qr_code", dto.getToken()));
 //                    }
-                }
+//                }
             }
 
             BadRequestException.ThrowWhenError("Invalid Parameter Transaction", validations,dto);

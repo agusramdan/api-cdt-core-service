@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.mapping;
 
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerCrewDTO;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
@@ -7,7 +8,6 @@ import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQuery
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
-import agus.ramdan.base.utils.EntityFallbackFactory;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,27 +17,28 @@ import java.util.UUID;
 public abstract class CustomerCrewMapper {
     @Autowired
     private CustomerMapper customerMapper;
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewDTO target);
-    public CustomerCrewDTO entityToDto(CustomerCrew entity){
-        if (entity == null) {
-            return null;
-        }
-        entity = EntityFallbackFactory.safe(entity);
-        CustomerCrewDTO dto = new CustomerCrewDTO();
-        updateEntityToDto(entity, dto);
-        return dto;
+
+    public CustomerDTO mapCustomerDTO(Customer source){
+        return customerMapper.entityToDto(source);
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewQueryDTO target);
-    public CustomerCrewQueryDTO entityTQueryDto(CustomerCrew entity){
+    public abstract CustomerCrewDTO updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewDTO target);
+    public CustomerCrewDTO entityToDto(CustomerCrew entity){
+        entity = EntityFallbackFactory.safe(entity);
         if (entity == null) {
             return null;
         }
+        return updateEntityToDto(entity, new CustomerCrewDTO());
+
+    }
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract CustomerCrewQueryDTO updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewQueryDTO target);
+    public CustomerCrewQueryDTO entityTQueryDto(CustomerCrew entity){
         entity = EntityFallbackFactory.safe(entity);
-        CustomerCrewQueryDTO dto = new CustomerCrewQueryDTO();
-        updateEntityToDto(entity, dto);
-        return dto;
+        if (entity == null) {
+            return null;
+        }
+        return updateEntityToDto(entity, new CustomerCrewQueryDTO());
     }
 
     //    @Mapping(source = "id", target = "id", ignore = true)
