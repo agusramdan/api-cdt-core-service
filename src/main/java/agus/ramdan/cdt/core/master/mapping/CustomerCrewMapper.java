@@ -1,11 +1,14 @@
 package agus.ramdan.cdt.core.master.mapping;
 
+import agus.ramdan.base.service.QueryDTOMapper;
 import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerCrewDTO;
 import agus.ramdan.cdt.core.master.controller.dto.CustomerDTO;
+import agus.ramdan.cdt.core.master.controller.dto.beneficiary.BeneficiaryAccountQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
+import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import org.mapstruct.*;
@@ -14,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class CustomerCrewMapper {
+public abstract class CustomerCrewMapper implements QueryDTOMapper<CustomerCrewQueryDTO, CustomerCrew> {
     @Autowired
     private CustomerMapper customerMapper;
     @Named("mapCustomerDTO")
@@ -53,15 +56,6 @@ public abstract class CustomerCrewMapper {
         //@Mapping(source = "user_id", target = "userId", qualifiedByName = "uuidToString")
     @Mapping(source = "customer", target = "customer", ignore = true)
     public abstract CustomerCrewQueryDTO entityToQueryDto(CustomerCrew entity);
-
-    public CustomerDTO entityToCustomerDTO(Customer entity){
-        return customerMapper.entityToDto(entity);
-    }
-//    @BeanMapping
-//    public void handleException(@MappingTarget CustomerCrewQueryDTO customerCrewQueryDTO, CustomerCrew entity) {
-//        customerCrewQueryDTO.setCustomer(customerMapper.entityToDto(entity.getCustomer()));
-//
-//    }
 
     //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
     //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
