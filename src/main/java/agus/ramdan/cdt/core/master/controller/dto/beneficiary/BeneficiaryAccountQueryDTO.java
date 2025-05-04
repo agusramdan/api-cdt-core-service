@@ -41,4 +41,5 @@ public class BeneficiaryAccountQueryDTO {
     private BranchDTO branch;
     @JsonProperty("qr_code")
     private QRCodeDTO qrCode;
+    private CustomerDTO customer;
 }

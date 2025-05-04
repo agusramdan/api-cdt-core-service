@@ -25,11 +25,11 @@ public abstract class QRCodeMapper {
     private CustomerMapper customerMapper;
     @Named("mapCustomerCrewDTO")
     public CustomerCrewDTO mapCustomerCrewDTO(CustomerCrew source){
-        return customerCrewMapper.entityToCustomerCrewDTO(source);
+        return customerCrewMapper.entityToDto(source);
     }
     @Named("mapCustomerDTO")
     public CustomerDTO mapCustomerDTO(Customer source){
-        return customerMapper.entityToCustomerDTO(source);
+        return customerMapper.entityToDto(source);
     }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract ServiceProduct map(ServiceProductDTO source);
