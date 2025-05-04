@@ -17,11 +17,12 @@ import java.util.UUID;
 public abstract class CustomerCrewMapper {
     @Autowired
     private CustomerMapper customerMapper;
-
+    @Named("mapCustomerDTO")
     public CustomerDTO mapCustomerDTO(Customer source){
         return customerMapper.entityToDto(source);
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
     public abstract CustomerCrewDTO updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewDTO target);
     public CustomerCrewDTO entityToDto(CustomerCrew entity){
         entity = EntityFallbackFactory.safe(entity);
@@ -32,6 +33,7 @@ public abstract class CustomerCrewMapper {
 
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
     public abstract CustomerCrewQueryDTO updateEntityToDto(CustomerCrew entity,@MappingTarget CustomerCrewQueryDTO target);
     public CustomerCrewQueryDTO entityTQueryDto(CustomerCrew entity){
         entity = EntityFallbackFactory.safe(entity);
