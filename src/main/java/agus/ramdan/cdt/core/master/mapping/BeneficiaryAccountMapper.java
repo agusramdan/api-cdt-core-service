@@ -37,21 +37,14 @@ public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<Benefic
         return  entity != null ? updateEntityToDto( new BeneficiaryAccountQueryDTO(), entity):null;
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(source = "customer.id", target = "customerId")
     public abstract BeneficiaryAccountQueryDTO updateEntityToDto(@MappingTarget BeneficiaryAccountQueryDTO dto, BeneficiaryAccount entity);
-    //@Mapping(source = "customer.id", target = "customerId")
-    //public abstract BeneficiaryAccountQueryDTO entityToQueryDto(BeneficiaryAccount beneficiaryAccount);
-    @AfterMapping
-    public void handleException(@MappingTarget BeneficiaryAccountQueryDTO dto, BeneficiaryAccount entity) {
-        val customer = dto.getCustomer();
-        if (customer != null && customer.getId() != null) {
-            dto.setCustomerId(customer.getId());
-        }
-    }
-    public abstract BeneficiaryAccount createDtoToEntity(BeneficiaryAccountCreateDTO createDTO);
 
+    @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
+    public abstract BeneficiaryAccount createDtoToEntity(BeneficiaryAccountDTO createDTO);
+    public abstract BeneficiaryAccount createDtoToEntity(BeneficiaryAccountCreateDTO createDTO);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract  void updateEntityFromDto(BeneficiaryAccountUpdateDTO updateDTO, @MappingTarget BeneficiaryAccount entity);
-
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract  void updateEntityFromDto(BeneficiaryAccount target, @MappingTarget BeneficiaryAccount entity);
 }

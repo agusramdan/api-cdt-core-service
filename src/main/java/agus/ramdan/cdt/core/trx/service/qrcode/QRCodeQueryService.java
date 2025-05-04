@@ -84,6 +84,8 @@ public class QRCodeQueryService implements
                             Customer customer = EntityFallbackFactory.ensureNotLazy(validations,"Customer not found",key + "customer",qr::getCustomer);
                             if (customer != null) {
                                 customerId = customer.getId();
+                            }else {
+                                validations.add(ErrorValidation.New("Customer not found", key + "customer", qr.getCode()));
                             }
                             BeneficiaryAccount beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations,"Beneficiary Account not found",key + "beneficiary_account",qr::getBeneficiaryAccount);
                             if (beneficiaryAccount != null) {
@@ -91,14 +93,21 @@ public class QRCodeQueryService implements
                                 if(customerId != null && cus!=null && !customerId.equals(cus.getId())){
                                     validations.add(ErrorValidation.New("Customer not match with beneficiary", key + "customer.id", qr.getCode()));
                                 }
+                                Bank bank = EntityFallbackFactory.ensureNotLazy(validations,"BeneficiaryAccount Bank not found",key + "beneficiary_account.bank",beneficiaryAccount::getBank);
+                                if (bank == null) {
+                                    validations.add(ErrorValidation.New("BeneficiaryAccount Bank not found", key + "beneficiary_account.bank", qr.getCode()));
+                                }
+                            }else {
+                                validations.add(ErrorValidation.New("Beneficiary Account not found", key + "beneficiary_account", qr.getCode()));
                             }
-
                             CustomerCrew customerCrew = EntityFallbackFactory.ensureNotLazy(validations,"QR Code User not found",key + "user",qr::getUser) ;
                             if (customerCrew != null) {
                                 Customer crew = EntityFallbackFactory.ensureNotLazy(validations,"Customer Crew not found",key + "user.customer",customerCrew::getCustomer);
                                 if(customerId != null && crew != null &&!customerId.equals(crew.getId())){
                                     validations.add(ErrorValidation.New("Customer not match with customer crew", key + "user.customer.id", qr.getCode()));
                                 }
+                            }else {
+                                validations.add(ErrorValidation.New("Customer Crew not found", key + "user", qr.getCode()));
                             }
                         }
                         case COLLECTION -> {

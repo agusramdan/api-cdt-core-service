@@ -48,8 +48,10 @@ public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCo
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
     public abstract ServiceProductDTO map(ServiceProduct source);
 
-    @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
-    public abstract BeneficiaryAccount mapBeneficiaryAccount(BeneficiaryAccountDTO source);
+
+    public  BeneficiaryAccount mapBeneficiaryAccount(BeneficiaryAccountDTO source){
+        return beneficiaryAccountMapper.createDtoToEntity(source);
+    }
 
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract ServiceTransaction map(ServiceTransactionDTO source);
