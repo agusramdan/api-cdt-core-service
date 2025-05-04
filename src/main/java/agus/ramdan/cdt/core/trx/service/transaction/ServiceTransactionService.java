@@ -108,6 +108,7 @@ public class ServiceTransactionService {
         checkStatusTransaction(trx);
         return trx;
     }
+
     protected ServiceProduct checkServiceProduct(ServiceTransaction trx) {
         var product = trx.getServiceProduct();
         if (product == null) {
@@ -223,7 +224,6 @@ public class ServiceTransactionService {
                 if(!TrxStatus.SUCCESS.equals(trx.getStatus())){
                     trx.setStatus(TrxStatus.SUCCESS);
                 }
-                trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
             }else {
                 if(TrxStatus.SUCCESS.equals(trx.getStatus())){
                     trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
