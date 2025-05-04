@@ -1,5 +1,6 @@
 package agus.ramdan.cdt.core.master.mapping;
 
+import agus.ramdan.cdt.core.master.controller.dto.CustomerCrewDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
@@ -30,6 +31,16 @@ public abstract class CustomerCrewMapper {
         customerCrewQueryDTO.setCustomer(customerMapper.entityToCustomerDTO(EntityFallbackFactory.safe(entity.getCustomer())));
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract void updateEntityToQueryDto(CustomerCrew entity,@MappingTarget CustomerCrewDTO target);
+    public CustomerCrewDTO entityToCustomerCrewDTO(CustomerCrew entity){
+        if (entity == null) {
+            return null;
+        }
+        entity = EntityFallbackFactory.safe(entity);
+        CustomerCrewDTO dto = new CustomerCrewDTO();
+        updateEntityToQueryDto(entity, dto);
+        return dto;
+    }
     //@Mapping(source = "customerId", target = "customer.id", qualifiedByName = "stringToUUID")
     //@Mapping(source = "userId", target = "user_id", qualifiedByName = "stringToUUID")
     public abstract  void updateEntityFromUpdateDto(CustomerCrewUpdateDTO dto, @MappingTarget CustomerCrew entity);

@@ -1,9 +1,8 @@
 package agus.ramdan.cdt.core.trx.mapper;
 
-import agus.ramdan.cdt.core.master.controller.dto.BankDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BeneficiaryAccountDTO;
-import agus.ramdan.cdt.core.master.controller.dto.BranchDTO;
-import agus.ramdan.cdt.core.master.controller.dto.ServiceProductDTO;
+import agus.ramdan.cdt.core.master.controller.dto.*;
+import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
+import agus.ramdan.cdt.core.master.mapping.CustomerMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.controller.dto.ServiceTransactionDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.TrxUserDTO;
@@ -14,12 +13,24 @@ import agus.ramdan.cdt.core.trx.persistence.domain.QRCode;
 import agus.ramdan.cdt.core.trx.persistence.domain.QRCodeType;
 import agus.ramdan.cdt.core.trx.persistence.domain.ServiceTransaction;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class QRCodeMapper {
-
+    @Autowired
+    private CustomerCrewMapper customerCrewMapper;
+    @Autowired
+    private CustomerMapper customerMapper;
+    @Named("mapCustomerCrewDTO")
+    public CustomerCrewDTO mapCustomerCrewDTO(CustomerCrew source){
+        return customerCrewMapper.entityToCustomerCrewDTO(source);
+    }
+    @Named("mapCustomerDTO")
+    public CustomerDTO mapCustomerDTO(Customer source){
+        return customerMapper.entityToCustomerDTO(source);
+    }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract ServiceProduct map(ServiceProductDTO source);
 
@@ -75,8 +86,8 @@ public abstract class QRCodeMapper {
 //    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "stringToUUID")
     public abstract QRCode createDtoToEntity(QRCodeCreateDTO dto);
 
-    //    @Mapping(source = "user.customer_id", target = "user.customer_id", qualifiedByName = "uuidToString")
-//    @Mapping(source = "user.customer_crew_id", target = "user.customer_crew_id", qualifiedByName = "uuidToString")
+    @Mapping(source = "customer", target = "customer", qualifiedByName = "mapCustomerDTO")
+    @Mapping(source = "user", target = "user", qualifiedByName = "mapCustomerCrewDTO")
     //@Mapping(source = "serviceTransaction.id", target = "serviceTransaction.id", qualifiedByName = "uuidToString")
     //@Mapping(source = "serviceProduct.id", target = "serviceProduct.id", qualifiedByName = "uuidToString")
     @Mapping(source = "id", target = "id", qualifiedByName = "uuidToString")
