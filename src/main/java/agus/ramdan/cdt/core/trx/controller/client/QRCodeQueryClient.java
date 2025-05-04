@@ -12,4 +12,7 @@ public interface QRCodeQueryClient extends BaseQueryClient<QRCodeQueryDTO, Strin
 
     @GetMapping("/code/{code}")
     QRCodeQueryDTO getByCodeDTO(@PathVariable String code);
+
+    @GetMapping("/validate_by_code/{code}")
+    QRCodeQueryDTO validateByCode(@PathVariable String code);
 }
