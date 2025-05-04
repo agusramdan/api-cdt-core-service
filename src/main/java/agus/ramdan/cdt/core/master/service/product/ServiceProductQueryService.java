@@ -39,11 +39,11 @@ public class ServiceProductQueryService implements
         return mapper.entityToQueryDto(entity);
     }
 
-//    public ServiceProductQueryDTO getByCode(String code) {
-//        return repository.findByCode(code)
-//                .map(mapper::entityToQueryDto)
-//                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
-//    }
+    public ServiceProductQueryDTO getByCode(String code) {
+        return findByCode(code)
+                .map(mapper::entityToQueryDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
+    }
 //
 //    public ServiceProduct getForRelation(final ServiceProductDTO dto, @NotNull final List<ErrorValidation> validations, String key) {
 //        final String keyField = key == null ? "product" : key;

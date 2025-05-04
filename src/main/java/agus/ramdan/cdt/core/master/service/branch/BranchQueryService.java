@@ -38,16 +38,16 @@ public class BranchQueryService implements BaseQueryEntityService<Branch, UUID, 
         log.debug("Converting Branch entity to DTO: {}", entity.getId());
         return mapper.entityToQueryDto(entity);
     }
-
+//
 //    public Optional<Branch> findByCode(String code) {
 //        return repository.findByCode(code);
 //    }
-//
-//    public BranchQueryDTO getByCode(String code) {
-//        return findByCode(code)
-//                .map(mapper::entityToQueryDto)
-//                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
-//    }
+
+    public BranchQueryDTO getByCode(String code) {
+        return findByCode(code)
+                .map(mapper::entityToQueryDto)
+                .orElseThrow(() -> new ResourceNotFoundException("Branch Code not found"));
+    }
 
 //    public Branch getForRelation(final BranchDTO branchDTO, @NotNull final List<ErrorValidation> validations, String key) {
 //        final String keyField = key==null?"branch":key;
