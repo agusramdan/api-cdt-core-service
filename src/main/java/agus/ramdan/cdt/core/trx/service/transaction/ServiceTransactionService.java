@@ -180,20 +180,12 @@ public class ServiceTransactionService {
             trx.setTransfer(transfer);
             if (TransferRuleConfig.MANDATORY_SUCCESS.equals(product.getTransferRuleConfig()) && !TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 trx.setStatus(TrxStatus.TRANSFER_FAILED);
-                log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),depositPjpur.getStatus());
+                log.info("Transaction; id={}; amount={}; trx={}; mandatory success. Status", trx.getId(), trx.getAmount(), trx.getNo(),transfer.getStatus());
                 return trx;
             }
         }
-        if (transfer != null && depositPjpur != null) {
-            if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus()) && TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
-                trx.setStatus(TrxStatus.SUCCESS);
-            }
-        }else if (transfer != null) {
-            if (TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
-                trx.setStatus(TrxStatus.SUCCESS);
-            }
-        }
-        return trx;
+
+        return checkStatusTransaction(trx);
     }
 
     protected ServiceTransaction checkStatusTransaction(ServiceTransaction trx) {
