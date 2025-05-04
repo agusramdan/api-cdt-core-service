@@ -24,7 +24,8 @@ public class QRCodeCreateDTO {
     private String type;
 
     @Schema(description = "Informasi pengguna transaksi deprecated gunakan customer_crew")
-    private CustomerCrewDTO user;
+    @JsonProperty("customer_crew")
+    private CustomerCrewDTO customerCrew;
     private CustomerDTO customer;
 
     @Schema(description = "Informasi pengguna transaksi customer")
@@ -45,5 +46,7 @@ public class QRCodeCreateDTO {
     @JsonProperty("service_product")
     @Schema(description = "Informasi produk layanan terkait")
     private ServiceProductDTO serviceProduct;
+
+    private CustomerCrewDTO user;
 }
 

@@ -90,7 +90,7 @@ public class QRCodeCommandService extends TrxDataEventProducer<QRCode, UUID, QRC
         branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
-        customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        customerCrewQueryService.relation(dto.getUser(), validations, "customerCrew").ifPresent(entity::setUser);
         customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(entity::setCustomer);
         if (QRCodeStatus.ACTIVE.equals(entity.getStatus())) {
             validateActiveStatus(entity, validations);
@@ -112,6 +112,8 @@ public class QRCodeCommandService extends TrxDataEventProducer<QRCode, UUID, QRC
         serviceProductQueryService.relation(dto.getServiceProduct(), validations, "service_product").ifPresent(entity::setServiceProduct);
         beneficiaryAccountQueryService.relation(dto.getBeneficiaryAccount(), validations, "beneficiary_account").ifPresent(entity::setBeneficiaryAccount);
         customerCrewQueryService.relation(dto.getUser(), validations, "user").ifPresent(entity::setUser);
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(entity::setCustomer);
+
         BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }

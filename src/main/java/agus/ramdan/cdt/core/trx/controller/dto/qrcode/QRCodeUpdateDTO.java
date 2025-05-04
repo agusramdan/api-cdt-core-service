@@ -21,7 +21,9 @@ public class QRCodeUpdateDTO {
     private BeneficiaryAccountDTO beneficiaryAccount;
 
     @Schema(description = "Informasi pengguna transaksi")
-    private CustomerCrewDTO user;
+
+    @JsonProperty("customer_crew")
+    private CustomerCrewDTO customerCrew;
     private CustomerDTO customer;
 
     @Schema(description = "Informasi cabang manage QR Code")
@@ -38,4 +40,7 @@ public class QRCodeUpdateDTO {
     @JsonProperty("service_product")
     @Schema(description = "Informasi produk layanan terkait")
     private ServiceProductDTO serviceProduct;
+
+
+    private CustomerCrewDTO user;
 }
