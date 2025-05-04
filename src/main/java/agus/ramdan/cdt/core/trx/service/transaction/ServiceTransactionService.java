@@ -8,6 +8,7 @@ import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.TransferRuleConfig;
+import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
 import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
@@ -64,10 +65,11 @@ public class ServiceTransactionService {
 //        };
 //    }
     @Transactional
-    public ServiceTransaction prepare(BigDecimal amount) {
+    public ServiceTransaction prepare(BigDecimal amount, ServiceProduct product) {
         val trx = new ServiceTransaction();
         trx.setAmount(amount);
         trx.setStatus(TrxStatus.PREPARE);
+        trx.setServiceProduct(product);
         while (true) {
             trx.setNo(generateRandomString(Long.toString(Instant.now().toEpochMilli())));
             try {
@@ -80,31 +82,17 @@ public class ServiceTransactionService {
     }
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction prepare(TrxDeposit deposit) {
-        ServiceTransaction trx = prepare(deposit.getAmount());
+        ServiceTransaction trx = prepare(deposit.getAmount(), deposit.getServiceProduct());
         trx.setStatus(TrxStatus.CDM_DEPOSIT);
         trx.setDeposit(deposit);
         trx.setBeneficiaryAccount(deposit.getBeneficiaryAccount());
-        trx.setServiceProduct(deposit.getServiceProduct());
         trx= repository.saveAndFlush(trx);
         producerService.publishDataEvent(EventType.CREATE,trx);
         return trx;
     }
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction prepare(ServiceTransaction trx) {
-        var product = trx.getServiceProduct();
-        if (product==null) {
-            if (trx.getDeposit() != null && trx.getDeposit().getServiceProduct() != null) {
-                product = trx.getDeposit().getServiceProduct();
-                log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
-                trx.setServiceProduct(product);
-            } else {
-                trx.setStatus(TrxStatus.REJECT);
-                trx = repository.saveAndFlush(trx);
-                producerService.publishDataEvent(EventType.UPDATE, trx);
-                log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
-                throw new ResourceNotFoundException("Service Product not found");
-            }
-        }
+        var product = checkServiceProduct(trx);
         try {
             if (!PjpurRuleConfig.isNONE(product.getPjpurRuleConfig()) && trx.getDepositPjpur() == null) {
                 trx.setDepositPjpur(pjpurService.prepare(trx.getDeposit()));
@@ -120,7 +108,24 @@ public class ServiceTransactionService {
         checkStatusTransaction(trx);
         return trx;
     }
-
+    protected ServiceProduct checkServiceProduct(ServiceTransaction trx) {
+        var product = trx.getServiceProduct();
+        if (product == null) {
+            if (trx.getDeposit() != null && trx.getDeposit().getServiceProduct() != null) {
+                product = trx.getDeposit().getServiceProduct();
+                log.info("Transaction Product; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
+                trx.setServiceProduct(product);
+            } else {
+                trx.setStatus(TrxStatus.REJECT);
+                trx = repository.saveAndFlush(trx);
+                producerService.publishDataEvent(EventType.UPDATE, trx);
+                log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
+                throw new ResourceNotFoundException("Service Product not found");
+            }
+            return product;
+        }
+        return product;
+    }
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public ServiceTransaction transaction(ServiceTransaction trx) {
         if(TrxStatus.SUCCESS.equals(trx.getStatus())){
@@ -129,14 +134,7 @@ public class ServiceTransactionService {
         }
         trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
         log.info("Start Transaction; id={}; amount={}; trx={}; finish", trx.getId(), trx.getAmount(), trx.getNo());
-        val product = trx.getServiceProduct();
-        if (product == null) {
-            trx.setStatus(TrxStatus.REJECT);
-            trx= repository.saveAndFlush(trx);
-            producerService.publishDataEvent(EventType.UPDATE,trx);
-            log.error("Service Product not found {} ,{}", trx.getId(), trx.getNo());
-            throw new ResourceNotFoundException("Service Product code not found");
-        }
+        val product = checkServiceProduct(trx);
         if (!ServiceRuleConfig.DEPOSIT.equals(product.getServiceRuleConfig())){
             trx.setStatus(TrxStatus.REJECT);
             trx= repository.saveAndFlush(trx);
@@ -199,7 +197,7 @@ public class ServiceTransactionService {
         return trx;
     }
 
-    public ServiceTransaction checkStatusTransaction(ServiceTransaction trx) {
+    protected ServiceTransaction checkStatusTransaction(ServiceTransaction trx) {
         val status = trx.getStatus();
         val product = trx.getServiceProduct();
         try {
@@ -236,9 +234,9 @@ public class ServiceTransactionService {
                 try {
                     trx = repository.saveAndFlush(trx);
                     producerService.publishDataEvent(EventType.UPDATE, trx);
-                    log.info("Finish Transaction; id={}; amount={}; trx={}", trx.getId(), trx.getAmount(), trx.getNo());
+                    log.info("Finish check Transaction; id={}; amount={}; trx={}", trx.getId(), trx.getAmount(), trx.getNo());
                 } catch (Exception e) {
-                    log.error("Error transaction:", e);
+                    log.error("Error check transaction:", e);
                 }
             }
         }
