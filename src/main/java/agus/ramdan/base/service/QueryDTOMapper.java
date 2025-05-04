@@ -1,11 +1,21 @@
 package agus.ramdan.base.service;
 
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import java.util.UUID;
 
-public interface QueryDTOMapper <QueryDTO, Entity, ID_DTO> {
+public interface QueryDTOMapper <QueryDTO, Entity> {
     QueryDTO entityToQueryDto(Entity entity);
-    ID_DTO convertId(UUID id);
-    ID_DTO convertId(String id);
+    @Named("uuidToString")
+    default String uuidToString(UUID source) {
+        if (source == null) return null;
+        return source.toString();
+    }
+
+    @Named("stringToUUID")
+    default UUID stringToUUID(String source) {
+        if (source == null) return null;
+        return UUID.fromString(source);
+    }
 }

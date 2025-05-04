@@ -16,18 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<BeneficiaryAccountQueryDTO,BeneficiaryAccount, String > {
+public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<BeneficiaryAccountQueryDTO,BeneficiaryAccount > {
     @Autowired
     private CustomerMapper customerMapper;
-    public String convertId(UUID id){
-        if (id == null) {
-            return null;
-        }
-        return id.toString();
-    }
-    public String convertId(String id){
-        return id;
-    }
+
     public CustomerDTO mapCustomerDTO(Customer source) {
         return customerMapper.entityToDto(source);
     }

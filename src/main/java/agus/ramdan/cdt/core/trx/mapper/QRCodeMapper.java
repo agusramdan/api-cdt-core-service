@@ -22,7 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCode, String > {
+public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCode > {
+
     @Autowired
     private CustomerCrewMapper customerCrewMapper;
     @Autowired
@@ -103,16 +104,16 @@ public abstract class QRCodeMapper implements QueryDTOMapper<QRCodeQueryDTO,QRCo
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void updateEntityFromUpdateDto(QRCodeUpdateDTO dto, @MappingTarget QRCode entity);
 
-    @Named("uuidToString")
-    public String uuidToString(UUID source) {
-        if (source == null) return null;
-        return source.toString();
-    }
-
-    @Named("stringToUUID")
-    public UUID stringToUUID(String source) {
-        if (source == null) return null;
-        return UUID.fromString(source);
-    }
+//    @Named("uuidToString")
+//    public String uuidToString(UUID source) {
+//        if (source == null) return null;
+//        return source.toString();
+//    }
+//
+//    @Named("stringToUUID")
+//    public UUID stringToUUID(String source) {
+//        if (source == null) return null;
+//        return UUID.fromString(source);
+//    }
 
 }

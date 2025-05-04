@@ -70,7 +70,7 @@ public class EntityFallbackFactory {
                 T instance = clazz.getDeclaredConstructor().newInstance();
                 Field idField = null;
                 Field nameField = null;
-//                Field codeField = null;
+                Field codeField = null;
 
                 for (Field field : clazz.getDeclaredFields()) {
                     if (field.getName().equalsIgnoreCase("id")) {
@@ -79,9 +79,9 @@ public class EntityFallbackFactory {
                     if (field.getName().equalsIgnoreCase("name")) {
                         nameField= field;
                     }
-//                    if (field.getName().equalsIgnoreCase("code")) {
-//                        codeField= field;
-//                    }
+                    if (field.getName().equalsIgnoreCase("code")) {
+                        codeField= field;
+                    }
                 }
                 if (idField != null) {
                     idField.setAccessible(true);
@@ -101,14 +101,14 @@ public class EntityFallbackFactory {
                         nameField.set(instance, "DELETED");
                     }
                 }
-//                if (codeField != null) {
-//                    codeField.setAccessible(true);
-//                    Class<?> idType = codeField.getType();
-//                    if (idType.equals(String.class)) {
-//                        codeField.set(instance, "DELETED");
-//                    }
-//                }
-//
+                if (codeField != null) {
+                    codeField.setAccessible(true);
+                    Class<?> idType = codeField.getType();
+                    if (idType.equals(String.class)) {
+                        codeField.set(instance, "DELETED");
+                    }
+                }
+
                 return instance;
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create entity fallback", e);
