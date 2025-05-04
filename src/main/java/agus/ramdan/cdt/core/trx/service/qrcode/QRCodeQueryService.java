@@ -66,64 +66,72 @@ public class QRCodeQueryService implements
             }
             ServiceProduct product = EntityFallbackFactory.ensureNotLazy(validations,"Product not found",key + "product",qr::getServiceProduct);
             if (product != null) {
+                if (product.getQrRuleConfig()!=null) {
                     switch (product.getQrRuleConfig()) {
                         case SINGLE_USAGE -> {
-                            if(!QRCodeType.SINGLE_TRX_USE.equals(type)){
+                            if (!QRCodeType.SINGLE_TRX_USE.equals(type)) {
                                 validations.add(ErrorValidation.New("QRCode type not match with product", key + "type", qr.getCode()));
                             }
                         }
                         case MULTIPLE_USAGE -> {
-                            if(!QRCodeType.MULTIPLE_TRX_USE.equals(type)){
+                            if (!QRCodeType.MULTIPLE_TRX_USE.equals(type)) {
                                 validations.add(ErrorValidation.New("QRCode type not match with product", key + "type", qr.getCode()));
                             }
                         }
                     }
+                }else {
+                    validations.add(ErrorValidation.New("QRCode product QR Rule Invalid", key + "service_product.qr_rule_config", qr.getCode()));
+                }
+                if (product.getServiceRuleConfig() == null) {
                     switch (product.getServiceRuleConfig()) {
                         case DEPOSIT -> {
                             UUID customerId = null;
-                            Customer customer = EntityFallbackFactory.ensureNotLazy(validations,"Customer not found",key + "customer",qr::getCustomer);
+                            Customer customer = EntityFallbackFactory.ensureNotLazy(validations, "Customer not found", key + "customer", qr::getCustomer);
                             if (customer != null) {
                                 customerId = customer.getId();
-                            }else {
+                            } else {
                                 validations.add(ErrorValidation.New("Customer not found", key + "customer", qr.getCode()));
                             }
-                            BeneficiaryAccount beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations,"Beneficiary Account not found",key + "beneficiary_account",qr::getBeneficiaryAccount);
+                            BeneficiaryAccount beneficiaryAccount = EntityFallbackFactory.ensureNotLazy(validations, "Beneficiary Account not found", key + "beneficiary_account", qr::getBeneficiaryAccount);
                             if (beneficiaryAccount != null) {
-                                Customer cus =EntityFallbackFactory.ensureNotLazy(validations,"BeneficiaryAccount Customer not found",key + "customer",beneficiaryAccount::getCustomer);
-                                if(customerId != null && cus!=null && !customerId.equals(cus.getId())){
+                                Customer cus = EntityFallbackFactory.ensureNotLazy(validations, "BeneficiaryAccount Customer not found", key + "customer", beneficiaryAccount::getCustomer);
+                                if (customerId != null && cus != null && !customerId.equals(cus.getId())) {
                                     validations.add(ErrorValidation.New("Customer not match with beneficiary", key + "customer.id", qr.getCode()));
                                 }
-                                Bank bank = EntityFallbackFactory.ensureNotLazy(validations,"BeneficiaryAccount Bank not found",key + "beneficiary_account.bank",beneficiaryAccount::getBank);
+                                Bank bank = EntityFallbackFactory.ensureNotLazy(validations, "BeneficiaryAccount Bank not found", key + "beneficiary_account.bank", beneficiaryAccount::getBank);
                                 if (bank == null) {
                                     validations.add(ErrorValidation.New("BeneficiaryAccount Bank not found", key + "beneficiary_account.bank", qr.getCode()));
                                 }
-                            }else {
+                            } else {
                                 validations.add(ErrorValidation.New("Beneficiary Account not found", key + "beneficiary_account", qr.getCode()));
                             }
-                            CustomerCrew customerCrew = EntityFallbackFactory.ensureNotLazy(validations,"QR Code User not found",key + "user",qr::getUser) ;
+                            CustomerCrew customerCrew = EntityFallbackFactory.ensureNotLazy(validations, "QR Code User not found", key + "user", qr::getUser);
                             if (customerCrew != null) {
-                                Customer crew = EntityFallbackFactory.ensureNotLazy(validations,"Customer Crew not found",key + "user.customer",customerCrew::getCustomer);
-                                if(customerId != null && crew != null &&!customerId.equals(crew.getId())){
+                                Customer crew = EntityFallbackFactory.ensureNotLazy(validations, "Customer Crew not found", key + "user.customer", customerCrew::getCustomer);
+                                if (customerId != null && crew != null && !customerId.equals(crew.getId())) {
                                     validations.add(ErrorValidation.New("Customer not match with customer crew", key + "user.customer.id", qr.getCode()));
                                 }
-                            }else {
+                            } else {
                                 validations.add(ErrorValidation.New("Customer Crew not found", key + "user", qr.getCode()));
                             }
                         }
                         case COLLECTION -> {
-                            Vendor vendor = EntityFallbackFactory.ensureNotLazy(validations,"QR Code User not found",key + "vendor",qr::getVendor);
+                            Vendor vendor = EntityFallbackFactory.ensureNotLazy(validations, "QR Code User not found", key + "vendor", qr::getVendor);
                             UUID vendorId = null;
                             if (vendor != null) {
                                 vendorId = vendor.getId();
                             }
-                            VendorCrew vendorCrew = EntityFallbackFactory.ensureNotLazy(validations,"QR Code User not found",key + "vendor_crew",qr::getVendorCrew);
+                            VendorCrew vendorCrew = EntityFallbackFactory.ensureNotLazy(validations, "QR Code User not found", key + "vendor_crew", qr::getVendorCrew);
                             if (vendorCrew != null) {
-                                Vendor crew = EntityFallbackFactory.ensureNotLazy(validations,"Vendor Crew not found",key + "vendor_crew.vendor",vendorCrew::getVendor);
-                                if (vendorId!=null && crew!=null && !vendorId.equals(crew.getId())) {
+                                Vendor crew = EntityFallbackFactory.ensureNotLazy(validations, "Vendor Crew not found", key + "vendor_crew.vendor", vendorCrew::getVendor);
+                                if (vendorId != null && crew != null && !vendorId.equals(crew.getId())) {
                                     validations.add(ErrorValidation.New("Vendor not match with Crew", key + "vendor_crew.id", qr.getCode()));
                                 }
                             }
                         }
+                    }
+                }else {
+                    validations.add(ErrorValidation.New("QRCode product Service Rule Invalid", key + "service_product.service_rule_config", qr.getCode()));
                 }
             }
         return qr;
