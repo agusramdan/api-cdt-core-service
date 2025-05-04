@@ -3,6 +3,7 @@ package agus.ramdan.cdt.core.trx.service.deposit;
 import agus.ramdan.base.dto.EventType;
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
+import agus.ramdan.base.exception.PropagationXxxException;
 import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
 import agus.ramdan.cdt.core.master.service.machine.MachineQueryService;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -40,6 +42,7 @@ public class TrxDepositCommandService {
     private final ServiceTransactionService transactionService;
     private final TrxDataEventProducerService trxDataEventProducerService;
 
+    @Transactional(noRollbackFor = PropagationXxxException.class)
     public TrxDepositQueryDTO createTrxDeposit(TrxDepositCreateDTO dto) {
         val token = dto.getToken();
         val qrCodeDTO = new QRCodeDTO(dto.getToken());
@@ -110,7 +113,7 @@ public class TrxDepositCommandService {
                         .stream()
                         .peek(deposit -> deposit.setStatus(TrxDepositStatus.DEPOSIT))
                         .peek(deposit -> log.info("Deposit; id={}; amount={}; product={};", deposit.getId(), deposit.getAmount(), deposit.getServiceProduct().getCode()))
-                        .map(repository::save)
+                        .map(repository::saveAndFlush)
                         .peek(deposit -> codeCommandService.useCode(deposit.getCode()))
                         .findFirst())
                 .map(this::executeTransaction)
