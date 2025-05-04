@@ -2,6 +2,8 @@ package agus.ramdan.cdt.core.trx.controller.dto.qrcode;
 
 import agus.ramdan.cdt.core.master.controller.dto.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "DTO untuk membaca data QR Code")
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class QRCodeQueryDTO {
     @Schema(description = "ID QR Code dalam format String")
     private String id;
