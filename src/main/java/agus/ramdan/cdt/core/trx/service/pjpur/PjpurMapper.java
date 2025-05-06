@@ -37,7 +37,7 @@ public interface PjpurMapper {
     BillDTO mapBillDTO(TrxDepositDenom trxTransfer);
 
     @Mapping(source = "machine.code", target = "terminalid")
-    @Mapping(source = "trxDateTime", target = "timestamp")
+    @Mapping(source = "trxDateTime", target = "timestamp",ignore = true)
     @Mapping(source = "serviceTransaction.no", target = "trxrefno")
     @Mapping(source = "user.id", target = "accinfo.userid")
     @Mapping(source = "user.username", target = "accinfo.username")

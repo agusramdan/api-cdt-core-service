@@ -159,9 +159,8 @@ public class ServiceTransactionService {
         val product = trx.getServiceProduct();
         log.info("Transfer Transaction; id={}; amount={}; trx={};", trx.getId(), trx.getAmount(), trx.getNo());
         trx.setStatus(TrxStatus.TRANSACTION_IN_PROGRESS);
-        TrxDepositPjpur depositPjpur = null;
         if (!PjpurRuleConfig.isNONE(product.getPjpurRuleConfig()) && trx.getDepositPjpur() != null) {
-            depositPjpur =trx.getDepositPjpur();
+            var depositPjpur =trx.getDepositPjpur();
             if (!TrxDepositPjpurStatus.SUCCESS.equals(depositPjpur.getStatus())) {
                 depositPjpur = pjpurService.deposit(depositPjpur);
             }
@@ -171,9 +170,8 @@ public class ServiceTransactionService {
                 return trx;
             }
         }
-        TrxTransfer transfer = null;
         if(!TransferRuleConfig.isNONE(product.getTransferRuleConfig()) && trx.getTransfer() != null){
-            transfer = trx.getTransfer();
+            var transfer = trx.getTransfer();
             if(!TrxTransferStatus.SUCCESS.equals(transfer.getStatus())) {
                 transfer = transferService.transferFund(trx.getTransfer());
             }
