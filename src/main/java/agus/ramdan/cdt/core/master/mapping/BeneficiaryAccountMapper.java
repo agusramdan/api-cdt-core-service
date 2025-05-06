@@ -23,13 +23,6 @@ public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<Benefic
     public CustomerDTO mapCustomerDTO(Customer source) {
         return customerMapper.entityToDto(source);
     }
-    public UUID entityCustomerId( Customer source ){
-        val customer = EntityFallbackFactory.safe(source);
-        if (customer == null) {
-            return null;
-        }
-        return customer.getId();
-    }
     public BeneficiaryAccountDTO entityToDto(BeneficiaryAccount beneficiaryAccount){
         beneficiaryAccount = EntityFallbackFactory.safe(beneficiaryAccount);
         if (beneficiaryAccount == null) {
@@ -44,9 +37,14 @@ public abstract class BeneficiaryAccountMapper implements QueryDTOMapper<Benefic
         return  entity != null ? updateEntityToDto( new BeneficiaryAccountQueryDTO(), entity):null;
     }
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "customer.id", target = "customerId")
+    //@Mapping(source = "customer.id", target = "customerId" , qualifiedByName = {"entityCustomerId","stringToUUID"})
     public abstract BeneficiaryAccountQueryDTO updateEntityToDto(@MappingTarget BeneficiaryAccountQueryDTO dto, BeneficiaryAccount entity);
-
+    @AfterMapping
+    public void afterMappingCustomer(@MappingTarget BeneficiaryAccountQueryDTO dto) {
+        if (dto.getCustomer() != null) {
+            dto.setCustomerId(dto.getCustomer().getId());
+        }
+    }
     @Mapping(source = "id", target = "id", qualifiedByName = "stringToUUID")
     public abstract BeneficiaryAccount createDtoToEntity(BeneficiaryAccountDTO createDTO);
     public abstract BeneficiaryAccount createDtoToEntity(BeneficiaryAccountCreateDTO createDTO);
