@@ -51,6 +51,19 @@ public class TrxDepositCommandController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @PutMapping("/{id}/check_status")
+    @ApiResponses(value = {
+            @ApiResponse(description = "successful operation", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = TrxDepositQueryDTO.class)),})
+    })
+    public ResponseEntity<TrxDepositQueryDTO> checkStatus(@PathVariable UUID id) {
+        val result = service.checkStatus(id);
+        if (!"SUCCESS".equals(result.getStatus())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
         service.deleteTrxDeposit(id);
