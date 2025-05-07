@@ -230,15 +230,6 @@ public class ServiceTransactionService {
         }
         return trx;
     }
-    @Transactional(noRollbackFor = PropagationXxxException.class)
-    public void transactionReTray(UUID trxNo) {
-        try {
-            repository.findById(trxNo).map(this::prepare).map(this::transaction);
-        }catch (Exception e) {
-            log.error("Error transactionReTray: {}",trxNo);
-        }
-
-    }
 
     @KafkaListener(topics = "core-trx-status-check-event", groupId = "cdt-core-transaction-callback")
     @Transactional(noRollbackFor = PropagationXxxException.class)

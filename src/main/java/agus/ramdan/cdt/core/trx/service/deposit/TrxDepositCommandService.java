@@ -147,11 +147,13 @@ public class TrxDepositCommandService {
         }
         throw new BadRequestException("Transaction already processed");
     }
+
     public TrxDepositQueryDTO checkStatus(UUID id) {
         val trxDeposit = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         return trxDepositMapper.entityToQueryDto(checkStatus(trxDeposit));
     }
+
     public TrxDeposit checkStatus(@NotNull TrxDeposit deposit) {
         if(!TrxDepositStatus.SUCCESS.equals(deposit.getStatus())) {
             val sc = deposit.getServiceTransaction();
@@ -163,22 +165,13 @@ public class TrxDepositCommandService {
         }
         return deposit;
     }
+
     @KafkaListener(topics = "core-deposit-status-check-event", groupId = "cdt-core-transaction-callback")
     @Transactional(noRollbackFor = PropagationXxxException.class)
     public void depositCallback(DepositCheckStatusDTO trxNo) {
         val trx = repository.findById(trxNo.getId());
-        TrxDeposit deposit = null;
         if (trx.isPresent()) {
-            if(TrxDepositStatus.SUCCESS.equals(deposit.getStatus())){
-                return;
-            }
-            deposit = trx.get();
-            val sc = deposit.getServiceTransaction();
-            if (TrxStatus.SUCCESS.equals(sc.getStatus())) {
-                deposit.setStatus(TrxDepositStatus.SUCCESS);
-                repository.save(deposit);
-                trxDataEventProducerService.publishDataEvent(EventType.UPDATE, deposit);
-            }
+            checkStatus(trx.get());
         } else {
             log.error("Transaction not found; id={}", trxNo.getId());
         }
