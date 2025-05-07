@@ -9,6 +9,9 @@ import agus.ramdan.cdt.core.master.controller.dto.PjpurRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.ServiceRuleConfig;
 import agus.ramdan.cdt.core.master.controller.dto.TransferRuleConfig;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceProduct;
+import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.transaction.ServiceTransactionQueryDTO;
+import agus.ramdan.cdt.core.trx.mapper.ServiceTransactionMapper;
 import agus.ramdan.cdt.core.trx.persistence.domain.*;
 import agus.ramdan.cdt.core.trx.persistence.repository.ServiceTransactionRepository;
 import agus.ramdan.cdt.core.trx.service.TrxDataEventProducerService;
@@ -33,6 +36,7 @@ import java.util.UUID;
 public class ServiceTransactionService {
 
     private final ServiceTransactionRepository repository;
+    private final ServiceTransactionMapper mapper;
     private final TrxTransferService transferService;
     private final TrxDataEventProducerService producerService;
     private final PjpurService pjpurService;
@@ -184,6 +188,12 @@ public class ServiceTransactionService {
         }
 
         return checkStatusTransaction(trx);
+    }
+
+    public ServiceTransactionQueryDTO checkStatus(UUID id) {
+        val trx = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+        return mapper.entityToQueryDto(checkStatusTransaction(trx));
     }
 
     protected ServiceTransaction checkStatusTransaction(ServiceTransaction trx) {

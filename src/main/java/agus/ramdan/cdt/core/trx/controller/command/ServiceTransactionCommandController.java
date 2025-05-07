@@ -2,8 +2,10 @@ package agus.ramdan.cdt.core.trx.controller.command;
 
 import agus.ramdan.base.dto.TransactionCheckStatusDTO;
 import agus.ramdan.cdt.core.trx.controller.dto.deposit.TrxDepositQueryDTO;
+import agus.ramdan.cdt.core.trx.controller.dto.transaction.ServiceTransactionQueryDTO;
 import agus.ramdan.cdt.core.trx.persistence.domain.TrxStatus;
 import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionQueryService;
+import agus.ramdan.cdt.core.trx.service.transaction.ServiceTransactionService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,11 +17,12 @@ import lombok.val;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cdt/core/trx/service-transaction/command")
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServiceTransactionCommandController {
     private final ServiceTransactionQueryService queryService;
     private final KafkaTemplate<String, TransactionCheckStatusDTO> kafkaTemplate;
+    private final ServiceTransactionService service;
 
     @PostMapping("/all/retry")
     @ApiResponses(value = {
@@ -56,6 +60,7 @@ public class ServiceTransactionCommandController {
         }
 
     }
+
     @PostMapping("/all/retry/{status}")
     @ApiResponses(value = {
             @ApiResponse(description = "successful operation", content = {
@@ -82,5 +87,18 @@ public class ServiceTransactionCommandController {
             page = page.next();
         }
 
+    }
+
+    @PutMapping("/{id}/check_status")
+    @ApiResponses(value = {
+            @ApiResponse(description = "successful operation", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTransactionQueryDTO.class)),})
+    })
+    public ResponseEntity<ServiceTransactionQueryDTO> checkStatus(@PathVariable UUID id) {
+        val result = service.checkStatus(id);
+        if (!"SUCCESS".equals(result.getStatus())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
