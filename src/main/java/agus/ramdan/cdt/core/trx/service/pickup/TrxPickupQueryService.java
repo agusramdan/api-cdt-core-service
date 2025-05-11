@@ -29,6 +29,7 @@ public class TrxPickupQueryService implements
     public TrxPickupQueryDTO convertOne(TrxPickup entity) {
         return mapper.entityToQueryDto(entity);
     }
+
     @Override
     public TrxPickupQueryDTO convert(TrxPickup entity) {
         return mapper.entityToQueryDto(entity);

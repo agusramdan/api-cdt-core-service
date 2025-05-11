@@ -1,8 +1,10 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.embeddable.Address;
-import agus.ramdan.base.embeddable.AuditMetadata;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -27,7 +29,8 @@ import java.util.UUID;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class Vendor {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Vendor extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,10 +42,6 @@ public class Vendor {
     @JsonProperty("name")
     @Schema(description = "Name")
     private String name;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     // Address
     @Embedded
     private Address address;  // Embedded Address
@@ -64,6 +63,5 @@ public class Vendor {
     private Boolean maintenance;
     private Boolean pjpur;
     private Boolean gateway;
-
 
 }

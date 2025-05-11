@@ -5,10 +5,5 @@ management:
     enabled: true
   zipkin:
     tracing:
-      endpoint: http://zipkin:9411/api/v2/spans
-
-logging:
-  level:
-    root: info
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"
+#      endpoint: http://zipkin:9411/api/v2/spans
+      endpoint: http://tempo:9411/api/v2/spans

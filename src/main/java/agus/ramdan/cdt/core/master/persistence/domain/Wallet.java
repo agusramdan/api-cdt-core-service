@@ -1,7 +1,9 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
-import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,7 +22,8 @@ import java.math.BigDecimal;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class Wallet {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Wallet extends BaseEntity {
 
     @Id
     @Column(name = "number")
@@ -31,9 +34,6 @@ public class Wallet {
     private String name;
 
     private BigDecimal balance;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")

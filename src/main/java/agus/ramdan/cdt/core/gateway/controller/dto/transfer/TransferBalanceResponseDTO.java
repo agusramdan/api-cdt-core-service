@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.gateway.controller.dto.transfer;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

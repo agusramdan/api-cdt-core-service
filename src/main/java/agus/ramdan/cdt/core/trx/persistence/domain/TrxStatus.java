@@ -3,14 +3,15 @@ package agus.ramdan.cdt.core.trx.persistence.domain;
 public enum TrxStatus {
     PREPARE,
     CDM_DEPOSIT,
-    // TRANSFER
+    PJPUR_FAILED,
     TRANSFER,
+    TRANSFER_IN_PROGRESS,
     TRANSFER_SUCCESS,
     TRANSFER_REJECT,
     TRANSFER_FAILED,
     TRANSFER_TIME_OUT,
     TRANSFER_REVERSAL,
-
+    // TRANSACTION STATUS
     REVERSAL,
     REJECT,
     APPROVE,
@@ -19,6 +20,7 @@ public enum TrxStatus {
     EXPIRED,
     DELETED,
     PENDING,
+    TRANSACTION_IN_PROGRESS,
     SUCCESS,
     FAILED,
 }

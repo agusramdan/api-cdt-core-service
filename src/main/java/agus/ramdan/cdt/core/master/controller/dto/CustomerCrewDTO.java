@@ -1,26 +1,32 @@
 package agus.ramdan.cdt.core.master.controller.dto;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
+import agus.ramdan.base.dto.TID;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(description = "DTO untuk membaca data Customer Crew")
-public class CustomerCrewDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public class CustomerCrewDTO implements TID<String> {
     @Schema(description = "ID Crew dalam format String")
     private String id;
 
-    @Schema(description = "Nama Crew")
+    @Schema(description = "Nama")
     private String name;
 
-    @JsonProperty("customer_id")
-    private String customerId;
+//    @JsonProperty("customer_id")
+    private CustomerDTO customer;
 
-    @Schema(description = "Username Crew")
+    @Schema(description = "Username")
     private String username;
 
-    @Schema(description = "Email Crew")
+    @Schema(description = "Email")
     private String email;
 
-    @Schema(description = "MSIDN Crew")
+    @Schema(description = "MSIDN")
     private String msisdn;
 }

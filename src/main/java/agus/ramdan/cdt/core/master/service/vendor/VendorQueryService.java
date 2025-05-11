@@ -1,4 +1,5 @@
 package agus.ramdan.cdt.core.master.service.vendor;
+
 import agus.ramdan.base.service.BaseQueryEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.vendor.VendorQueryDTO;
 import agus.ramdan.cdt.core.master.mapping.VendorMapper;

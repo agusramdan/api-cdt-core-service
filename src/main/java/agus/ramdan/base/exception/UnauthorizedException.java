@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
 @Getter
-public class UnauthorizedException extends RuntimeException implements FeighResponError{
+public class UnauthorizedException extends RuntimeException implements FeighResponError {
     private static final long serialVersionUID = 1L;
     private ErrorValidation[] errors;
     private Response response;
-    public UnauthorizedException(String message){
+
+    public UnauthorizedException(String message) {
         super(message);
     }
 

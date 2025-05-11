@@ -1,14 +1,13 @@
 package agus.ramdan.cdt.core.master.service.branch;
 
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
-import agus.ramdan.base.service.BaseCommandService;
 import agus.ramdan.cdt.core.master.controller.dto.branch.BranchCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.branch.BranchQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.branch.BranchUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.BranchMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Branch;
 import agus.ramdan.cdt.core.master.persistence.repository.BranchRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class BranchCommandService implements
-        BaseCommandService<BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, String>,
-        BaseCommandEntityService<Branch, UUID, BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, String> {
+public class BranchCommandService extends MasterDataEventProducer<Branch, UUID, BranchQueryDTO, BranchCreateDTO, BranchUpdateDTO, String> {
 
     private final BranchRepository repository;
     private final BranchMapper mapper;
@@ -37,10 +34,12 @@ public class BranchCommandService implements
     public Branch convertFromCreateDTO(BranchCreateDTO dto) {
         return mapper.createDtoToEntity(dto);
     }
+
     public Branch getById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Branch not found"));
     }
+
     @Override
     public Branch convertFromUpdateDTO(String id, BranchUpdateDTO dto) {
         Branch branch = getById(convertId(id));

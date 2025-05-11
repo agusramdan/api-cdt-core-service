@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "feign-client.api-cdm-core-trx-command-service.qr-code", url = "${feign-client.api-cdm-core-trx-command-service.base-url}/api/cdt/core/trx/deposit/command")
+@FeignClient(name = "feign-client.api-cdt-core-trx-command-service.deposit", url = "${feign-client.api-cdt-core-trx-command-service.base-url}/api/cdt/core/trx/deposit/command")
 public interface TrxDepositCommandClient {
 
     @PostMapping

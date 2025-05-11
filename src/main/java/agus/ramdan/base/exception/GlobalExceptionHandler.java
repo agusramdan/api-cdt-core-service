@@ -1,6 +1,7 @@
 package agus.ramdan.base.exception;
 
 import io.micrometer.tracing.Tracer;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +17,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.sql.SQLException;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -27,112 +25,98 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final Tracer tracer;
-    private String getTraceId(){
+    private String getTraceId() {
         String traceId = MDC.get("traceId");
-        if (traceId == null && tracer.currentSpan() != null && tracer.currentSpan().context() != null){
-            traceId =  tracer.currentSpan().context().traceId();
+        if (traceId == null && tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
+            traceId = tracer.currentSpan().context().traceId();
         }
         return traceId;
     }
-    private String getSpanId(){
+
+    private String getSpanId() {
         String spanId = MDC.get("spanId");
-        if (spanId == null && tracer.currentSpan() != null){
-            spanId =  tracer.currentSpan().context().spanId();
+        if (spanId == null && tracer.currentSpan() != null) {
+            spanId = tracer.currentSpan().context().spanId();
         }
         return spanId;
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Errors> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        val error = new Errors(new Date(), ex.getMessage(), traceId, spanId, request.getDescription(false), null);
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-    }
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Errors> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.warn("trace_id={},span_id={}:{}",traceId,spanId,"Message Error");
-        val error = new Errors(new Date(),"Message Error",traceId,spanId, request.getDescription(false));
+        log.warn("trace_id={},span_id={},{}:{}", traceId, spanId,request.getDescription(false), "Message Error");
+        val error = new Errors(new Date(), "Message Error: Not Readable", traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Errors> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-        String errorMsg = "Data integrity violation";
-        Throwable rootCause = ex.getRootCause(); // Ambil error dari database
-        if (rootCause instanceof SQLException sqlException) {
-            String message = sqlException.getMessage();
-            if (message.contains("duplicate key value")) {
-                errorMsg = extractDuplicateKeyMessage(message);
-            }
-        }
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"DataIntegrityViolationException"),ex);
-        val error = new Errors(new Date(),errorMsg, traceId, spanId, request.getDescription(false), null);
+        String errorMsg = ErrorMessage.get(ex,null);
+        log.error("trace_id={},span_id={},{}:{}", traceId, spanId,request.getDescription(false), errorMsg);
+        log.trace("Trace",ex);
+        val error = new Errors(new Date(), errorMsg, traceId, spanId, request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-    private String extractDuplicateKeyMessage(String message) {
-        // Pola regex untuk menangkap "Key (msisdn)=(+6281234567890) already exists."
-        Pattern pattern = Pattern.compile("Key \\((.*?)\\)=\\((.*?)\\) already exists");
-        Matcher matcher = pattern.matcher(message);
-        if (matcher.find()) {
-            return "Key (" + matcher.group(1) + ")=(" + matcher.group(2) + ") already exists.";
-        }
-        return "Duplicate key constraint violation.";
-    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Errors> handleMethodArgumentNotValidException(ConstraintViolationException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.warn(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"ConstraintViolationException"),ex);
+        log.warn(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, "ConstraintViolationException"), ex);
         val errors = ex.getConstraintViolations().stream()
-                .map(violation -> new ErrorValidation(violation.getMessage(),String.valueOf(violation.getPropertyPath()),violation.getInvalidValue()) )
+                .map(violation -> new ErrorValidation(violation.getMessage(), String.valueOf(violation.getPropertyPath()), violation.getInvalidValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
-        val error = new Errors(new Date(),"Validation Error",traceId,spanId, request.getDescription(false),errors);
+        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false));
+        error.setErrors(errors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Errors> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,"MethodArgumentNotValidException"),ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, "MethodArgumentNotValidException"), ex);
         BindingResult result = ex.getBindingResult();
         val errors = result.getFieldErrors().stream()
-                .map(violation -> new ErrorValidation(violation.getDefaultMessage(),violation.getField(),violation.getRejectedValue()) )
+                .map(violation -> new ErrorValidation(violation.getDefaultMessage(), violation.getField(), violation.getRejectedValue()))
                 .collect(Collectors.toList()).toArray(new ErrorValidation[0]);
-        val error = new Errors(new Date(),"Validation Error",traceId,spanId, request.getDescription(false),errors);
+        val error = new Errors(new Date(), "Validation Error", traceId, spanId, request.getDescription(false));
+        error.setErrors(errors);
+
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(NoContentException.class)
     public ResponseEntity<?> noContentException(NoContentException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.debug(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
         return ResponseEntity.noContent().build();
     }
-    @ExceptionHandler(Propagation5xxException.class)
-    public ResponseEntity<Errors> internalServerErrorExcpetionHandler(Propagation5xxException ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        val error = ex.create(traceId,spanId,request.getDescription(false));;
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+
     @ExceptionHandler(XxxException.class)
     public ResponseEntity<Errors> xxxException(XxxException ex, WebRequest request) {
         String traceId = getTraceId();
         String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        return new ResponseEntity<>(ex.create(traceId,spanId,request.getDescription(false)),ex.getHttpStatus());
+        log.error(String.format("trace_id=%s,span_id=%s:%s", traceId, spanId, ex.getMessage()), ex);
+        return new ResponseEntity<>(ex.getOrCreate(traceId, spanId, request.getDescription(false)), ex.getHttpStatus());
     }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request) {
-        String traceId = getTraceId();
-        String spanId = getSpanId();
-        log.error(String.format("trace_id=%s,span_id=%s:%s",traceId,spanId,ex.getMessage()),ex);
-        val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk",traceId,spanId, request.getDescription(false),null);
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Errors> globleExcpetionHandler(Exception ex, WebRequest request,HttpServletRequest httpRequest) throws Exception {
+        String path = httpRequest.getRequestURI();
+        if (path.startsWith("/api/")) {
+            String traceId = getTraceId();
+            String spanId = getSpanId();
+            log.error("trace_id={},span_id={},{}:{}", traceId, spanId, request.getDescription(false),ex.getMessage());
+            log.trace(ex.getMessage(),ex);
+            val error = new Errors(new Date(), "Internal Server Error Please Contact Helpdesk", traceId, spanId, request.getDescription(false));
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        throw ex;
     }
+
 }

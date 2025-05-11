@@ -1,25 +1,34 @@
 package agus.ramdan.cdt.core.master.service.machine;
 
+import agus.ramdan.base.exception.BadRequestException;
+import agus.ramdan.base.exception.ErrorValidation;
 import agus.ramdan.base.exception.ResourceNotFoundException;
-import agus.ramdan.base.service.BaseCommandEntityService;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.machine.MachineUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.MachineMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.Machine;
 import agus.ramdan.cdt.core.master.persistence.repository.MachineRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
+import agus.ramdan.cdt.core.master.service.branch.BranchQueryService;
+import agus.ramdan.cdt.core.master.service.location.ServiceLocationQueryService;
+import agus.ramdan.cdt.core.master.service.vendor.VendorQueryService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MachineCommandService implements
-        BaseCommandEntityService<Machine, UUID, MachineQueryDTO, MachineCreateDTO, MachineUpdateDTO, String> {
+public class MachineCommandService extends MasterDataEventProducer <Machine, UUID, MachineQueryDTO, MachineCreateDTO, MachineUpdateDTO, String> {
 
     private final MachineRepository repository;
     private final MachineMapper mapper;
+    private final BranchQueryService branchQueryService;
+    private final ServiceLocationQueryService serviceLocationQueryService;
+    private final VendorQueryService vendorQueryService;
 
     @Override
     public UUID convertId(String id) {
@@ -43,15 +52,31 @@ public class MachineCommandService implements
 
     @Override
     public Machine convertFromCreateDTO(MachineCreateDTO dto) {
-        return mapper.createDtoToEntity(dto);
+        val validations = new ArrayList<ErrorValidation>();
+        val entity = mapper.createDtoToEntity(dto);
+        // Fetch related Customer entity and set it
+        serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "service_location").ifPresent(entity::setServiceLocation);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
+        vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
+        vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
+        vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
+        return entity;
     }
 
     @Override
     public Machine convertFromUpdateDTO(String id, MachineUpdateDTO dto) {
-        Machine machine = repository.findById(UUID.fromString(id))
+        val entity = repository.findById(convertId(id))
                 .orElseThrow(() -> new ResourceNotFoundException("Machine not found"));
-        mapper.updateEntityFromUpdateDto(dto, machine);
-        return machine;
+        val validations = new ArrayList<ErrorValidation>();
+        serviceLocationQueryService.relation(dto.getServiceLocation(), validations, "service_location").ifPresent(entity::setServiceLocation);
+        branchQueryService.relation(dto.getBranch(), validations, "branch").ifPresent(entity::setBranch);
+        vendorQueryService.relation(dto.getSupplier(), validations, "supplier").ifPresent(entity::setSupplier);
+        vendorQueryService.relation(dto.getMaintenance(), validations, "maintenance").ifPresent(entity::setMaintenance);
+        vendorQueryService.relation(dto.getPjpur(), validations, "pjpur").ifPresent(entity::setPjpur);
+        mapper.updateEntityFromUpdateDto(dto, entity);
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
+        return entity;
     }
 
     @Override

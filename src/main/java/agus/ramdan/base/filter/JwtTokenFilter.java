@@ -35,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             // Set Authentication ke SecurityContext
             // Object object = claims.get("Role");
             //val authentication = new UsernamePasswordAuthenticationToken(userId, token, new ArrayList<>());
-            SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationToken.authenticated(userId,token,new ArrayList<>()));
+            SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationToken.authenticated(userId, token, new ArrayList<>()));
         }
         filterChain.doFilter(request, response);
         SecurityContextHolder.getContext().setAuthentication(authentication_old);

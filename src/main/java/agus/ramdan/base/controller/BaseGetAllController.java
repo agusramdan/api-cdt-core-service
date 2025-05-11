@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.val;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -21,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface BaseGetAllController<T, DTO>{
+public interface BaseGetAllController<T, DTO> {
 
     JpaSpecificationExecutor<T> getRepository();
 
@@ -41,6 +42,7 @@ public interface BaseGetAllController<T, DTO>{
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
             @RequestParam(value = "limit", required = false, defaultValue = "25") int limit,
             @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "order", required = false) String order,
             @RequestParam(value = "ids", required = false) String ids
     ) {
         val builder = new BaseSpecificationsBuilder<T>();
@@ -56,12 +58,26 @@ public interface BaseGetAllController<T, DTO>{
         }
         builder.withSearch(search);
         val spec = builder.build(BaseSpecifications::new);
-        val pageable = new OffsetBasedPageRequest(offset, limit);
+        Sort sort = null;
+        if (StringUtils.hasText(order)) {
+            List<Sort.Order> orders = Arrays.stream(order.split(","))
+                    .map(o -> {
+                        String[] orderParts = o.split(":");
+                        String fieldName = orderParts[0];
+                        Sort.Direction direction = Sort.Direction.fromString(orderParts.length > 1 ? orderParts[1] : "ASC");
+                        return new Sort.Order(direction, fieldName);
+                    })
+                    .collect(Collectors.toList());
+            sort = Sort.by(orders);
+        }else {
+            sort = Sort.by(Sort.Direction.DESC, "createdOn");
+        }
+        val pageable = new OffsetBasedPageRequest(offset, limit, sort);
         val page = getRepository().findAll(spec, pageable);
         if (page.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        val content =page.getContent().stream().map(this::convert).collect(Collectors.toList());
+        val content = page.getContent().stream().map(this::convert).collect(Collectors.toList());
         return ResponseEntity.ok(content);
     }
 }

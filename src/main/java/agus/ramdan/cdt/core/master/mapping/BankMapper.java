@@ -18,7 +18,6 @@ public interface BankMapper {
     BankQueryDTO entityToQueryDto(Bank entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "auditMetadata", ignore = true)
     void updateEntityFromUpdateDto(BankUpdateDTO dto, @MappingTarget Bank entity);
 
     default UUID stringToUUID(String value) {

@@ -1,8 +1,9 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
-import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.cdt.core.master.persistence.domain.BeneficiaryAccount;
 import agus.ramdan.cdt.core.master.persistence.domain.Gateway;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -20,16 +21,12 @@ import java.util.UUID;
 @Table(name = "cdt_clearing")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class TrxClearing {
+public class TrxClearing extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonProperty(index = 1)
     private UUID id;
-
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     private LocalDateTime trx_date;
 
     @Column(name = "amount", precision = 12, scale = 2, nullable = false)
@@ -37,10 +34,12 @@ public class TrxClearing {
     protected BigDecimal amount;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "beneficiary_account_id")
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "gateway_id")
     private Gateway gateway;
 

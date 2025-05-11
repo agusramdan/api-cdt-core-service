@@ -1,8 +1,11 @@
 package agus.ramdan.cdt.core.master.persistence.domain;
 
-import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.base.utils.UserUtils;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +26,8 @@ import java.util.UUID;
 @Where(clause = "deleted_at is null")
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class VendorCrew {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class VendorCrew extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,11 +39,9 @@ public class VendorCrew {
     @Schema(description = "Name")
     private String name;
 
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "vendor_id")
+    @JoinColumn(name = "vendor_id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Vendor vendor;
 
     private String ktp;
@@ -57,12 +59,12 @@ public class VendorCrew {
     private Boolean gateway;
 
     @PrePersist
-    protected void onCreate(){
-        username= UserUtils.username(username);
+    protected void onCreate() {
+        username = UserUtils.username(username);
     }
 
     @PreUpdate
-    protected void onUpdate(){
-        username=UserUtils.username(username);
+    protected void onUpdate() {
+        username = UserUtils.username(username);
     }
 }

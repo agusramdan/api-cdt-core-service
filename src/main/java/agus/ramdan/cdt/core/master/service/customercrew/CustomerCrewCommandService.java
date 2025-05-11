@@ -2,14 +2,16 @@ package agus.ramdan.cdt.core.master.service.customercrew;
 
 import agus.ramdan.base.exception.BadRequestException;
 import agus.ramdan.base.exception.ErrorValidation;
-import agus.ramdan.base.service.BaseCommandEntityService;
+import agus.ramdan.base.exception.ResourceNotFoundException;
+import agus.ramdan.base.utils.EntityFallbackFactory;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.customercrew.CustomerCrewUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.CustomerCrewMapper;
+import agus.ramdan.cdt.core.master.persistence.domain.Customer;
 import agus.ramdan.cdt.core.master.persistence.domain.CustomerCrew;
 import agus.ramdan.cdt.core.master.persistence.repository.CustomerCrewRepository;
-import agus.ramdan.cdt.core.master.persistence.repository.CustomerRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import agus.ramdan.cdt.core.master.service.customer.CustomerQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -20,12 +22,11 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerCrewCommandService implements
-        BaseCommandEntityService<CustomerCrew, UUID, CustomerCrewQueryDTO, CustomerCrewCreateDTO, CustomerCrewUpdateDTO, String> {
+public class CustomerCrewCommandService extends MasterDataEventProducer<CustomerCrew, UUID, CustomerCrewQueryDTO, CustomerCrewCreateDTO, CustomerCrewUpdateDTO, String> {
 
     private final CustomerCrewRepository repository;
     private final CustomerCrewMapper mapper;
-    private final CustomerRepository customerRepository;
+//    private final CustomerRepository customerRepository;
     private final CustomerQueryService customerQueryService;
 
     @Override
@@ -51,37 +52,33 @@ public class CustomerCrewCommandService implements
 
     @Override
     public CustomerCrew convertFromCreateDTO(CustomerCrewCreateDTO dto) {
-        val entity =mapper.createDtoToEntity(dto);
+        val entity = mapper.createDtoToEntity(dto);
         val validations = new ArrayList<ErrorValidation>();
 //        entity.setBranch(branchQueryService.getForRelation(dto.getBranch(), validations, "branch"));
         // Fetch related Customer entity and set it
-
-        if (dto.getCustomerId()!=null) {
-            entity.setCustomer(customerRepository.findById(UUID.fromString(dto.getCustomerId()))
-                    .orElseGet(() -> {
-                        validations.add(ErrorValidation.New("Customer not found", "customer_id", dto.getCustomerId()));
-                        return null;
-                    }));
-        } else {
-            entity.setCustomer(customerQueryService.getForRelation(dto.getCustomer(),validations,"customer"));
+//        customerQueryService.relation(dto.getCustomerId(), d -> ErrorValidation.add(validations, "Customer not found", "customer_id", d))
+//                .or(() -> customerQueryService.relation(dto.getCustomer(), validations, "customer")).ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresentOrElse(entity::setCustomer, () -> ErrorValidation.add(validations, "Customer can't not null", "customer", null));
+        Customer customer=EntityFallbackFactory.ensureNotLazy(validations,"Deleted Customer","customer", entity::getCustomer);
+        if(customer == null){
+            ErrorValidation.add(validations, "Customer can't not null", "customer", null);
         }
-        if(entity.getCustomer()==null){
-            validations.add(ErrorValidation.New("Customer can't not null","customer_id",null));
-        }
-        if (validations.size() > 0) {
-            throw new BadRequestException(
-                    "Validation error",
-                    validations.toArray(new ErrorValidation[validations.size()])
-            );
-        }
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return entity;
     }
 
     @Override
     public CustomerCrew convertFromUpdateDTO(String id, CustomerCrewUpdateDTO dto) {
-        CustomerCrew customerCrew = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Customer Crew not found"));
+        val customerCrew = repository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new ResourceNotFoundException("Customer Crew not found"));
         mapper.updateEntityFromUpdateDto(dto, customerCrew);
+        val validations = new ArrayList<ErrorValidation>();
+        customerQueryService.relation(dto.getCustomer(), validations, "customer").ifPresent(customerCrew::setCustomer);
+        Customer customer=EntityFallbackFactory.ensureNotLazy(validations,"Deleted Customer","customer", customerCrew::getCustomer);
+        if(customer == null){
+            ErrorValidation.add(validations, "Customer can't not null", "customer", null);
+        }
+        BadRequestException.ThrowWhenError("Validation error", validations,dto);
         return customerCrew;
     }
 

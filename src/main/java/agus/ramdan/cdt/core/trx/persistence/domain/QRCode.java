@@ -1,13 +1,12 @@
 package agus.ramdan.cdt.core.trx.persistence.domain;
 
-import agus.ramdan.base.embeddable.AuditMetadata;
+import agus.ramdan.base.domain.BaseEntity;
 import agus.ramdan.cdt.core.master.persistence.domain.*;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -21,22 +20,22 @@ import java.util.UUID;
 })
 @Schema
 @EntityListeners(AuditingEntityListener.class)
-public class QRCode {
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class QRCode extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Embedded
-    private AuditMetadata auditMetadata;
-
     @Column(name = "code")
-    @JsonProperty(index = 2)
+    @JsonIgnore
     @Schema(description = "QR Code")
     private String code;
 
-    private LocalDateTime expired_time ;
+    @Column(name = "expired_time")
+    @JsonProperty("expired_time")
+    private LocalDateTime expiredTime;
 
-    private boolean active=true;
+    private boolean active = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "code_type", nullable = false)
@@ -50,38 +49,65 @@ public class QRCode {
 
     // customer/user information
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("customer_id")
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("customer_crew_id")
     private CustomerCrew user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("beneficiary_account_id")
     private BeneficiaryAccount beneficiaryAccount;
 
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("branch_id")
     private Branch branch;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("service_transaction_id")
     private ServiceTransaction serviceTransaction;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("service_product_id")
     private ServiceProduct serviceProduct;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("vendor_id")
+    private Vendor vendor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("vendor_crew_id")
+    private VendorCrew vendorCrew;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonProperty("machine_id")
+    private Machine machine;
 
     @PrePersist
     protected void onCreate() {
         if (type == null) {
-            type = QRCodeType.SINGEL_TRX_USE;
+            type = QRCodeType.SINGLE_TRX_USE;
         }
         if (status == null) {
             status = QRCodeStatus.PENDING;
         }
-        if (expired_time == null){
-            if (type == QRCodeType.SINGEL_TRX_USE)
-                expired_time = LocalDateTime.now().plusDays(1);
+        if (expiredTime == null) {
+            if (type == QRCodeType.SINGLE_TRX_USE)
+                expiredTime = LocalDateTime.now().plusDays(1);
             else
-                expired_time = LocalDateTime.now().plusYears(1);
+                expiredTime = LocalDateTime.now().plusYears(1);
         }
-        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+        if (status == QRCodeStatus.ACTIVE && expiredTime.isBefore(LocalDateTime.now())) {
             status = QRCodeStatus.EXPIRED;
         }
         active = status == QRCodeStatus.ACTIVE;
@@ -89,13 +115,13 @@ public class QRCode {
 
     @PreUpdate
     protected void onUpdate() {
-        if (expired_time == null){
-            if (type == QRCodeType.SINGEL_TRX_USE)
-                expired_time = LocalDateTime.now().plusDays(1);
+        if (expiredTime == null) {
+            if (type == QRCodeType.SINGLE_TRX_USE)
+                expiredTime = LocalDateTime.now().plusDays(1);
             else
-                expired_time = LocalDateTime.now().plusYears(1);
+                expiredTime = LocalDateTime.now().plusYears(1);
         }
-        if (status == QRCodeStatus.ACTIVE && expired_time.isBefore(LocalDateTime.now())){
+        if (status == QRCodeStatus.ACTIVE && expiredTime.isBefore(LocalDateTime.now())) {
             status = QRCodeStatus.EXPIRED;
         }
         active = status == QRCodeStatus.ACTIVE;

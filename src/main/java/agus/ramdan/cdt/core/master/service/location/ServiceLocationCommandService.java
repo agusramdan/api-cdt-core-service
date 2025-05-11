@@ -1,12 +1,13 @@
 package agus.ramdan.cdt.core.master.service.location;
 
-import agus.ramdan.base.service.BaseCommandEntityService;
+import agus.ramdan.base.exception.ResourceNotFoundException;
 import agus.ramdan.cdt.core.master.controller.dto.location.ServiceLocationCreateDTO;
 import agus.ramdan.cdt.core.master.controller.dto.location.ServiceLocationQueryDTO;
 import agus.ramdan.cdt.core.master.controller.dto.location.ServiceLocationUpdateDTO;
 import agus.ramdan.cdt.core.master.mapping.ServiceLocationMapper;
 import agus.ramdan.cdt.core.master.persistence.domain.ServiceLocation;
 import agus.ramdan.cdt.core.master.persistence.repository.ServiceLocationRepository;
+import agus.ramdan.cdt.core.master.service.MasterDataEventProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ServiceLocationCommandService implements
-        BaseCommandEntityService<ServiceLocation, UUID, ServiceLocationQueryDTO, ServiceLocationCreateDTO, ServiceLocationUpdateDTO, String> {
+public class ServiceLocationCommandService extends MasterDataEventProducer<ServiceLocation, UUID, ServiceLocationQueryDTO, ServiceLocationCreateDTO, ServiceLocationUpdateDTO, String> {
 
     private final ServiceLocationRepository repository;
     private final ServiceLocationMapper mapper;
@@ -48,7 +48,7 @@ public class ServiceLocationCommandService implements
     @Override
     public ServiceLocation convertFromUpdateDTO(String id, ServiceLocationUpdateDTO dto) {
         ServiceLocation location = repository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new RuntimeException("Service Location not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service Location not found"));
         mapper.updateEntityFromUpdateDto(dto, location);
         return location;
     }

@@ -1,15 +1,23 @@
 ---
-spring:
-  application:
-    name: API-CDT-CORE-SERVICE
+# JVM memory settings
+jvm:
+  initial-heap-size: 256m
+  max-heap-size: 512m
 
----
 server:
   port: 8080
   error:
     include-stacktrace: never
+  shutdown: graceful
 
+---
 spring:
+  application:
+    name: api-cdt-core-service
+  threads:
+    virtual:
+      enabled: true
+  thread-executor: virtual
   config:
     use-legacy-processing: true
   jmx:
@@ -17,22 +25,41 @@ spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
   main:
-    lazy-initialization: true
-    allow-bean-definition-overriding: true
+    lazy-initialization: false
+#    allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:postgresql://db:5432/core
+    url: jdbc:postgresql://db:5432/core?serverTimezone=Asia/Jakarta
     username: core_user
     password: core_pwd
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     # Hibernate ddl auto (create, create-drop, validate, update)
-    hibernate.ddl-auto: validate
+    hibernate.ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Jakarta
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: core-consumer-group
+      auto-offset-reset: earliest
+      enable-auto-commit: true
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    admin:
+      auto-create-topics: true
 
   flyway:
-    enabled: false
-
-  zipkin:
     enabled: false
 
   graphql:
@@ -57,3 +84,45 @@ springdoc:
 feign-client:
   api-cdt-gateway-service:
     base-url: http://api-cdt-gateway-service:8080
+  api-cdt-pjpur-service:
+    base-url: http://api-cdt-pjpur-service:8080
+
+logging:
+  pattern:
+    correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    root: WARN
+    agus.ramdan.base.exception: DEBUG
+    agus.ramdan.cdt.core: INFO
+
+management:
+  server:
+    port: 7180
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+  security:
+    enabled: false
+  metrics:
+    tags:
+      application: api-cdt-core-service
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+  observations:
+    key-values:
+      application: api-cdt-core-service

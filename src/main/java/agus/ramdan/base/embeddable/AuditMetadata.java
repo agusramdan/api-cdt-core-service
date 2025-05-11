@@ -1,6 +1,8 @@
 package agus.ramdan.base.embeddable;
 
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.NoArgsConstructor;
@@ -13,25 +15,30 @@ import java.time.LocalDateTime;
 
 @Embeddable
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AuditMetadata {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime created_on;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
 
     @UpdateTimestamp
-    private LocalDateTime updated_on;
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
-    private String created_by;
+    private String createdBy;
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private String updated_by;
+    private String updatedBy;
 
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
     // Getters and Setters
 
 

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerCrewQueryController implements
         BaseQueryController<CustomerCrewQueryDTO, String> {
     private final CustomerCrewQueryService service;
+
     @GetMapping("/username/{username}")
     public ResponseEntity<CustomerCrewQueryDTO> getByUsername(@PathVariable String username) {
         return ResponseEntity.ok(service.getByUsername(username));

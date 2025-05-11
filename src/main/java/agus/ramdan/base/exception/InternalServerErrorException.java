@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 @Getter
-public class InternalServerErrorException extends RuntimeException implements FeighResponError{
+public class InternalServerErrorException extends RuntimeException implements FeighResponError {
 
     private static final long serialVersionUID = 1L;
     private Response response;
-    public InternalServerErrorException(String message){
+
+    public InternalServerErrorException(String message) {
         super(message);
     }
 

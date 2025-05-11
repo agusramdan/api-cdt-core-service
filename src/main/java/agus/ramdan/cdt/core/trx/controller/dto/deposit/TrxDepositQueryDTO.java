@@ -9,7 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,9 +21,7 @@ public class TrxDepositQueryDTO {
     private UUID id;
     private String token;
     private String status;
-
-//    private LocalDateTime createdOn;
-//    private LocalDateTime updatedOn;
+    private String username;
 
     @JsonProperty("service_transaction")
     private ServiceTransactionDTO serviceTransaction;
@@ -31,14 +30,18 @@ public class TrxDepositQueryDTO {
     private ServiceProductDTO serviceProduct;
 
     private MachineDTO machine;
-
-    private String cdm_trx_no;
-
-    private LocalDateTime cdm_trx_date;
-    private LocalDateTime cdm_trx_time;
+    @JsonProperty("machine_info")
+    private String machineInfo;
+    @JsonProperty("cdm_trx_no")
+    private String cdmTrxNo;
+    @JsonProperty("cdm_trx_date")
+    private LocalDate cdmTrxDate;
+    @JsonProperty("cdm_trx_time")
+    private LocalTime cdmTrxTime;
+    @JsonProperty("cdm_trx_type")
+    private String cdmTrxType;
 
     private BigDecimal amount;
 
     private List<TrxDepositDenQueryDTO> denominations;
 }
-

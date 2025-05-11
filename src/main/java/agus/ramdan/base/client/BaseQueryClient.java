@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-public interface BaseQueryClient <DTO,DTO_ID> {
+public interface BaseQueryClient<DTO, DTO_ID> {
     @GetMapping("")
     List<DTO> getAll(
             @RequestParam(value = "offset", required = false, defaultValue = "0") int offset,

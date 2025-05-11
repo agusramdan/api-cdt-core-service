@@ -10,9 +10,12 @@ public interface GatewayTransferMapper {
 
     @Mapping(source = "gateway.code", target = "gatewayCode")
     // @Mapping(source = "beneficiaryAccount.account_number", target = "transferType")
-    @Mapping(source = "beneficiaryAccount.account_number", target = "destinationAccount")
-    @Mapping(source = "beneficiaryAccount.account_name", target = "destinationAccountName")
+    @Mapping(source = "beneficiaryAccount.firstname", target = "destinationAccountFirstname")
+    @Mapping(source = "beneficiaryAccount.lastname", target = "destinationAccountLastname")
+    @Mapping(source = "beneficiaryAccount.accountNumber", target = "destinationAccount")
+    @Mapping(source = "beneficiaryAccount.accountName", target = "destinationAccountName")
     @Mapping(source = "beneficiaryAccount.bank.code", target = "destinationBankCode")
+    @Mapping(source = "beneficiaryAccount.bank.bankPayerId", target = "bankPayerId")
     @Mapping(source = "beneficiaryAccount.regionCode.id", target = "destinationRegionCode")
     @Mapping(source = "beneficiaryAccount.countryCode.id", target = "destinationCountryCode")
     @Mapping(source = "beneficiaryAccount.customerStatus.id", target = "destinationCustomerStatus")
@@ -25,5 +28,4 @@ public interface GatewayTransferMapper {
     @Mapping(source = "description", target = "description")
     //@Mapping(source = "amount", target = "checkName")
     TransferBalanceRequestDTO mapDTO(TrxTransfer transfer);
-
 }

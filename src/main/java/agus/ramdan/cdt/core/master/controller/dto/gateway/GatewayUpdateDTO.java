@@ -1,10 +1,16 @@
 package agus.ramdan.cdt.core.master.controller.dto.gateway;
 
+import agus.ramdan.cdt.core.master.controller.dto.VendorDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
 @Schema(description = "DTO untuk memperbarui Gateway")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GatewayUpdateDTO {
 
     @Schema(description = "Kode Gateway")
@@ -16,6 +22,8 @@ public class GatewayUpdateDTO {
     @Schema(description = "Deskripsi Gateway")
     private String description;
 
-    @Schema(description = "ID Vendor sebagai Partner")
+    @Schema(description = "ID Vendor sebagai Partner/ use partner will remove")
     private String partnerId;
+
+    private VendorDTO partner;
 }

@@ -12,15 +12,16 @@ import java.util.UUID;
 public interface GatewayMapper {
 
     //@Mapping(source = "id", target = "id", ignore = true)
-    @Mapping(source = "partnerId", target = "partner.id", qualifiedByName = "stringToUUID")
+    //@Mapping(source = "partnerId", target = "partner.id", ignore = true)
     Gateway createDtoToEntity(GatewayCreateDTO dto);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "partner.id", target = "partnerId")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     GatewayQueryDTO entityToQueryDto(Gateway entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "partnerId", target = "partner.id")
+        //@Mapping(source = "partnerId", target = "partner.id", ignore = true)
     void updateEntityFromUpdateDto(GatewayUpdateDTO dto, @MappingTarget Gateway entity);
 
     @Named("stringToUUID")

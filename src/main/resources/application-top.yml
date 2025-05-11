@@ -1,0 +1,7 @@
+feign-client:
+  api-cdt-gateway-service:
+    base-url: http://api-cdt-gateway-service:8080
+
+payment-gateway:
+  code : TOP
+

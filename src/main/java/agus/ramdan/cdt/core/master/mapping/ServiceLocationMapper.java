@@ -11,7 +11,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring")
 public interface ServiceLocationMapper {
 
-    //@Mapping(source = "id", target = "id", ignore = true)
+    @Mapping(target = "id", ignore = true)
     ServiceLocation createDtoToEntity(ServiceLocationCreateDTO dto);
 
     @Mapping(source = "id", target = "id")

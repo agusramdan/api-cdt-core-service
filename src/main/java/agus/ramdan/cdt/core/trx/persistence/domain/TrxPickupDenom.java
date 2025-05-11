@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "cdt_trx_cdm_de")
+@Table(name = "cdt_trx_pickup_den")
 @Schema
 public class TrxPickupDenom {
 

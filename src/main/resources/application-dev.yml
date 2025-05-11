@@ -4,3 +4,7 @@ spring:
     # show-sql: true
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
+
+logging:
+  level:
+    agus.ramdan.base.exception: debug

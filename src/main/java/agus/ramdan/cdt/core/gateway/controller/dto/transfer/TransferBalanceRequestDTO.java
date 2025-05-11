@@ -1,6 +1,7 @@
 package agus.ramdan.cdt.core.gateway.controller.dto.transfer;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,13 @@ public class TransferBalanceRequestDTO {
      * 1 = BI Fast Transfer
      */
     @JsonProperty("transfer_type")
-    private String transferType = "0";
+    private String transferType = "1";
+
+    @JsonProperty("destination_account_firstname")
+    private String destinationAccountFirstname;
+
+    @JsonProperty("destination_account_lastname")
+    private String destinationAccountLastname;
 
     @JsonProperty("destination_account")
     private String destinationAccount;
@@ -29,6 +36,9 @@ public class TransferBalanceRequestDTO {
     @JsonProperty("destination_bank_code")
     private String destinationBankCode;
 
+    @JsonProperty("bank_payer_id")
+    @Schema(description = "itsjeck Bank Payer ID")
+    private Integer bankPayerId;
     /**
      * Destination Region Code (Optional)
      */
@@ -46,7 +56,7 @@ public class TransferBalanceRequestDTO {
      * 02 = Non-Resident
      */
     @JsonProperty("destination_customer_status")
-    private String destinationCustomerStatus="01";
+    private String destinationCustomerStatus = "01";
 
     /**
      * 01 = Individual
@@ -56,7 +66,7 @@ public class TransferBalanceRequestDTO {
      * 99 = Others
      */
     @JsonProperty("destination_customer_type")
-    private String destinationCustomerType="01";
+    private String destinationCustomerType = "01";
 
     /**
      * CACC = Current Account
@@ -67,7 +77,7 @@ public class TransferBalanceRequestDTO {
      * OTHR =None of the above
      */
     @JsonProperty("destination_account_type")
-    private String destinationAccountType ="SVGS";
+    private String destinationAccountType = "SVGS";
 
     /**
      * purpose_of_transaction String(2) M
@@ -78,7 +88,7 @@ public class TransferBalanceRequestDTO {
      * purposes
      */
     @JsonProperty("purpose_of_transaction")
-    private String purposeOfTransaction="99";
+    private String purposeOfTransaction = "99";
 
     /**
      * transaction_no String(20) M Transaction Number Merchant
@@ -94,7 +104,6 @@ public class TransferBalanceRequestDTO {
 
     private String description;
     /**
-     *
      * checkName String(1) O “0” = No Need Check name with
      * Bank (going to bypass name
      * checking)
@@ -109,6 +118,6 @@ public class TransferBalanceRequestDTO {
      * name in request and
      * bank name
      */
-    private String checkName="0";
+    private String checkName = "0";
 
 }

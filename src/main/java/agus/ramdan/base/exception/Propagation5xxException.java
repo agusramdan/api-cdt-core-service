@@ -25,6 +25,6 @@ public class Propagation5xxException extends PropagationXxxException {
     }
 
     public Propagation5xxException(String message, int status, String errCode, Errors errors) {
-        super(message, status, errCode, null,errors);
+        super(message, status, errCode, null, errors);
     }
 }
